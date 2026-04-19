@@ -1,0 +1,8 @@
+{
+  "name": "Docente AI - PoC",
+  "description": "Asistente pedagógico para docentes, integrado con un pipeline de n8n.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": []
+}
