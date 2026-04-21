@@ -49,3 +49,72 @@
   -webkit-backdrop-filter: blur(40px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
+
+/* Print Styles */
+@media print {
+  @page {
+    margin: 2cm;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    overflow: visible !important;
+  }
+
+  /* Hide UI elements non-essential for the activity document */
+  header, 
+  footer, 
+  .fixed, 
+  .absolute.bottom-6, 
+  .absolute.top-0,
+  .pointer-events-none,
+  button:not(.print-visible),
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset layout for print */
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  .glass-panel {
+    background: transparent !important;
+    border: 1px solid #eee !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    color: black !important;
+    border-radius: 8px !important;
+    margin-bottom: 2rem !important;
+    page-break-inside: avoid;
+  }
+
+  h1, h2, h3, h4, p, span, li {
+    color: black !important;
+    background: transparent !important;
+  }
+
+  .text-cyan-400, .text-fuchsia-300, .text-amber-300, .text-purple-400 {
+    color: #333 !important;
+    text-shadow: none !important;
+  }
+
+  .bg-cyan-500, .bg-fuchsia-500, .bg-amber-400 {
+    background: #f0f0f0 !important;
+    color: black !important;
+    border: 1px solid #ccc !important;
+  }
+
+  /* Ensure the activity card is the main focus */
+  .activity-card-print {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+

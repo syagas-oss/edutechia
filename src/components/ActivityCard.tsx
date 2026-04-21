@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Copy, Check, Clock, Target, ListChecks, Sparkles, GraduationCap } from 'lucide-react';
+import { Copy, Check, Clock, Target, ListChecks, Sparkles, GraduationCap, Printer, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { toast } from 'sonner';
 import { Activity } from '../types';
 
 interface ActivityCardProps {
@@ -9,6 +10,7 @@ interface ActivityCardProps {
 
 export default function ActivityCard({ activity }: ActivityCardProps) {
   const [copied, setCopied] = useState(false);
+  const [rating, setRating] = useState<'up' | 'down' | null>(null);
 
   const finalObjective = activity.objective || activity.description || 'No especificado';
   const finalDuration = activity.duration || (activity.estimated_time_minutes ? `${activity.estimated_time_minutes} min` : 'Variable');
@@ -46,8 +48,25 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
     const textToCopy = `TÍTULO: ${activity.title}\nDURACIÓN: ${finalDuration}\n\nOBJETIVO:\n${finalObjective}\n\nPASOS:\n${finalSteps.map((step, i) => `${i + 1}. ${step}`).join('\n')}\n\nADAPTACIONES:\n${finalAdaptations.length > 0 ? finalAdaptations.map(a => `- ${a}`).join('\n') : 'N/A'}\n\nEVALUACIÓN:\n${finalAssessment.length > 0 ? finalAssessment.map(e => `- ${e}`).join('\n') : 'N/A'}`.trim();
     navigator.clipboard.writeText(textToCopy).then(() => {
       setCopied(true);
+      toast.success('Copiado al portapapeles');
+      if (navigator.vibrate) navigator.vibrate(30);
       setTimeout(() => setCopied(false), 2000);
     });
+  };
+
+  const handlePrint = () => {
+    if (navigator.vibrate) navigator.vibrate(20);
+    window.print();
+  };
+
+  const handleRate = (type: 'up' | 'down') => {
+    if (rating === type) {
+      setRating(null);
+      return;
+    }
+    setRating(type);
+    toast.success(type === 'up' ? '¡Gracias! Nos alegra que te guste.' : 'Gracias por tu feedback. Seguiremos mejorando.');
+    if (navigator.vibrate) navigator.vibrate(10);
   };
 
   return (
@@ -78,13 +97,22 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
         </div>
         
         <div className="flex items-center gap-3 shrink-0">
-          <div className="glass-panel px-5 py-2.5 rounded-full flex items-center gap-2">
+          <div className="glass-panel px-5 py-2.5 rounded-full flex items-center gap-2 no-print">
             <Clock className="w-4 h-4 text-cyan-400" />
             <span className="text-sm font-semibold text-white/90 tracking-wide">{finalDuration}</span>
           </div>
+          
+          <button 
+            onClick={handlePrint} 
+            className="glass-panel hover:bg-white/10 transition-all duration-300 w-11 h-11 rounded-full flex items-center justify-center shrink-0 cursor-pointer active:scale-95 no-print print-visible"
+            title="Imprimir o Exportar PDF"
+          >
+            <Printer className="w-4 h-4 text-white/70" />
+          </button>
+
           <button 
             onClick={handleCopy} 
-            className="glass-panel hover:bg-white/10 transition-all duration-300 w-11 h-11 rounded-full flex items-center justify-center shrink-0 cursor-pointer active:scale-95"
+            className="glass-panel hover:bg-white/10 transition-all duration-300 w-11 h-11 rounded-full flex items-center justify-center shrink-0 cursor-pointer active:scale-95 no-print"
             title="Copiar actividad"
           >
             {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-white/70" />}
@@ -203,6 +231,23 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               </ul>
             </div>
           )}
+        </div>
+
+        {/* Rating System Overlay Bottom Right */}
+        <div className="absolute bottom-6 right-8 flex items-center gap-2 no-print opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+           <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 mr-2">¿Te gusta?</span>
+           <button 
+            onClick={() => handleRate('up')}
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${rating === 'up' ? 'bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'bg-white/5 text-white/40 hover:bg-white/10'}`}
+           >
+            <ThumbsUp className="w-4 h-4" />
+           </button>
+           <button 
+            onClick={() => handleRate('down')}
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${rating === 'down' ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'bg-white/5 text-white/40 hover:bg-white/10'}`}
+           >
+            <ThumbsDown className="w-4 h-4" />
+           </button>
         </div>
 
       </div>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Send, Mic, Square, Trash2, AlertCircle, Sparkles } from 'lucide-react';
+import { Toaster, toast } from 'sonner';
+import useSound from 'use-sound';
 import { Message, WebhookResponse } from './types';
 import { saveChatHistory, getSessionId, getChatHistory, clearSession as clearStorageSession } from './lib/storage';
 import ActivityCard from './components/ActivityCard';
@@ -27,6 +29,11 @@ export default function App() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
+  // Sound Effects
+  const [playSend] = useSound('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3', { volume: 0.5 });
+  const [playReceive] = useSound('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3', { volume: 0.5 });
+  const [playError] = useSound('https://assets.mixkit.co/active_storage/sfx/2360/2360-preview.mp3', { volume: 0.5 });
+
   // Auto-scroll smooth
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -44,6 +51,8 @@ export default function App() {
 
   const clearSession = () => {
     clearStorageSession();
+    toast.success('Sesión reiniciada correctamente');
+    if (navigator.vibrate) navigator.vibrate(50);
   };
 
   // Web Speech API for Dictation
@@ -94,9 +103,12 @@ export default function App() {
     }
     if (isRecording) {
       recognitionRef.current.stop();
+      toast('Dictado finalizado');
     } else {
       recognitionRef.current.start();
       setIsRecording(true);
+      toast.info('Escuchando...');
+      if (navigator.vibrate) navigator.vibrate([30, 50]);
     }
   };
 
@@ -147,6 +159,8 @@ export default function App() {
     setInput('');
     setIsLoading(true);
     setErrorMsg(null);
+    playSend();
+    if (navigator.vibrate) navigator.vibrate(20);
 
     try {
       const payload = {
@@ -247,10 +261,14 @@ export default function App() {
         saveChatHistory(newHist);
         return newHist;
       });
+      playReceive();
+      if (navigator.vibrate) navigator.vibrate([10, 30]);
 
     } catch (error: any) {
       console.error("[API] ❌ Connection error caught:", error);
       setErrorMsg("No se ha podido contactar con el asistente. Verifica tu conexión o intenta más tarde.");
+      playError();
+      toast.error('Error de conexión');
       setMessages(prev => {
         const errorMsg: Message = {
            id: Date.now().toString(),
@@ -277,7 +295,7 @@ export default function App() {
 
   return (
     <div className="relative flex flex-col h-screen text-white overflow-hidden bg-[#02040a]">
-      
+      <Toaster position="top-center" richColors theme="dark" />
       {/* Background Spatial Effects */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-cyan-900/20 blur-[120px] mix-blend-screen opacity-50 animate-pulse" style={{ animationDuration: '8s' }} />
