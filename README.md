@@ -1,16 +1,16 @@
 # Docente AI - Asistente Pedagógico (PoC)
 
-Esta es una Prueba de Concepto (PoC) web estática desarrollada con React, Vite y Tailwind CSS. Está diseñada para integrarse con un pipeline de automatización impulsado por n8n para la creación de actividades pedagógicas adaptadas.
+Aplicación web estática construida con React, Vite y Tailwind CSS. La interfaz conversa con un webhook de n8n para generar actividades pedagógicas y puede publicarse automáticamente en GitHub Pages.
 
-## Requisitos Cumplidos
-- 💬 **Interfaz Conversacional**: Layout limpio e intuitivo para chatear con el asistente.
-- 🎙️ **Reconocimiento de Voz**: Botón de dictado que utiliza la Web Speech API en navegadores soportados.
-- 💾 **Persistencia Local**: Manejo transparente de `sessionId` e historial usando `localStorage`.
-- 🎨 **Renderizado Inteligente**: Tarjeta visual dinámica para presentar los datos estructurados obtenidos mediante webhook, incluyendo exportación por portapapeles.
-- ⚡ **Despliegue Simple**: Aplicación estática SPA sin necesidad de base de datos dedicada. Todo el procesamiento transcurre en n8n.
+## Capacidades
+- Interfaz conversacional para dialogar con el asistente.
+- Dictado por voz usando la Web Speech API en navegadores compatibles.
+- Persistencia local de `sessionId` e historial con `localStorage`.
+- Renderizado visual de actividades estructuradas devueltas por el webhook.
+- Despliegue automático en GitHub Pages sin publicar `dist/` en una rama dedicada.
 
-## Funcionamiento del Webhook
-La app hace un POST con formato JSON a n8n cuando se envía un mensaje:
+## Webhook
+La app envía un `POST` JSON a n8n al enviar un mensaje:
 
 ```json
 {
@@ -20,7 +20,7 @@ La app hace un POST con formato JSON a n8n cuando se envía un mensaje:
 }
 ```
 
-Espera respuestas con esta estructura (`type` puede ser `clarification`, `final_activity` o `error`):
+Respuestas esperadas (`type`: `clarification`, `final_activity` o `error`):
 
 ```json
 {
@@ -37,35 +37,28 @@ Espera respuestas con esta estructura (`type` puede ser `clarification`, `final_
 }
 ```
 
-## Configuración y Despliegue en GitHub Pages
+El endpoint actual está definido en `src/App.tsx`. n8n debe aceptar CORS desde el dominio público de GitHub Pages.
 
-Dado que la web no necesita backend, puedes alojarla de forma completamente grauita en GitHub Pages.
-
-**1. Configuración del Endpoint n8n**
-Edita la constante `N8N_WEBHOOK_URL` en `src/App.tsx`.
-*Importante*: Tu entorno de n8n debe tener habilitadas las cabeceras **CORS** para aceptar peticiones web procedentes de tu dominio de GitHub Pages.
-
-**2. Configuración en Vite.config.ts**
-Si tu repositorio se llama `ai-challenge-docente`, abre `vite.config.ts` y añade la propiedad `base` indicando el repo:
-```typescript
-export default defineConfig({
-  base: '/ai-challenge-docente/',
-  // ... resto de tu config
-})
-```
-
-**3. Testeo Local**
-Para ejecutar la aplicación localmente:
+## Desarrollo local
 ```bash
 npm install
 npm run dev
 ```
 
-**4. Build Manual para GH Pages**
-Puedes hacer un despliegue rápido usando la compilación estática.
-```bash
-npm run build
-npx gh-pages -d dist
-```
+## Despliegue en GitHub Pages
+La publicación queda automatizada mediante GitHub Actions.
 
-*(Opcional y altamente recomendado: Usa una GitHub Action oficial de Vite para despliegue automatizado).*
+- Cada `push` a `main` dispara build y deploy.
+- También se puede ejecutar manualmente desde la pestaña Actions con `workflow_dispatch`.
+- La URL esperada es `https://syagas-oss.github.io/edutechia/`.
+
+### Cómo funciona
+- `vite.config.ts` usa `base: '/edutechia/'` en producción.
+- `.github/workflows/deploy-pages.yml` instala dependencias, ejecuta `npm run build`, sube `dist/` como artifact y despliega con `actions/deploy-pages`.
+- GitHub Pages debe estar configurado con fuente `GitHub Actions`.
+
+## Verificación rápida
+```bash
+npm run lint
+npm run build
+```
