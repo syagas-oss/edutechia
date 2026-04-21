@@ -47,6 +47,16 @@ export default function App() {
   useEffect(() => {
     setSessionId(getSessionId());
     setMessages(getChatHistory());
+
+    // Animated Title (Marquee style)
+    const titleText = "EduTEchIA - Copiloto Pedagógico 🚀 ";
+    let index = 0;
+    const scrollTitle = setInterval(() => {
+      document.title = titleText.substring(index) + titleText.substring(0, index);
+      index = (index + 1) % titleText.length;
+    }, 250);
+
+    return () => clearInterval(scrollTitle);
   }, []);
 
   const clearSession = () => {
