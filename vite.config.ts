@@ -17,9 +17,9 @@ export default defineConfig(({mode}) => {
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
         manifest: {
-          name: 'AulaAI - Copiloto Pedagógico',
-          short_name: 'AulaAI',
-          description: 'Asistente inteligente para la creación de actividades educativas',
+          name: 'EduTEchIA - Copiloto Pedagógico',
+          short_name: 'EduTEchIA',
+          description: 'Plataforma inteligente para la creación y gestión de actividades educativas con IA.',
           theme_color: '#02040a',
           background_color: '#02040a',
           display: 'standalone',

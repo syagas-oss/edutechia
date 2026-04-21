@@ -12,8 +12,10 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   const [copied, setCopied] = useState(false);
   const [rating, setRating] = useState<'up' | 'down' | null>(null);
 
-  const finalObjective = activity.objective || activity.description || 'No especificado';
-  const finalDuration = activity.duration || (activity.estimated_time_minutes ? `${activity.estimated_time_minutes} min` : 'Variable');
+  // Fallback heuristic for the core identity of the card
+  const finalTitle = activity.title || (activity as any).taskTitle || (activity as any).activityName || 'Actividad Pedagógica';
+  const finalObjective = activity.objective || activity.description || (activity as any).goal || (activity as any).purpose || 'No especificado';
+  const finalDuration = activity.duration || (activity as any).timeLimit || (activity.estimated_time_minutes ? `${activity.estimated_time_minutes} min` : 'Variable');
   
   const ensureArray = (val: any): string[] => {
     if (Array.isArray(val)) {
@@ -43,6 +45,10 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   const finalAdaptations = ensureArray(activity.adaptations);
   const finalAssessment = ensureArray(activity.assessment);
   const finalResources = ensureArray(activity.resources_required);
+
+  // Dynamic extra fields logic
+  const knownKeys = ['title', 'taskTitle', 'name', 'activityTitle', 'activity_name', 'objective', 'goal', 'description', 'purpose', 'duration', 'timeLimit', 'estimated_time_minutes', 'time', 'passage', 'text', 'reading', 'questions', 'steps', 'instructions', 'pasos', 'adaptations', 'assessment', 'resources_required', 'difficulty_level', 'id', 'session_id', 'created_at', 'updated_at', 'conversation_state', 'profile'];
+  const extraEntries = Object.entries(activity).filter(([key]) => !knownKeys.includes(key) && typeof activity[key as keyof Activity] !== 'object');
 
   const handleCopy = () => {
     const textToCopy = `TÍTULO: ${activity.title}\nDURACIÓN: ${finalDuration}\n\nOBJETIVO:\n${finalObjective}\n\nPASOS:\n${finalSteps.map((step, i) => `${i + 1}. ${step}`).join('\n')}\n\nADAPTACIONES:\n${finalAdaptations.length > 0 ? finalAdaptations.map(a => `- ${a}`).join('\n') : 'N/A'}\n\nEVALUACIÓN:\n${finalAssessment.length > 0 ? finalAssessment.map(e => `- ${e}`).join('\n') : 'N/A'}`.trim();
@@ -92,7 +98,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
             )}
           </div>
           <h3 className="font-display text-3xl sm:text-4xl font-bold bg-gradient-to-br from-white via-white/90 to-white/40 bg-clip-text text-transparent leading-tight tracking-tight">
-            {activity.title}
+            {finalTitle}
           </h3>
         </div>
         
@@ -229,6 +235,22 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {extraEntries.length > 0 && (
+            <div className="glass-panel hover:bg-slate-500/[0.05] bg-slate-500/[0.02] border-slate-500/[0.05] p-6 lg:p-10 rounded-[1.5rem] flex-1 transition-colors no-print">
+              <h4 className="flex items-center gap-2 font-display text-[11px] font-bold text-slate-400/50 uppercase tracking-[0.2em] mb-5">
+                Datos Adicionales
+              </h4>
+              <div className="grid gap-2.5">
+                {extraEntries.map(([key, val]) => (
+                  <div key={key} className="flex justify-between items-start gap-4 text-[11px]">
+                     <span className="text-white/30 uppercase tracking-tighter shrink-0">{key.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')}</span>
+                     <span className="text-white/60 font-mono text-right break-words">{String(val)}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

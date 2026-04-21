@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Send, Mic, Square, Trash2, AlertCircle, Sparkles } from 'lucide-react';
+import { Send, Mic, Square, Trash2, AlertCircle, Sparkles, Cpu } from 'lucide-react';
 import { Toaster, toast } from 'sonner';
 import useSound from 'use-sound';
-import { Message, WebhookResponse } from './types';
+import { Message, WebhookResponse, Activity } from './types';
 import { saveChatHistory, getSessionId, getChatHistory, clearSession as clearStorageSession } from './lib/storage';
 import ActivityCard from './components/ActivityCard';
 
@@ -215,17 +215,45 @@ export default function App() {
           data.type = data.conversation_state === 'generated' ? 'final_activity' : 'clarification';
         }
         
-        if (!data.activity && data.last_activity) {
-          data.activity = data.last_activity;
-          // Merge profile info into activity to not lose duration and objective!
-          if (data.profile) {
-             data.activity = {
-               ...data.activity,
-               duration: data.activity.duration || data.profile.duration,
-               objective: data.activity.objective || data.profile.objective
-             };
-          }
-        }
+        const rawActivity = data.activity || data.last_activity || data;
+
+        // --- SMART NORMALIZATION LAYER ---
+        // Handles variations in AI property naming (e.g., taskTitle vs title)
+        const normalize = (obj: any): Activity => {
+          const findValue = (keys: string[]) => {
+            const foundKey = keys.find(k => obj[k] !== undefined && obj[k] !== null);
+            return foundKey ? obj[foundKey] : undefined;
+          };
+
+          const standard: Activity = {
+            title: String(findValue(['title', 'taskTitle', 'name', 'activityTitle', 'activity_name']) || 'Actividad Pedagógica'),
+            objective: String(findValue(['objective', 'goal', 'description', 'purpose', 'meta']) || findValue(['profile.objective']) || ''),
+            duration: String(findValue(['duration', 'timeLimit', 'estimated_time_minutes', 'time', 'duracion']) || (data.profile?.duration) || 'Variable'),
+            passage: findValue(['passage', 'text', 'reading', 'lectura']),
+            questions: findValue(['questions', 'preguntas', 'assessment_questions']),
+            steps: findValue(['steps', 'instructions', 'pasos', 'dynamic', 'development']),
+            adaptations: findValue(['adaptations', 'special_needs', 'ajustes', 'adaptaciones']),
+            assessment: findValue(['assessment', 'evaluation', 'evaluacion', 'grading']),
+            resources_required: findValue(['resources_required', 'resources', 'materiales', 'recursos']),
+            difficulty_level: findValue(['difficulty_level', 'level', 'nivel', 'difficulty']),
+          };
+
+          // Capture any extra fields that might be useful but aren't in the standard schema
+          // We'll store them as an extra hidden field for the card to render optionally
+          const knownKeys = ['title', 'taskTitle', 'name', 'activityTitle', 'activity_name', 'objective', 'goal', 'description', 'purpose', 'duration', 'timeLimit', 'estimated_time_minutes', 'time', 'passage', 'text', 'reading', 'questions', 'steps', 'instructions', 'adaptations', 'assessment', 'resources_required', 'difficulty_level'];
+          const extraData: Record<string, any> = {};
+          Object.keys(obj).forEach(k => {
+            if (!knownKeys.includes(k) && typeof obj[k] !== 'object') {
+              extraData[k] = obj[k];
+            }
+          });
+          
+          return { ...standard, ...extraData };
+        };
+
+        const activity = normalize(rawActivity);
+        data.activity = activity; // Use the normalized version
+        // ---------------------------------
 
         if (!data.message) {
            data.message = data.type === 'final_activity' 
@@ -238,7 +266,7 @@ export default function App() {
         throw new Error('n8n no retornó un JSON válido. Revisa la configuración del nodo Webhook (Respond Mode).');
       }
 
-      console.log('[API] 📦 Parsed JSON payload from N8N:', data);
+      console.log('[API] 📦 Parsed & Normalized activity:', data);
 
       let botMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -248,13 +276,15 @@ export default function App() {
         type: data.type === 'error' ? 'error' : 'text',
       };
 
-      if (data.type === 'final_activity' && data.activity) {
-        console.log('[Chat] 🎨 Rendering Activity Card response.');
+      if (data.type === 'final_activity') {
+        const rawActivity = data.activity || data.last_activity || data;
+        
+        // Re-run normalize if needed to ensure we have the cleanest object for the card
+        const finalActivityData = (data as any).normalizedActivity || rawActivity;
+        
         botMessage.type = 'activity';
-        botMessage.activityData = data.activity;
-      } else {
-        console.log(`[Chat] 💬 Processing Assistant message (type: ${data.type})`);
-      }
+        botMessage.activityData = finalActivityData;
+      } 
 
       setMessages(prev => {
         const newHist = [...prev, botMessage];
@@ -306,14 +336,25 @@ export default function App() {
 
       {/* Floating Header */}
       <header className="absolute top-0 w-full z-40 p-4 sm:p-6 flex justify-between items-center transition-all bg-gradient-to-b from-[#02040a] to-transparent">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-[1rem] glass-panel bg-white/5 flex items-center justify-center border-white/10 shadow-[0_0_30px_rgba(6,182,212,0.15)] relative overflow-hidden group">
-            <div className="absolute inset-0 bg-cyan-400/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400 relative z-10" />
+        <div className="flex items-center gap-4">
+          <div className="relative group cursor-default">
+            <div className="absolute inset-0 bg-cyan-500/20 rounded-xl blur-lg group-hover:bg-cyan-500/40 transition-all duration-500"></div>
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl glass-panel bg-white/5 flex items-center justify-center border-white/10 shadow-2xl relative overflow-hidden">
+               <Cpu className="w-6 h-6 text-cyan-400 animate-pulse-slow" />
+               <div className="absolute top-0 right-0 w-3 h-3 bg-fuchsia-500 rounded-bl-lg border-l border-b border-white/10"></div>
+            </div>
           </div>
           <div className="flex flex-col">
-            <h1 className="font-display font-medium text-lg sm:text-xl tracking-wide text-white/90">Aula<span className="font-extrabold text-cyan-400">AI</span></h1>
-            <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">Nexus Pedagógico</span>
+            <div className="flex items-center">
+              <h1 className="font-display text-xl sm:text-2xl tracking-tighter text-white">
+                <span className="font-extralight opacity-70">Edu</span>
+                <span className="font-bold text-cyan-400">TEch</span>
+              </h1>
+              <div className="ml-1.5 px-1.5 py-0.5 bg-cyan-400 rounded-md">
+                 <span className="text-[10px] sm:text-[11px] font-black text-black leading-none uppercase">IA</span>
+              </div>
+            </div>
+            <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.4em] text-white/30 -mt-0.5">Pedagogy 4.0</span>
           </div>
         </div>
 

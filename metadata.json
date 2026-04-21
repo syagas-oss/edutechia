@@ -1,6 +1,6 @@
 {
-  "name": "Docente AI - PoC",
-  "description": "Asistente pedagógico para docentes, integrado con un pipeline de n8n.",
+  "name": "EduTEchIA",
+  "description": "El copiloto de IA definitiva para la planificación pedagógica moderna.",
   "requestFramePermissions": [
     "microphone"
   ],
