@@ -8,7 +8,7 @@ export default defineConfig(({mode}) => {
   const isProduction = mode === 'production';
 
   return {
-    base: isProduction ? '/edutechia/' : '/',
+    base: '/edutechia/',
     plugins: [react(), tailwindcss()],
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
