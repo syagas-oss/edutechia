@@ -14,9 +14,26 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   const finalDuration = activity.duration || (activity.estimated_time_minutes ? `${activity.estimated_time_minutes} min` : 'Variable');
   
   const ensureArray = (val: any): string[] => {
-    if (Array.isArray(val)) return val;
+    if (Array.isArray(val)) {
+      return val.map(item => {
+        if (typeof item === 'string') return item;
+        if (typeof item === 'object' && item !== null) {
+          if (item.instruction) {
+            return item.step_number ? `${item.instruction}` : item.instruction;
+          }
+          if (item.description) return item.description;
+          if (item.text) return item.text;
+          if (item.name) return item.name;
+          return JSON.stringify(item);
+        }
+        return String(item);
+      });
+    }
     if (typeof val === 'string') return val.split('\n').map(s => s.trim()).filter(s => s);
-    if (val) return [String(val)];
+    if (val !== null && val !== undefined) {
+      if (typeof val === 'object') return [JSON.stringify(val)];
+      return [String(val)];
+    }
     return [];
   };
 
