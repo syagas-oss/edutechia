@@ -4,6 +4,8 @@ export interface Activity {
   description?: string;
   duration?: string;
   estimated_time_minutes?: number | string;
+  passage?: string;
+  questions?: string[];
   steps?: string[];
   instructions?: string[];
   adaptations?: string[];

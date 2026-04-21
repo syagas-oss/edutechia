@@ -203,6 +203,14 @@ export default function App() {
         
         if (!data.activity && data.last_activity) {
           data.activity = data.last_activity;
+          // Merge profile info into activity to not lose duration and objective!
+          if (data.profile) {
+             data.activity = {
+               ...data.activity,
+               duration: data.activity.duration || data.profile.duration,
+               objective: data.activity.objective || data.profile.objective
+             };
+          }
         }
 
         if (!data.message) {

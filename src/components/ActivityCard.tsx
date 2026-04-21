@@ -103,22 +103,54 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
           <p className="text-white/90 leading-relaxed text-lg sm:text-xl font-light">{finalObjective}</p>
         </div>
 
-        {/* Steps - Taking 2/3 width */}
-        {finalSteps.length > 0 && (
+        {/* Passage, Questions, Steps - Taking 2/3 width */}
+        {(finalSteps.length > 0 || activity.passage || (activity.questions && activity.questions.length > 0)) && (
           <div className="lg:col-span-2 glass-panel bg-white/[0.01] hover:bg-white/[0.03] transition-colors border-white/[0.03] p-6 lg:p-8 rounded-[1.5rem]">
-            <h4 className="flex items-center gap-2 font-display text-[11px] font-bold text-white/40 uppercase tracking-[0.2em] mb-6">
-              <ListChecks className="w-4 h-4 text-cyan-400/50" /> Dinámica de Desarrollo
-            </h4>
-            <div className="space-y-6">
-              {finalSteps.map((step, idx) => (
-                <div key={idx} className="flex items-start gap-5 group/step">
-                  <div className="shrink-0 w-8 h-8 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-display font-medium text-sm group-hover/step:bg-cyan-500/20 group-hover/step:scale-110 transition-all duration-300">
-                    {idx + 1}
-                  </div>
-                  <p className="text-white/70 group-hover/step:text-white/90 transition-colors leading-relaxed pt-1.5">{step}</p>
+            
+            {activity.passage && (
+              <div className="mb-10 last:mb-0 relative z-10">
+                <h4 className="flex items-center gap-2 font-display text-[11px] font-bold text-white/40 uppercase tracking-[0.2em] mb-4">
+                  📘 Texto / Lectura
+                </h4>
+                <div className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl">
+                  <p className="text-white/90 leading-relaxed font-serif text-lg italic">{activity.passage}</p>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
+            
+            {activity.questions && activity.questions.length > 0 && (
+              <div className="mb-10 last:mb-0 relative z-10">
+                <h4 className="flex items-center gap-2 font-display text-[11px] font-bold text-white/40 uppercase tracking-[0.2em] mb-4">
+                  💬 Preguntas Formativas
+                </h4>
+                <div className="grid gap-3">
+                  {ensureArray(activity.questions).map((q, idx) => (
+                     <div key={idx} className="bg-white/[0.02] border border-white/5 p-4 rounded-xl flex items-start gap-4">
+                        <span className="text-purple-400 font-display font-medium text-sm mt-0.5 pointer-events-none">Q{(idx + 1).toString().padStart(2, '0')}</span>
+                        <p className="text-white/80 leading-relaxed">{q}</p>
+                     </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {finalSteps.length > 0 && (
+              <>
+                <h4 className="flex items-center gap-2 font-display text-[11px] font-bold text-white/40 uppercase tracking-[0.2em] mb-6">
+                  <ListChecks className="w-4 h-4 text-cyan-400/50" /> Dinámica de Desarrollo
+                </h4>
+                <div className="space-y-6">
+                  {finalSteps.map((step, idx) => (
+                    <div key={idx} className="flex items-start gap-5 group/step">
+                      <div className="shrink-0 w-8 h-8 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-display font-medium text-sm group-hover/step:bg-cyan-500/20 group-hover/step:scale-110 transition-all duration-300">
+                        {idx + 1}
+                      </div>
+                      <p className="text-white/70 group-hover/step:text-white/90 transition-colors leading-relaxed pt-1.5">{step}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
 
