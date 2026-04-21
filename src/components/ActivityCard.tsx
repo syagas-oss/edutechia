@@ -80,7 +80,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
       initial={{ opacity: 0, y: 20, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-      className="w-full glass-panel rounded-[2rem] p-6 sm:p-8 relative overflow-hidden group mt-4 mb-2"
+      className="w-full glass-panel rounded-[2rem] p-6 sm:p-8 relative overflow-hidden group mt-4 mb-2 activity-card-print"
     >
       {/* Background ambient glow inside the card */}
       <div className="absolute -top-[30%] -right-[10%] w-[60%] h-[80%] bg-cyan-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-cyan-500/20 transition-colors duration-1000 ease-in-out" />

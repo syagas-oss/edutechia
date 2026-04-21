@@ -1,64 +1,73 @@
-# Docente AI - Asistente Pedagógico (PoC)
+# EduTEchIA - Copiloto Pedagógico 4.0 🚀
 
-Aplicación web estática construida con React, Vite y Tailwind CSS. La interfaz conversa con un webhook de n8n para generar actividades pedagógicas y puede publicarse automáticamente en GitHub Pages.
+**EduTEchIA** es un asistente conversacional avanzado diseñado para transformar la planificación docente mediante Inteligencia Artificial. No es solo un chatbot; es un motor de diseño curricular que entiende el contexto educativo y genera materiales listos para el aula.
 
-## Capacidades
-- Interfaz conversacional para dialogar con el asistente.
-- Dictado por voz usando la Web Speech API en navegadores compatibles.
-- Persistencia local de `sessionId` e historial con `localStorage`.
-- Renderizado visual de actividades estructuradas devueltas por el webhook.
-- Despliegue automático en GitHub Pages sin publicar `dist/` en una rama dedicada.
+## ✨ Características Principales
 
-## Webhook
-La app envía un `POST` JSON a n8n al enviar un mensaje:
+- **🧠 Inteligencia Adaptativa:** Capaz de procesar respuestas de IA complejas y variables gracias a una capa de normalización inteligente y renderizado dinámico de "Datos Adicionales".
+- **🎙️ Interfaz Multimodal:** Soporta dictado por voz (Mic) para una interacción manos libres más natural para el docente.
+- **📱 Experiencia PWA:** Instalable como aplicación en dispositivos móviles y escritorio, con soporte para modo offline básico.
+- **📄 Exportación a PDF e Impresión:** Genera hojas de actividad limpias y profesionales con un solo clic, optimizadas para impresión física.
+- **⚡ Feedback Táctil y Sonoro:** Respuesta inmediata mediante micro-vibraciones (hápticos) y sonidos sutiles para una mejor experiencia de usuario.
+- **📊 Sistema de Bento-Grid:** Visualización estructurada de actividades pedagógicas (Objetivos, Dinámicas, Adaptaciones y Evaluación).
+- **🔄 Persistencia Inteligente:** Gestión de sesiones local para no perder el hilo de la conversación.
 
-```json
-{
-  "sessionId": "session_xxx_123",
-  "message": "Quiero una actividad de álgebra para primaria...",
-  "timestamp": "2024-03-24T10:00:00.000Z"
-}
-```
+## 🛠️ Stack Tecnológico
 
-Respuestas esperadas (`type`: `clarification`, `final_activity` o `error`):
+- **Frontend:** React 18 + Vite
+- **Estilos:** Tailwind CSS (Arquitectura de paneles de cristal / Glassmorphism)
+- **Animaciones:** Framer Motion (Transiciones espaciales y efectos de entrada)
+- **Iconografía:** Lucide React
+- **Notificaciones:** Sonner
+- **Estado & Red:** Hooks de React + Webhook de n8n (o cualquier orquestador compatible)
+
+## 🔌 Integración con IA (n8n)
+
+La aplicación conversa con un flujo de trabajo de n8n mediante un webhook que centraliza la lógica pedagógica.
+
+### Formato de Salida Esperado (JSON)
+EduTEchIA es resiliente a las variaciones de la IA, pero el esquema óptimo incluye:
 
 ```json
 {
   "type": "final_activity",
-  "message": "¡Aquí tienes la actividad diseñada!",
+  "message": "Mensaje de la IA para el docente...",
   "activity": {
-    "title": "Aventura Matemática",
-    "objective": "Resolver sumas simples.",
-    "duration": "45 minutos",
+    "title": "Nombre de la Actividad",
+    "objective": "Objetivo pedagógico central",
+    "duration": "Tiempo estimado",
     "steps": ["Paso 1", "Paso 2"],
-    "adaptations": ["Usar colores visuales"],
-    "assessment": ["Revisión cruzada"]
+    "adaptations": ["Estrategias para necesidades especiales"],
+    "assessment": ["Criterios de éxito"],
+    "resources_required": ["Materiales"]
   }
 }
 ```
+*Si la IA envía campos extra (ej: `curiosidades`, `tips_pro`), EduTEchIA los mostrará automáticamente en la sección "Datos Adicionales".*
 
-El endpoint actual está definido en `src/App.tsx`. n8n debe aceptar CORS desde el dominio público de GitHub Pages.
+## 🚀 Instalación y Desarrollo
 
-## Desarrollo local
-```bash
-npm install
-npm run dev
-```
+1. **Clonar e Instalar:**
+   ```bash
+   npm install
+   ```
 
-## Despliegue en GitHub Pages
-La publicación queda automatizada mediante GitHub Actions.
+2. **Ejecutar en Desarrollo:**
+   ```bash
+   npm run dev
+   ```
 
-- Cada `push` a `main` dispara build y deploy.
-- También se puede ejecutar manualmente desde la pestaña Actions con `workflow_dispatch`.
-- La URL esperada es `https://syagas-oss.github.io/edutechia/`.
+3. **Verificación de Tipos y Calidad:**
+   ```bash
+   npm run lint
+   ```
 
-### Cómo funciona
-- `vite.config.ts` usa `base: '/edutechia/'` en producción.
-- `.github/workflows/deploy-pages.yml` instala dependencias, ejecuta `npm run build`, sube `dist/` como artifact y despliega con `actions/deploy-pages`.
-- GitHub Pages debe estar configurado con fuente `GitHub Actions`.
+## 📦 Despliegue
 
-## Verificación rápida
-```bash
-npm run lint
-npm run build
-```
+El proyecto está configurado para desplegarse automáticamente en **GitHub Pages** mediante GitHub Actions en cada `push` a la rama `main`.
+
+- **PWA:** Los Service Workers se generan automáticamente para asegurar que la app se comporte como una aplicación nativa.
+- **Asset Optimization:** Los assets se comprimen y minifican durante el proceso de build.
+
+---
+*Desarrollado con ❤️ para la comunidad educativa.*
