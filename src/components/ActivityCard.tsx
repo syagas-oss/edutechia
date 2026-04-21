@@ -12,10 +12,18 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
 
   const finalObjective = activity.objective || activity.description || 'No especificado';
   const finalDuration = activity.duration || (activity.estimated_time_minutes ? `${activity.estimated_time_minutes} min` : 'Variable');
-  const finalSteps = activity.steps || activity.instructions || [];
-  const finalAdaptations = activity.adaptations || [];
-  const finalAssessment = activity.assessment || [];
-  const finalResources = activity.resources_required || [];
+  
+  const ensureArray = (val: any): string[] => {
+    if (Array.isArray(val)) return val;
+    if (typeof val === 'string') return val.split('\n').map(s => s.trim()).filter(s => s);
+    if (val) return [String(val)];
+    return [];
+  };
+
+  const finalSteps = ensureArray(activity.steps || activity.instructions);
+  const finalAdaptations = ensureArray(activity.adaptations);
+  const finalAssessment = ensureArray(activity.assessment);
+  const finalResources = ensureArray(activity.resources_required);
 
   const handleCopy = () => {
     const textToCopy = `TÍTULO: ${activity.title}\nDURACIÓN: ${finalDuration}\n\nOBJETIVO:\n${finalObjective}\n\nPASOS:\n${finalSteps.map((step, i) => `${i + 1}. ${step}`).join('\n')}\n\nADAPTACIONES:\n${finalAdaptations.length > 0 ? finalAdaptations.map(a => `- ${a}`).join('\n') : 'N/A'}\n\nEVALUACIÓN:\n${finalAssessment.length > 0 ? finalAssessment.map(e => `- ${e}`).join('\n') : 'N/A'}`.trim();
