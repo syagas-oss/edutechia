@@ -9,7 +9,7 @@ export default defineConfig(({mode}) => {
   const isProduction = mode === 'production';
 
   return {
-    base: '/edutechia/',
+    base: './',
     plugins: [
       react(), 
       tailwindcss(),
