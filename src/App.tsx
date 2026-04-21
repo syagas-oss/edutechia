@@ -102,7 +102,9 @@ export default function App() {
 
   // Enviar mensaje al webhook
   const handleSend = async () => {
-    let finalInput = input.trim();
+    const rawInput = input.trim();
+    let finalPayloadText = rawInput;
+    let savedContextData = undefined;
     
     // Inject contextual tags if this is the first message and selections exist
     const isFirstMessage = messages.filter(m => m.sender === 'user').length === 0;
@@ -113,27 +115,31 @@ export default function App() {
       if (contextData.duration) parts.push(`Duración: ${contextData.duration}`);
       
       if (parts.length > 0) {
-        // Encerramos el contexto para aislarlo de las peticiones adicionales
-        finalInput = `[CONTEXTO PRE-CARGADO: ${parts.join(' | ')}]\n\n${finalInput ? finalInput : 'Diseña una actividad adecuada basándote en este contexto.'}`;
+        // Encerramos el contexto para enviarlo limpio a n8n
+        finalPayloadText = `[CONTEXTO PRE-CARGADO: ${parts.join(' | ')}]\n\n${rawInput ? rawInput : 'Diseña una actividad adecuada basándote en este contexto.'}`;
+        savedContextData = { ...contextData }; // Salvar para pintar UI en el chat
       }
     }
 
-    if (!finalInput && !isRecording) return;
+    if (!finalPayloadText && !isRecording) return;
     
     if (isRecording) {
       recognitionRef.current?.stop();
       setIsRecording(false);
     }
 
+    // Message saved to UI History (clean text, no weird prompt injection strings)
+    const uiMessageText = rawInput ? rawInput : 'Genera una actividad basada en mi configuración inicial.';
     const newMessage: Message = {
       id: Date.now().toString(),
-      text: finalInput,
+      text: uiMessageText,
       sender: 'user',
       type: 'text',
+      contextData: savedContextData,
       timestamp: new Date().toISOString()
     };
     
-    console.log('[Chat] 👤 User sent message:', newMessage.text);
+    console.log('[Chat] 👤 User generated message logic:', finalPayloadText);
 
     const updatedMessages = [...messages, newMessage];
     setMessages(updatedMessages);
@@ -145,15 +151,16 @@ export default function App() {
     try {
       const payload = {
         sessionId: sessionId,
-        message: newMessage.text,
+        message: finalPayloadText, // Send the prompt-injected text to n8n
         timestamp: newMessage.timestamp
       };
       
-      console.log('[API] 🚀 Triggering POST request to N8N webhook...', {
-        url: N8N_WEBHOOK_URL,
-        payload
-      });
+      const currentTime = new Date().toLocaleTimeString();
+      console.log(`[API] 🚀 [${currentTime}] PREPARING REQUEST to n8n...`);
+      console.log('[API] 📦 Outgoing Payload:', payload);
+      console.log('[API] ⏳ WAITING FOR N8N ENGINE TO PROCESS (this usually takes a few seconds while LLM generates)...');
 
+      const startTime = performance.now();
       const response = await fetch(N8N_WEBHOOK_URL, {
         method: 'POST',
         headers: {
@@ -162,19 +169,48 @@ export default function App() {
         },
         body: JSON.stringify(payload),
       });
+      const fetchTime = ((performance.now() - startTime) / 1000).toFixed(2);
 
-      console.log('[API] 📡 Received HTTP status:', response.status);
+      const receivedTime = new Date().toLocaleTimeString();
+      console.log(`[API] 📡 [${receivedTime}] RESPONSE HEADERS RECEIVED! (Time elapsed: ${fetchTime}s)`);
+      console.log(`[API] 🚦 HTTP Status: ${response.status} ${response.statusText}`);
 
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
 
+      console.log('[API] 📥 Downloading body content streaming from n8n...');
       const rawText = await response.text();
-      console.log('[API] 📄 Raw response text from N8N:', rawText);
+      const byteSize = new Blob([rawText]).size;
+      
+      console.log(`[API] 📄 Body fully downloaded (${byteSize} bytes).`);
+      console.log('[API] 🔍 Raw content extract:', rawText.substring(0, 300) + (rawText.length > 300 ? '... [TRUNCATED]' : ''));
 
-      let data: WebhookResponse;
+      console.log('[API] ⚙️ Proceeding to Map JSON and structure into React state (Polymorphic JSON handling)...');
+      let data: any; // Use any since we handle multiple structures dynamically
       try {
         data = JSON.parse(rawText);
+        
+        // Normalize if n8n returned a Supabase array
+        if (Array.isArray(data)) {
+           data = data[0]; 
+        }
+
+        // Normalize if falling back to direct Supabase record mapping without wrapper
+        if (!data.type && data.conversation_state) {
+          data.type = data.conversation_state === 'generated' ? 'final_activity' : 'clarification';
+        }
+        
+        if (!data.activity && data.last_activity) {
+          data.activity = data.last_activity;
+        }
+
+        if (!data.message) {
+           data.message = data.type === 'final_activity' 
+            ? '¡Actividad diseñada con éxito! Aquí tienes la estructura visual:'
+            : 'Necesito algunos datos más para continuar la planificación.';
+        }
+
       } catch (e) {
         console.error('[API] ❌ Failed to parse JSON. Server returned:', rawText);
         throw new Error('n8n no retornó un JSON válido. Revisa la configuración del nodo Webhook (Respond Mode).');
@@ -374,8 +410,29 @@ export default function App() {
                     
                     {/* User Message (Floating Pill) */}
                     {isUser && (
-                      <div className="glass-panel hover:bg-white/10 transition-colors bg-white/5 border-white/10 px-6 py-4 rounded-[2rem] rounded-br-md shadow-lg backdrop-blur-3xl text-right">
-                        <p className="text-[1.05rem] text-white/90 leading-relaxed font-light">{msg.text}</p>
+                      <div className="flex flex-col items-end gap-2 w-full">
+                        {msg.contextData && (
+                          <div className="flex flex-wrap gap-1.5 justify-end mb-1 opacity-80">
+                            {msg.contextData.stage && (
+                              <span className="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-bold tracking-wider uppercase border border-cyan-500/20 backdrop-blur-md">
+                                {msg.contextData.stage}
+                              </span>
+                            )}
+                            {msg.contextData.subject && (
+                              <span className="px-2 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-300 text-[10px] font-bold tracking-wider uppercase border border-fuchsia-500/20 backdrop-blur-md">
+                                {msg.contextData.subject}
+                              </span>
+                            )}
+                            {msg.contextData.duration && (
+                              <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold tracking-wider uppercase border border-amber-500/20 backdrop-blur-md">
+                                {msg.contextData.duration}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <div className="glass-panel hover:bg-white/10 transition-colors bg-white/5 border-white/10 px-6 py-4 rounded-[2rem] rounded-br-md shadow-lg backdrop-blur-3xl text-right">
+                          <p className="text-[1.05rem] text-white/90 leading-relaxed font-light">{msg.text}</p>
+                        </div>
                       </div>
                     )}
 
