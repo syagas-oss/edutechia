@@ -47,7 +47,20 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   const finalResources = ensureArray(activity.resources_required);
 
   // Dynamic extra fields logic
-  const knownKeys = ['title', 'taskTitle', 'name', 'activityTitle', 'activity_name', 'objective', 'goal', 'description', 'purpose', 'duration', 'timeLimit', 'estimated_time_minutes', 'time', 'passage', 'text', 'reading', 'questions', 'steps', 'instructions', 'pasos', 'adaptations', 'assessment', 'resources_required', 'difficulty_level', 'id', 'session_id', 'created_at', 'updated_at', 'conversation_state', 'profile'];
+  const knownKeys = [
+    'title', 'taskTitle', 'name', 'activityTitle', 'activity_name', 
+    'objective', 'goal', 'description', 'purpose', 'meta',
+    'duration', 'timeLimit', 'estimated_time_minutes', 'time', 'duracion',
+    'passage', 'text', 'reading', 'lectura',
+    'questions', 'preguntas', 'assessment_questions',
+    'steps', 'instructions', 'pasos', 'dynamic', 'development',
+    'adaptations', 'special_needs', 'ajustes', 'adaptaciones',
+    'assessment', 'evaluation', 'evaluacion', 'grading',
+    'resources_required', 'resources', 'materiales', 'recursos', 'materials',
+    'difficulty_level', 'level', 'nivel', 'difficulty',
+    'id', 'session_id', 'created_at', 'updated_at', 'conversation_state', 'profile', 
+    'ok', 'message', 'context', 'normalizedActivity', 'last_activity'
+  ];
   const extraEntries = Object.entries(activity).filter(([key]) => !knownKeys.includes(key) && typeof activity[key as keyof Activity] !== 'object');
 
   const handleCopy = () => {

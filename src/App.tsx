@@ -220,9 +220,15 @@ export default function App() {
            data = data[0]; 
         }
 
-        // Normalize if falling back to direct Supabase record mapping without wrapper
-        if (!data.type && data.conversation_state) {
-          data.type = data.conversation_state === 'generated' ? 'final_activity' : 'clarification';
+        // Normalize if falling back to direct Supabase record mapping or new n8n format
+        if (!data.type) {
+          if (data.conversation_state) {
+            data.type = data.conversation_state === 'generated' ? 'final_activity' : 'clarification';
+          } else if (data.activity || data.last_activity) {
+            data.type = 'final_activity';
+          } else if (data.ok === true) {
+            data.type = 'text';
+          }
         }
         
         const rawActivity = data.activity || data.last_activity || data;
@@ -244,13 +250,24 @@ export default function App() {
             steps: findValue(['steps', 'instructions', 'pasos', 'dynamic', 'development']),
             adaptations: findValue(['adaptations', 'special_needs', 'ajustes', 'adaptaciones']),
             assessment: findValue(['assessment', 'evaluation', 'evaluacion', 'grading']),
-            resources_required: findValue(['resources_required', 'resources', 'materiales', 'recursos']),
+            resources_required: findValue(['resources_required', 'resources', 'materiales', 'recursos', 'materials']),
             difficulty_level: findValue(['difficulty_level', 'level', 'nivel', 'difficulty']),
           };
 
           // Capture any extra fields that might be useful but aren't in the standard schema
           // We'll store them as an extra hidden field for the card to render optionally
-          const knownKeys = ['title', 'taskTitle', 'name', 'activityTitle', 'activity_name', 'objective', 'goal', 'description', 'purpose', 'duration', 'timeLimit', 'estimated_time_minutes', 'time', 'passage', 'text', 'reading', 'questions', 'steps', 'instructions', 'adaptations', 'assessment', 'resources_required', 'difficulty_level'];
+          const knownKeys = [
+            'title', 'taskTitle', 'name', 'activityTitle', 'activity_name', 
+            'objective', 'goal', 'description', 'purpose', 'meta',
+            'duration', 'timeLimit', 'estimated_time_minutes', 'time', 'duracion',
+            'passage', 'text', 'reading', 'lectura',
+            'questions', 'preguntas', 'assessment_questions',
+            'steps', 'instructions', 'pasos', 'dynamic', 'development',
+            'adaptations', 'special_needs', 'ajustes', 'adaptaciones',
+            'assessment', 'evaluation', 'evaluacion', 'grading',
+            'resources_required', 'resources', 'materiales', 'recursos', 'materials',
+            'difficulty_level', 'level', 'nivel', 'difficulty'
+          ];
           const extraData: Record<string, any> = {};
           Object.keys(obj).forEach(k => {
             if (!knownKeys.includes(k) && typeof obj[k] !== 'object') {
