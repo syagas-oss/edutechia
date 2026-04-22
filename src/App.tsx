@@ -554,51 +554,64 @@ export default function App() {
       </main>
 
       {/* Floating Spatial Input Bar */}
-      <div className="absolute bottom-6 sm:bottom-10 w-full px-4 sm:px-8 z-40 flex justify-center pointer-events-none">
-        <div className="w-full max-w-3xl pointer-events-auto">
-          <div className="input-glass p-2 sm:p-2.5 rounded-[2.5rem] flex items-end gap-2 sm:gap-3 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] group focus-within:border-cyan-500/30 focus-within:bg-white/[0.05] focus-within:shadow-[0_20px_60px_-15px_rgba(6,182,212,0.2)] transition-all duration-500">
-            
-            {/* Mic Toggle */}
-            <button
-              onClick={toggleRecording}
-              className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
-                isRecording 
-                  ? 'bg-red-500/20 text-red-400 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-pulse' 
-                  : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white'
-              }`}
-              title={isRecording ? 'Detener dictado' : 'Dictar por voz'}
-            >
-              {isRecording ? <Square className="w-5 h-5 fill-current" /> : <Mic className="w-5 h-5" />}
-            </button>
-            
-            {/* Main Text Input */}
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Explica la actividad que necesitas..."
-              className="flex-1 max-h-32 min-h-[48px] py-3 px-2 bg-transparent border-none focus:ring-0 resize-none text-[15px] text-white placeholder-white/30 font-light"
-              style={{ overflowY: 'auto' }}
-              rows={1}
-            />
-            
-            {/* Send Button */}
-            <button
-              onClick={handleSend}
-              disabled={isLoading || (!input.trim() && !isRecording && Object.values(contextData).every(v => v === ''))}
-              className="w-12 h-12 rounded-full bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 disabled:bg-white/10 disabled:text-white/30 flex items-center justify-center text-black shrink-0 transition-all duration-300 disabled:hover:scale-100 hover:scale-[1.02] active:scale-95 disabled:shadow-none shadow-[0_0_30px_rgba(6,182,212,0.3)]"
-            >
-              <Send className="w-5 h-5 ml-1" />
-            </button>
-            
-          </div>
-          <div className="flex justify-center mt-4">
-             <span className="text-[9px] uppercase tracking-[0.3em] font-bold text-white/20 font-display">
-                Powered by N8N Engine
-             </span>
-          </div>
-        </div>
-      </div>
+      <AnimatePresence>
+        {!messages.some(m => m.type === 'activity') && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="absolute bottom-6 sm:bottom-10 w-full px-4 sm:px-8 z-40 flex justify-center pointer-events-none"
+          >
+            <div className="w-full max-w-3xl pointer-events-auto">
+              <div className="input-glass p-2 sm:p-2.5 rounded-[2.5rem] flex items-end gap-2 sm:gap-3 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] group focus-within:border-cyan-500/30 focus-within:bg-white/[0.05] focus-within:shadow-[0_20px_60px_-15px_rgba(6,182,212,0.2)] transition-all duration-500">
+                
+                {/* Mic Toggle */}
+                <button
+                  onClick={toggleRecording}
+                  className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
+                    isRecording 
+                      ? 'bg-red-500/20 text-red-400 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-pulse' 
+                      : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white'
+                  }`}
+                  title={isRecording ? 'Detener dictado' : 'Dictar por voz'}
+                >
+                  {isRecording ? <Square className="w-5 h-5 fill-current" /> : <Mic className="w-5 h-5" />}
+                </button>
+                
+                {/* Main Text Input */}
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Explica la actividad que necesitas..."
+                  className="flex-1 max-h-32 min-h-[48px] py-3 px-2 bg-transparent border-none focus:ring-0 resize-none text-[15px] text-white placeholder-white/30 font-light"
+                  style={{ overflowY: 'auto' }}
+                  rows={1}
+                />
+                
+                {/* Send Button */}
+                <button
+                  onClick={handleSend}
+                  disabled={isLoading || (!input.trim() && !isRecording && Object.values(contextData).every(v => v === ''))}
+                  className="w-12 h-12 rounded-full bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 disabled:bg-white/10 disabled:text-white/30 flex items-center justify-center text-black shrink-0 transition-all duration-300 disabled:hover:scale-100 hover:scale-[1.02] active:scale-95 disabled:shadow-none shadow-[0_0_30px_rgba(6,182,212,0.3)]"
+                >
+                  {isLoading ? (
+                    <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                  ) : (
+                    <Send className="w-5 h-5 ml-1" />
+                  )}
+                </button>
+              </div>
+              
+              <div className="flex justify-center mt-4">
+                <span className="text-[9px] uppercase tracking-[0.3em] font-bold text-white/20 font-display">
+                    Powered by N8N Engine
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
