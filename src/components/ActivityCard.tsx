@@ -57,6 +57,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
     'adaptations', 'special_needs', 'ajustes', 'adaptaciones',
     'assessment', 'evaluation', 'evaluacion', 'grading',
     'resources_required', 'resources', 'materiales', 'recursos', 'materials',
+    'closure', 'conclusion', 'cierre', 'finish',
     'difficulty_level', 'level', 'nivel', 'difficulty',
     'id', 'session_id', 'created_at', 'updated_at', 'conversation_state', 'profile', 
     'ok', 'message', 'context', 'normalizedActivity', 'last_activity'
@@ -64,7 +65,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   const extraEntries = Object.entries(activity).filter(([key]) => !knownKeys.includes(key) && typeof activity[key as keyof Activity] !== 'object');
 
   const handleCopy = () => {
-    const textToCopy = `TÍTULO: ${activity.title}\nDURACIÓN: ${finalDuration}\n\nOBJETIVO:\n${finalObjective}\n\nPASOS:\n${finalSteps.map((step, i) => `${i + 1}. ${step}`).join('\n')}\n\nADAPTACIONES:\n${finalAdaptations.length > 0 ? finalAdaptations.map(a => `- ${a}`).join('\n') : 'N/A'}\n\nEVALUACIÓN:\n${finalAssessment.length > 0 ? finalAssessment.map(e => `- ${e}`).join('\n') : 'N/A'}`.trim();
+    const textToCopy = `TÍTULO: ${activity.title}\nDURACIÓN: ${finalDuration}\n\nOBJETIVO:\n${finalObjective}\n\nPASOS:\n${finalSteps.map((step, i) => `${i + 1}. ${step}`).join('\n')}\n\nADAPTACIONES:\n${finalAdaptations.length > 0 ? finalAdaptations.map(a => `- ${a}`).join('\n') : 'N/A'}\n\nEVALUACIÓN:\n${finalAssessment.length > 0 ? finalAssessment.map(e => `- ${e}`).join('\n') : 'N/A'}\n\nCIERRE:\n${activity.closure || 'N/A'}`.trim();
     navigator.clipboard.writeText(textToCopy).then(() => {
       setCopied(true);
       toast.success('Copiado al portapapeles');
@@ -182,7 +183,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
             )}
 
             {finalSteps.length > 0 && (
-              <>
+              <div className="mb-10 last:mb-0 relative z-10">
                 <h4 className="flex items-center gap-2 font-display text-[11px] font-bold text-white/40 uppercase tracking-[0.2em] mb-6">
                   <ListChecks className="w-4 h-4 text-cyan-400/50" /> Dinámica de Desarrollo
                 </h4>
@@ -196,7 +197,16 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
                     </div>
                   ))}
                 </div>
-              </>
+              </div>
+            )}
+
+            {activity.closure && (
+              <div className="mt-10 pt-10 border-t border-white/5 relative z-10">
+                <h4 className="flex items-center gap-2 font-display text-[11px] font-bold text-cyan-400/50 uppercase tracking-[0.2em] mb-4">
+                  🏁 Cierre / Conclusión
+                </h4>
+                <p className="text-white/80 leading-relaxed italic pr-4">{activity.closure}</p>
+              </div>
             )}
           </div>
         )}

@@ -243,7 +243,7 @@ export default function App() {
 
           const standard: Activity = {
             title: String(findValue(['title', 'taskTitle', 'name', 'activityTitle', 'activity_name']) || 'Actividad Pedagógica'),
-            objective: String(findValue(['objective', 'goal', 'description', 'purpose', 'meta']) || findValue(['profile.objective']) || ''),
+            objective: String(findValue(['objective', 'goal', 'description', 'purpose', 'meta']) || findValue(['profile.objective']) || obj.objective || ''),
             duration: String(findValue(['duration', 'timeLimit', 'estimated_time_minutes', 'time', 'duracion']) || (data.profile?.duration) || 'Variable'),
             passage: findValue(['passage', 'text', 'reading', 'lectura']),
             questions: findValue(['questions', 'preguntas', 'assessment_questions']),
@@ -251,6 +251,7 @@ export default function App() {
             adaptations: findValue(['adaptations', 'special_needs', 'ajustes', 'adaptaciones']),
             assessment: findValue(['assessment', 'evaluation', 'evaluacion', 'grading']),
             resources_required: findValue(['resources_required', 'resources', 'materiales', 'recursos', 'materials']),
+            closure: String(findValue(['closure', 'conclusion', 'cierre', 'finish']) || ''),
             difficulty_level: findValue(['difficulty_level', 'level', 'nivel', 'difficulty']),
           };
 
@@ -266,6 +267,7 @@ export default function App() {
             'adaptations', 'special_needs', 'ajustes', 'adaptaciones',
             'assessment', 'evaluation', 'evaluacion', 'grading',
             'resources_required', 'resources', 'materiales', 'recursos', 'materials',
+            'closure', 'conclusion', 'cierre', 'finish',
             'difficulty_level', 'level', 'nivel', 'difficulty'
           ];
           const extraData: Record<string, any> = {};
