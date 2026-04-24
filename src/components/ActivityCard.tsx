@@ -7,14 +7,15 @@ import {
   Zap, Brain, Shield, Info, ArrowRight, Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Activity } from '../types';
+import { Activity, ProviderMeta } from '../types';
 import { aiService } from '../services/aiService';
 
 interface ActivityCardProps {
   activity: Activity;
+  providerMeta?: ProviderMeta;
 }
 
-export default function ActivityCard({ activity }: ActivityCardProps) {
+export default function ActivityCard({ activity, providerMeta }: ActivityCardProps) {
   const [copied, setCopied] = useState(false);
   const [rating, setRating] = useState<'up' | 'down' | null>(null);
   
@@ -91,7 +92,8 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
     'closure', 'conclusion', 'cierre', 'finish',
     'difficulty_level', 'level', 'nivel', 'difficulty',
     'id', 'session_id', 'created_at', 'updated_at', 'conversation_state', 'profile', 
-    'ok', 'message', 'context', 'normalizedActivity', 'last_activity'
+    'ok', 'message', 'context', 'normalizedActivity', 'last_activity',
+    'aiProviderStatus', 'usedFallback', 'providerFailureReason', 'responseDiagnostics'
   ];
   const extraEntries = Object.entries(activity).filter(([key]) => !knownKeys.includes(key) && typeof activity[key as keyof Activity] !== 'object');
 
@@ -207,6 +209,27 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
           >
             <Brain className="w-3 h-3" /> Morphismo Neuro-Activado
           </motion.div>
+        </div>
+      )}
+
+      {providerMeta?.usedFallback && (
+        <div className="relative z-10 mb-6 rounded-[1.4rem] border border-amber-400/20 bg-amber-500/10 px-5 py-4 shadow-[0_0_30px_rgba(251,191,36,0.08)]">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-amber-300/90">
+                Respuesta degradada
+              </p>
+              <p className="mt-1 text-sm leading-relaxed text-amber-50/85">
+                Esta actividad se devolvió con fallback porque LM Studio no respondió con un resultado válido.
+              </p>
+              {providerMeta.providerFailureReason && (
+                <p className="mt-2 text-xs leading-relaxed text-amber-100/70">
+                  Motivo: {providerMeta.providerFailureReason}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       )}
       

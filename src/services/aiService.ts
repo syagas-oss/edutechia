@@ -1,6 +1,6 @@
 import { API_CONFIG } from "../config/api";
 import { getSessionId } from "../lib/storage";
-import { Activity } from "../types";
+import { Activity, ProviderMeta } from "../types";
 
 type LabAction =
   | "expert_debate"
@@ -14,6 +14,10 @@ interface LabSuccessResponse<T> {
   type: LabAction | string;
   data: T;
   message?: string;
+  aiProviderStatus?: ProviderMeta["aiProviderStatus"];
+  usedFallback?: boolean;
+  providerFailureReason?: string;
+  responseDiagnostics?: ProviderMeta["responseDiagnostics"];
 }
 
 interface LabErrorResponse {
@@ -62,6 +66,15 @@ function extractLabData<T>(payload: unknown): T {
 
   if (response.ok === false) {
     throw new Error(response.error?.message || response.message || "n8n returned a controlled lab error.");
+  }
+
+  if (response.usedFallback) {
+    console.warn("n8n lab workflow returned degraded fallback:", {
+      type: response.type,
+      aiProviderStatus: response.aiProviderStatus,
+      providerFailureReason: response.providerFailureReason,
+      responseDiagnostics: response.responseDiagnostics,
+    });
   }
 
   if ("data" in response && response.data !== undefined) {

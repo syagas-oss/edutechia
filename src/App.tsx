@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Send, Mic, Square, Trash2, AlertCircle, Sparkles, Cpu } from 'lucide-react';
 import { Toaster, toast } from 'sonner';
 import useSound from 'use-sound';
-import { Message, WebhookResponse, Activity } from './types';
+import { Message, WebhookResponse, Activity, ProviderMeta } from './types';
 import { saveChatHistory, getSessionId, getChatHistory, clearSession as clearStorageSession } from './lib/storage';
 import ActivityCard from './components/ActivityCard';
 import { ParticlesBackground } from './components/ParticlesBackground';
@@ -16,6 +16,103 @@ const N8N_WEBHOOK_URL = API_CONFIG.chatWebhookUrl;
 const STAGES = ["Infantil", "Primaria", "Secundaria", "Bachillerato"];
 const SUBJECTS = ["Matemáticas", "Lengua", "Ciencias", "Historia", "Inglés", "Arte", "Ed. Física", "Música"];
 const DURATIONS = ["15 min", "30 min", "45 min", "60 min", "90 min"];
+
+function normalizeActivityRecord(obj: any, durationFallback?: string): Activity {
+  const source = obj && typeof obj === 'object' ? obj : {};
+  const findValue = (keys: string[]) => {
+    const foundKey = keys.find((key) => source[key] !== undefined && source[key] !== null);
+    return foundKey ? source[foundKey] : undefined;
+  };
+
+  const knownKeys = [
+    'title', 'taskTitle', 'name', 'activityTitle', 'activity_name',
+    'objective', 'goal', 'description', 'purpose', 'meta',
+    'duration', 'timeLimit', 'estimated_time_minutes', 'time', 'duracion',
+    'passage', 'text', 'reading', 'lectura',
+    'questions', 'preguntas', 'assessment_questions',
+    'steps', 'instructions', 'pasos', 'dynamic', 'development',
+    'adaptations', 'special_needs', 'ajustes', 'adaptaciones',
+    'assessment', 'evaluation', 'evaluacion', 'grading',
+    'resources_required', 'resources', 'materiales', 'recursos', 'materials',
+    'closure', 'conclusion', 'cierre', 'finish',
+    'difficulty_level', 'level', 'nivel', 'difficulty',
+    'aiProviderStatus', 'usedFallback', 'providerFailureReason', 'responseDiagnostics'
+  ];
+
+  const standard: Activity = {
+    title: String(findValue(['title', 'taskTitle', 'name', 'activityTitle', 'activity_name']) || 'Actividad PedagÃ³gica'),
+    objective: String(findValue(['objective', 'goal', 'description', 'purpose', 'meta']) || source.objective || ''),
+    duration: String(findValue(['duration', 'timeLimit', 'estimated_time_minutes', 'time', 'duracion']) || durationFallback || 'Variable'),
+    passage: findValue(['passage', 'text', 'reading', 'lectura']),
+    questions: findValue(['questions', 'preguntas', 'assessment_questions']),
+    steps: findValue(['steps', 'instructions', 'pasos', 'dynamic', 'development']),
+    adaptations: findValue(['adaptations', 'special_needs', 'ajustes', 'adaptaciones']),
+    assessment: findValue(['assessment', 'evaluation', 'evaluacion', 'grading']),
+    resources_required: findValue(['resources_required', 'resources', 'materiales', 'recursos', 'materials']),
+    closure: String(findValue(['closure', 'conclusion', 'cierre', 'finish']) || ''),
+    difficulty_level: findValue(['difficulty_level', 'level', 'nivel', 'difficulty']),
+  };
+
+  const extraData: Record<string, any> = {};
+  Object.keys(source).forEach((key) => {
+    if (!knownKeys.includes(key) && typeof source[key] !== 'object') {
+      extraData[key] = source[key];
+    }
+  });
+
+  return { ...standard, ...extraData };
+}
+
+function normalizeWebhookPayload(payload: any): WebhookResponse {
+  let data = payload;
+
+  if (Array.isArray(data)) {
+    data = data[0];
+  }
+
+  if (!data || typeof data !== 'object') {
+    throw new Error('n8n returned an empty payload.');
+  }
+
+  if (!data.type) {
+    if (data.conversation_state) {
+      data.type = data.conversation_state === 'generated' ? 'final_activity' : 'clarification';
+    } else if (data.activity || data.last_activity) {
+      data.type = 'final_activity';
+    } else if (data.ok === true) {
+      data.type = 'text';
+    }
+  }
+
+  const providerMeta: ProviderMeta = {
+    aiProviderStatus: data.aiProviderStatus,
+    usedFallback: typeof data.usedFallback === 'boolean'
+      ? data.usedFallback
+      : data.aiProviderStatus === 'degraded_fallback',
+    providerFailureReason: data.providerFailureReason,
+    responseDiagnostics: data.responseDiagnostics,
+  };
+
+  if (data.type === 'final_activity') {
+    const rawActivity = data.activity || data.last_activity || data;
+    data.activity = normalizeActivityRecord(rawActivity, data.profile?.duration);
+  }
+
+  if (!data.message) {
+    if (data.type === 'final_activity') {
+      data.message = providerMeta.usedFallback
+        ? 'Actividad generada en modo degradado. Revisa el aviso del proveedor.'
+        : 'Â¡Actividad diseÃ±ada con Ã©xito! AquÃ­ tienes la estructura visual:';
+    } else {
+      data.message = 'Necesito algunos datos mÃ¡s para continuar la planificaciÃ³n.';
+    }
+  }
+
+  return {
+    ...data,
+    ...providerMeta,
+  };
+}
 
 export default function App() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -175,8 +272,13 @@ export default function App() {
     if (navigator.vibrate) navigator.vibrate(20);
 
     try {
+      const activeSessionId = getSessionId();
+      if (activeSessionId !== sessionId) {
+        setSessionId(activeSessionId);
+      }
+
       const payload = {
-        sessionId: sessionId,
+        sessionId: activeSessionId,
         message: finalPayloadText, // Send the prompt-injected text to n8n
         timestamp: newMessage.timestamp
       };
@@ -213,84 +315,9 @@ export default function App() {
       console.log('[API] 🔍 Raw content extract:', rawText.substring(0, 300) + (rawText.length > 300 ? '... [TRUNCATED]' : ''));
 
       console.log('[API] ⚙️ Proceeding to Map JSON and structure into React state (Polymorphic JSON handling)...');
-      let data: any; // Use any since we handle multiple structures dynamically
+      let data: WebhookResponse;
       try {
-        data = JSON.parse(rawText);
-        
-        // Normalize if n8n returned a Supabase array
-        if (Array.isArray(data)) {
-           data = data[0]; 
-        }
-
-        // Normalize if falling back to direct Supabase record mapping or new n8n format
-        if (!data.type) {
-          if (data.conversation_state) {
-            data.type = data.conversation_state === 'generated' ? 'final_activity' : 'clarification';
-          } else if (data.activity || data.last_activity) {
-            data.type = 'final_activity';
-          } else if (data.ok === true) {
-            data.type = 'text';
-          }
-        }
-        
-        const rawActivity = data.activity || data.last_activity || data;
-
-        // --- SMART NORMALIZATION LAYER ---
-        // Handles variations in AI property naming (e.g., taskTitle vs title)
-        const normalize = (obj: any): Activity => {
-          const findValue = (keys: string[]) => {
-            const foundKey = keys.find(k => obj[k] !== undefined && obj[k] !== null);
-            return foundKey ? obj[foundKey] : undefined;
-          };
-
-          const standard: Activity = {
-            title: String(findValue(['title', 'taskTitle', 'name', 'activityTitle', 'activity_name']) || 'Actividad Pedagógica'),
-            objective: String(findValue(['objective', 'goal', 'description', 'purpose', 'meta']) || findValue(['profile.objective']) || obj.objective || ''),
-            duration: String(findValue(['duration', 'timeLimit', 'estimated_time_minutes', 'time', 'duracion']) || (data.profile?.duration) || 'Variable'),
-            passage: findValue(['passage', 'text', 'reading', 'lectura']),
-            questions: findValue(['questions', 'preguntas', 'assessment_questions']),
-            steps: findValue(['steps', 'instructions', 'pasos', 'dynamic', 'development']),
-            adaptations: findValue(['adaptations', 'special_needs', 'ajustes', 'adaptaciones']),
-            assessment: findValue(['assessment', 'evaluation', 'evaluacion', 'grading']),
-            resources_required: findValue(['resources_required', 'resources', 'materiales', 'recursos', 'materials']),
-            closure: String(findValue(['closure', 'conclusion', 'cierre', 'finish']) || ''),
-            difficulty_level: findValue(['difficulty_level', 'level', 'nivel', 'difficulty']),
-          };
-
-          // Capture any extra fields that might be useful but aren't in the standard schema
-          // We'll store them as an extra hidden field for the card to render optionally
-          const knownKeys = [
-            'title', 'taskTitle', 'name', 'activityTitle', 'activity_name', 
-            'objective', 'goal', 'description', 'purpose', 'meta',
-            'duration', 'timeLimit', 'estimated_time_minutes', 'time', 'duracion',
-            'passage', 'text', 'reading', 'lectura',
-            'questions', 'preguntas', 'assessment_questions',
-            'steps', 'instructions', 'pasos', 'dynamic', 'development',
-            'adaptations', 'special_needs', 'ajustes', 'adaptaciones',
-            'assessment', 'evaluation', 'evaluacion', 'grading',
-            'resources_required', 'resources', 'materiales', 'recursos', 'materials',
-            'closure', 'conclusion', 'cierre', 'finish',
-            'difficulty_level', 'level', 'nivel', 'difficulty'
-          ];
-          const extraData: Record<string, any> = {};
-          Object.keys(obj).forEach(k => {
-            if (!knownKeys.includes(k) && typeof obj[k] !== 'object') {
-              extraData[k] = obj[k];
-            }
-          });
-          
-          return { ...standard, ...extraData };
-        };
-
-        const activity = normalize(rawActivity);
-        data.activity = activity; // Use the normalized version
-        // ---------------------------------
-
-        if (!data.message) {
-           data.message = data.type === 'final_activity' 
-            ? '¡Actividad diseñada con éxito! Aquí tienes la estructura visual:'
-            : 'Necesito algunos datos más para continuar la planificación.';
-        }
+        data = normalizeWebhookPayload(JSON.parse(rawText));
 
       } catch (e) {
         console.error('[API] ❌ Failed to parse JSON. Server returned:', rawText);
@@ -305,17 +332,26 @@ export default function App() {
         sender: 'assistant',
         timestamp: new Date().toISOString(),
         type: data.type === 'error' ? 'error' : 'text',
+        providerMeta: {
+          aiProviderStatus: data.aiProviderStatus,
+          usedFallback: data.usedFallback,
+          providerFailureReason: data.providerFailureReason,
+          responseDiagnostics: data.responseDiagnostics,
+        },
       };
 
       if (data.type === 'final_activity') {
-        const rawActivity = data.activity || data.last_activity || data;
-        
-        // Re-run normalize if needed to ensure we have the cleanest object for the card
-        const finalActivityData = (data as any).normalizedActivity || rawActivity;
-        
         botMessage.type = 'activity';
-        botMessage.activityData = finalActivityData;
-      } 
+        botMessage.activityData = data.activity || normalizeActivityRecord(data);
+      }
+
+      if (data.usedFallback) {
+        toast.warning('La actividad se generó con fallback degradado');
+        console.warn('[API] degraded fallback:', data.responseDiagnostics || {
+          aiProviderStatus: data.aiProviderStatus,
+          providerFailureReason: data.providerFailureReason,
+        });
+      }
 
       setMessages(prev => {
         const newHist = [...prev, botMessage];
@@ -549,7 +585,7 @@ export default function App() {
 
                     {/* AI Activity Card (Bento Grid) */}
                     {msg.type === 'activity' && msg.activityData && (
-                      <ActivityCard activity={msg.activityData} />
+                      <ActivityCard activity={msg.activityData} providerMeta={msg.providerMeta} />
                     )}
 
                   </div>

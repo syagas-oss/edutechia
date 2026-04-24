@@ -15,6 +15,20 @@ export interface Activity {
   closure?: string;
 }
 
+export type AIProviderStatus = "lmstudio_ok" | "lmstudio_failed" | "degraded_fallback";
+
+export interface ProviderMeta {
+  aiProviderStatus?: AIProviderStatus;
+  usedFallback?: boolean;
+  providerFailureReason?: string;
+  responseDiagnostics?: {
+    providerCallAttempted?: boolean;
+    providerHttpStatus?: number | null;
+    providerRawContent?: string;
+    persistenceFailed?: boolean;
+  };
+}
+
 export interface WebhookResponse {
   type: "clarification" | "final_activity" | "error";
   message: string;
@@ -22,6 +36,8 @@ export interface WebhookResponse {
   profile?: any;
   activity?: Activity;
 }
+
+export interface WebhookResponse extends ProviderMeta {}
 
 export interface ContextData {
   stage?: string;
@@ -36,5 +52,6 @@ export interface Message {
   type: 'text' | 'activity' | 'error';
   activityData?: Activity;
   contextData?: ContextData;
+  providerMeta?: ProviderMeta;
   timestamp: string;
 }
