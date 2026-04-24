@@ -1,4 +1,4 @@
-import { Activity } from "./types";
+import { Activity } from "../types";
 
 const LM_STUDIO_URL = 'https://realtor-employee-cafe-offshore.trycloudflare.com/v1/chat/completions';
 const LM_STUDIO_KEY = 'CHANGE_ME_LM_STUDIO_TOKEN';
@@ -6,21 +6,24 @@ const LM_MODEL = 'google/gemma-4-e2b';
 
 async function callLMStudio(prompt: string, jsonMode: boolean = false) {
   try {
+    const payload = {
+      model: LM_MODEL,
+      messages: [
+        { role: "system", content: "Eres un experto pedagogo altamente capacitado." },
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.7,
+      stream: false,
+      ...(jsonMode && { response_format: { type: "json_object" } })
+    };
+
     const response = await fetch(LM_STUDIO_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${LM_STUDIO_KEY}`
       },
-      body: JSON.stringify({
-        model: LM_MODEL,
-        messages: [
-          { role: "system", content: "Eres un experto pedagogo altamente capacitado. Responde siempre en el formato solicitado." },
-          { role: "user", content: prompt }
-        ],
-        temperature: 0.7,
-        ...(jsonMode && { response_format: { type: "json_object" } })
-      })
+      body: JSON.stringify(payload)
     });
 
     if (!response.ok) {
