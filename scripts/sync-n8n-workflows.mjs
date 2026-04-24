@@ -20,29 +20,41 @@ function getNode(flow, name) {
   return node;
 }
 
-const chatPromptBody = `={{ (() => {
-  const source = $("AI Config1").item.json;
-  return {
-    model: source.config.lmModel,
-    temperature: 0.2,
-    stream: false,
-    messages: [
-      {
-        role: 'system',
-        content: 'Eres un asistente docente. Devuelve solo JSON valido. Usa este shape minimo: {"activity":{"title":"","objective":"","materials":[],"steps":[],"closure":"","assessment":[]}}. Puedes incluir stage, subject y duration si ayudan, pero si profile ya trae esos datos debes priorizarlos. No devuelvas markdown ni texto fuera del JSON.'
-      },
-      {
-        role: 'user',
-        content: JSON.stringify({
-          sessionId: source.sessionId,
-          requestedAt: source.requestedAt,
-          profile: source.profile,
-          message: source.message
-        })
-      }
-    ]
-  };
-})() }}`;
+const chatProviderPayloadCode = `const source = $json || {};
+
+const providerSystemPrompt = 'Eres un asistente docente experto en diseño de actividades didacticas claras, aplicables y con buena calidad pedagogica. Devuelve solo JSON minificado en una sola linea con una clave activity. activity debe incluir exactamente: title, objective, materials, steps, closure y assessment. Si profile ya trae stage, subject o duration, usalos para ajustar el nivel, el lenguaje y la complejidad. La actividad debe ser concreta, realista y lista para usar en aula. title: especifico y atractivo, no generico. objective: una frase clara que explique que aprendera el alumnado y para que. materials: maximo 6 elementos reales y utiles. steps: entre 4 y 6 pasos, cada uno con suficiente detalle operativo para que el docente sepa que hacer, que decir o que producto pedir; evita pasos vagos como introducir o discutir sin concretar. closure: indica como cerrar la actividad y consolidar el aprendizaje. assessment: entre 1 y 3 evidencias observables o comprobaciones concretas. Prioriza propuestas activas, comprensibles y ajustadas al tiempo disponible. No devuelvas markdown ni texto fuera del JSON.';
+
+const providerRequestBodyText = JSON.stringify({
+  model: source.config?.lmModel,
+  temperature: 0.35,
+  max_tokens: 2200,
+  stream: false,
+  messages: [
+    {
+      role: 'system',
+      content: providerSystemPrompt
+    },
+    {
+      role: 'user',
+      content: JSON.stringify({
+        sessionId: source.sessionId,
+        requestedAt: source.requestedAt,
+        profile: source.profile,
+        message: source.message
+      })
+    }
+  ]
+});
+
+return [{
+  json: {
+    ...source,
+    providerSystemPrompt,
+    providerRequestBodyText
+  }
+}];`;
+
+const chatGenerateJsonBody = "={{ $json.providerRequestBodyText }}";
 
 const chatBuildResponse = `const current = $json || {};
 const source = $("AI Config1").item.json;
@@ -67,6 +79,48 @@ function pick(sourceObject, keys) {
   return '';
 }
 
+function tryParseJson(text) {
+  if (!text || typeof text !== 'string') return null;
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    return null;
+  }
+}
+
+function closeOpenJson(text) {
+  let inString = false;
+  let escaped = false;
+  let curly = 0;
+  let square = 0;
+
+  for (const char of text) {
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (char === '\\\\') {
+      escaped = true;
+      continue;
+    }
+    if (char === '"') {
+      inString = !inString;
+      continue;
+    }
+    if (inString) continue;
+    if (char === '{') curly += 1;
+    if (char === '}') curly = Math.max(0, curly - 1);
+    if (char === '[') square += 1;
+    if (char === ']') square = Math.max(0, square - 1);
+  }
+
+  let fixed = text;
+  if (inString) fixed += '"';
+  fixed += ']'.repeat(square);
+  fixed += '}'.repeat(curly);
+  return fixed;
+}
+
 function parseJson(text) {
   if (!text || typeof text !== 'string') return null;
   const trimmed = text
@@ -75,23 +129,37 @@ function parseJson(text) {
     .replace(/^\\\`\\\`\\\`\\s*/i, '')
     .replace(/\\s*\\\`\\\`\\\`$/i, '')
     .trim();
-  try {
-    return JSON.parse(trimmed);
-  } catch (error) {}
+
+  const direct = tryParseJson(trimmed);
+  if (direct) return direct;
+
   const firstBrace = trimmed.indexOf('{');
   const lastBrace = trimmed.lastIndexOf('}');
   if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-    try {
-      return JSON.parse(trimmed.slice(firstBrace, lastBrace + 1));
-    } catch (error) {}
+    const parsedObject = tryParseJson(trimmed.slice(firstBrace, lastBrace + 1));
+    if (parsedObject) return parsedObject;
   }
+
   const firstBracket = trimmed.indexOf('[');
   const lastBracket = trimmed.lastIndexOf(']');
   if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {
-    try {
-      return JSON.parse(trimmed.slice(firstBracket, lastBracket + 1));
-    } catch (error) {}
+    const parsedArray = tryParseJson(trimmed.slice(firstBracket, lastBracket + 1));
+    if (parsedArray) return parsedArray;
   }
+
+  const repaired = closeOpenJson(trimmed);
+  if (repaired !== trimmed) {
+    const repairedDirect = tryParseJson(repaired);
+    if (repairedDirect) return repairedDirect;
+
+    const repairedFirstBrace = repaired.indexOf('{');
+    const repairedLastBrace = repaired.lastIndexOf('}');
+    if (repairedFirstBrace !== -1 && repairedLastBrace !== -1 && repairedLastBrace > repairedFirstBrace) {
+      const repairedObject = tryParseJson(repaired.slice(repairedFirstBrace, repairedLastBrace + 1));
+      if (repairedObject) return repairedObject;
+    }
+  }
+
   return null;
 }
 
@@ -215,10 +283,53 @@ function summarizeError(value) {
   }
 }
 
+function extractProviderPayload(payload) {
+  const contentCandidates = [
+    ['choices[0].message.content', payload?.choices?.[0]?.message?.content],
+    ['data.choices[0].message.content', payload?.data?.choices?.[0]?.message?.content],
+    ['body.choices[0].message.content', payload?.body?.choices?.[0]?.message?.content],
+    ['body.data.choices[0].message.content', payload?.body?.data?.choices?.[0]?.message?.content],
+    ['message', typeof payload?.message === 'string' ? payload.message : '']
+  ];
+
+  for (const [location, value] of contentCandidates) {
+    if (typeof value === 'string' && clean(value)) {
+      return {
+        rawContent: value,
+        rawToolArguments: '',
+        payloadLocation: location
+      };
+    }
+  }
+
+  const toolArgumentCandidates = [
+    ['choices[0].message.tool_calls[0].function.arguments', payload?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments],
+    ['data.choices[0].message.tool_calls[0].function.arguments', payload?.data?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments],
+    ['body.choices[0].message.tool_calls[0].function.arguments', payload?.body?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments],
+    ['body.data.choices[0].message.tool_calls[0].function.arguments', payload?.body?.data?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments]
+  ];
+
+  for (const [location, value] of toolArgumentCandidates) {
+    if (typeof value === 'string' && clean(value)) {
+      return {
+        rawContent: '',
+        rawToolArguments: value,
+        payloadLocation: location
+      };
+    }
+  }
+
+  return {
+    rawContent: '',
+    rawToolArguments: '',
+    payloadLocation: ''
+  };
+}
+
 const invalidBranch = !source.shouldCallModel;
-const raw = current?.choices?.[0]?.message?.content
-  ?? current?.data?.choices?.[0]?.message?.content
-  ?? (typeof current?.message === 'string' ? current.message : '');
+const providerPayload = extractProviderPayload(current);
+const raw = providerPayload.rawContent || providerPayload.rawToolArguments;
+const providerPayloadLocation = providerPayload.payloadLocation;
 const parsed = parseJson(raw);
 const providerHttpStatus = typeof current?.statusCode === 'number' ? current.statusCode : null;
 const providerCallAttempted = Boolean(source.shouldCallModel);
@@ -268,6 +379,7 @@ if (invalidBranch) {
     responseDiagnostics: {
       providerCallAttempted,
       providerHttpStatus,
+      providerPayloadLocation,
       providerRawContent: summarizeRaw(raw),
       providerEndpoint: source.config.lmStudioUrl,
       providerModel: source.config.lmModel,
@@ -293,6 +405,7 @@ if (invalidBranch) {
     responseDiagnostics: {
       providerCallAttempted,
       providerHttpStatus,
+      providerPayloadLocation,
       providerRawContent: summarizeRaw(raw),
       providerEndpoint: source.config.lmStudioUrl,
       providerModel: source.config.lmModel,
@@ -611,7 +724,8 @@ function updateHttpNode(node) {
 
 function syncChatFlow() {
   const flow = readJson(chatFlowPath);
-  getNode(flow, "Generate Activity1").parameters.jsonBody = chatPromptBody;
+  getNode(flow, "Build Provider Payload1").parameters.jsCode = chatProviderPayloadCode;
+  getNode(flow, "Generate Activity1").parameters.jsonBody = chatGenerateJsonBody;
   getNode(flow, "Build Chat Response1").parameters.jsCode = chatBuildResponse;
   getNode(flow, "Format Response1").parameters.jsCode = chatFormatResponse;
   updateHttpNode(getNode(flow, "Generate Activity1"));
