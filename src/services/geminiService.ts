@@ -93,5 +93,55 @@ export const geminiService = {
     });
 
     return response.text;
+  },
+
+  async getParentSummary(activity: Activity) {
+    const prompt = `Actúa como un puente entre la escuela y la casa. 
+    Traduce esta actividad escolar para familias, eliminando cualquier tecnicismo pedagógico (jerga).
+    Enfócate en:
+    1. ¿Qué va a aprender su hijo/a exactamente (en lenguaje cotidiano)?
+    2. ¿Por qué es importante para su vida real?
+    3. Una idea sencilla para reforzar esto en casa mientras cenan o pasean.
+    
+    Responde en formato Markdown cálido y directo.`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: `Actividad: ${JSON.stringify(activity)}\n\n${prompt}`,
+    });
+
+    return response.text;
+  },
+
+  async getCriticMirror(activity: Activity) {
+    const prompt = `Actúa como el "Abogado del Diablo" pedagógico más escéptico. 
+    Tu objetivo es encontrar los puntos ciegos, los sesgos implícitos o las debilidades ocultas de esta actividad.
+    No seas destructivo, sé brutalmente sincero para mejorarla.
+    Identifica:
+    1. El "Elefante en la habitación" (lo que nadie se atreve a decir que está mal).
+    2. Sesgo potencial (¿a quién excluye sin querer?).
+    3. El "Efecto Placebo" (¿parece que aprenden pero es solo entretenimiento?).
+    
+    Responde en JSON.`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: `Actividad: ${JSON.stringify(activity)}\n\n${prompt}`,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            elephant: { type: Type.STRING },
+            bias: { type: Type.STRING },
+            placebo_effect: { type: Type.STRING },
+            suggestion: { type: Type.STRING }
+          },
+          required: ["elephant", "bias", "placebo_effect", "suggestion"]
+        }
+      }
+    });
+
+    return JSON.parse(response.text);
   }
 };

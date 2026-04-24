@@ -396,7 +396,7 @@ export default function App() {
       </header>
 
       {/* Main Focus Area (Chat / Canvas) */}
-      <main className="flex-1 overflow-y-auto relative z-10 w-full flex flex-col items-center pt-28 pb-40 px-4 sm:px-6">
+      <main className="flex-1 overflow-y-auto relative z-10 w-full flex flex-col items-center pt-28 pb-40 px-4 sm:px-8">
         
         {/* Error Banner Floating Top */}
         <AnimatePresence>
@@ -413,7 +413,7 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        <div className="w-full max-w-4xl space-y-8 flex flex-col pb-8">
+        <div className="w-full max-w-[1400px] space-y-12 flex flex-col pb-8">
           
           <AnimatePresence>
             {messages.length === 0 && (

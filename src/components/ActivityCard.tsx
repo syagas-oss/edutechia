@@ -25,6 +25,10 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   const [stressTest, setStressTest] = useState<any | null>(null);
   const [isMappingCurr, setIsMappingCurr] = useState(false);
   const [curriculumMarkdown, setCurriculumMarkdown] = useState<string | null>(null);
+  const [isGettingParentSummary, setIsGettingParentSummary] = useState(false);
+  const [parentSummary, setParentSummary] = useState<string | null>(null);
+  const [isGettingCriticMirror, setIsGettingCriticMirror] = useState(false);
+  const [criticMirror, setCriticMirror] = useState<any | null>(null);
 
   // Neuro-morphism detection
   const isNeuroAdaptative = useMemo(() => {
@@ -153,6 +157,32 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
       toast.error('Error al mapear el currículo');
     } finally {
       setIsMappingCurr(false);
+    }
+  };
+
+  const triggerParentSummary = async () => {
+    setIsGettingParentSummary(true);
+    try {
+      const result = await geminiService.getParentSummary(activity);
+      setParentSummary(result);
+      toast.success('Sincronía para Padres generada');
+    } catch (e) {
+      toast.error('Error al generar resumen para padres');
+    } finally {
+      setIsGettingParentSummary(false);
+    }
+  };
+
+  const triggerCriticMirror = async () => {
+    setIsGettingCriticMirror(true);
+    try {
+      const result = await geminiService.getCriticMirror(activity);
+      setCriticMirror(result);
+      toast.success('IA Espejo activada: Puntos ciegos detectados');
+    } catch (e) {
+      toast.error('Error al activar IA Espejo');
+    } finally {
+      setIsGettingCriticMirror(false);
     }
   };
 
@@ -368,19 +398,19 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-6">
             {/* Feature 1: Consejo de Sabios */}
             <button 
               onClick={triggerDebate}
               disabled={isDebating}
-              className="flex flex-col items-center gap-4 p-8 glass-panel hover:bg-white/5 hover:border-cyan-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[2rem] cursor-pointer"
+              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel hover:bg-white/5 hover:border-cyan-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
             >
-              <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-cyan-500/20 transition-all duration-500">
-                {isDebating ? <Loader2 className="w-7 h-7 text-cyan-400 animate-spin" /> : <Users className="w-7 h-7 text-cyan-400" /> }
+              <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-cyan-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-cyan-500/20 transition-all duration-500">
+                {isDebating ? <Loader2 className="w-5 h-5 sm:w-7 sm:h-7 text-cyan-400 animate-spin" /> : <Users className="w-5 h-5 sm:w-7 sm:h-7 text-cyan-400" /> }
               </div>
-              <div className="space-y-1">
-                <span className="text-sm font-bold uppercase tracking-[0.2em] text-white">Consejo de Sabios</span>
-                <p className="text-[10px] text-white/40 leading-tight">Debate pedagógico multi-agente por expertos</p>
+              <div className="space-y-0.5 sm:space-y-1">
+                <span className="text-[10px] sm:text-sm font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-white">Sabios</span>
+                <p className="hidden sm:block text-[10px] text-white/40 leading-tight">Debate pedagógico multi-agente</p>
               </div>
             </button>
 
@@ -388,14 +418,14 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
             <button 
               onClick={triggerStressTest}
               disabled={isStressTesting}
-              className="flex flex-col items-center gap-4 p-8 glass-panel hover:bg-red-500/5 hover:border-red-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[2rem] cursor-pointer"
+              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel hover:bg-red-500/5 hover:border-red-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
             >
-               <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-red-500/20 transition-all duration-500">
-                {isStressTesting ? <Loader2 className="w-7 h-7 text-red-400 animate-spin" /> : <Flame className="w-7 h-7 text-red-400" /> }
+               <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-red-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-red-500/20 transition-all duration-500">
+                {isStressTesting ? <Loader2 className="w-5 h-5 sm:w-7 sm:h-7 text-red-400 animate-spin" /> : <Flame className="w-5 h-5 sm:w-7 sm:h-7 text-red-400" /> }
                </div>
-               <div className="space-y-1">
-                <span className="text-sm font-bold uppercase tracking-[0.2em] text-white">Simulacro de Estrés</span>
-                <p className="text-[10px] text-white/40 leading-tight">Analítica de puntos de fricción reales</p>
+               <div className="space-y-0.5 sm:space-y-1">
+                <span className="text-[10px] sm:text-sm font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-white">Estrés</span>
+                <p className="hidden sm:block text-[10px] text-white/40 leading-tight">Analítica de fricción real</p>
                </div>
             </button>
 
@@ -403,14 +433,44 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
             <button 
               onClick={triggerCurriculumMapping}
               disabled={isMappingCurr}
-              className="flex flex-col items-center gap-4 p-8 glass-panel hover:bg-purple-500/5 hover:border-purple-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[2rem] cursor-pointer"
+              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel hover:bg-purple-500/5 hover:border-purple-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
             >
-               <div className="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-purple-500/20 transition-all duration-500">
-                {isMappingCurr ? <Loader2 className="w-7 h-7 text-purple-400 animate-spin" /> : <BookOpen className="w-7 h-7 text-purple-400" /> }
+               <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-purple-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-purple-500/20 transition-all duration-500">
+                {isMappingCurr ? <Loader2 className="w-5 h-5 sm:w-7 sm:h-7 text-purple-400 animate-spin" /> : <BookOpen className="w-5 h-5 sm:w-7 sm:h-7 text-purple-400" /> }
               </div>
-              <div className="space-y-1">
-                <span className="text-sm font-bold uppercase tracking-[0.2em] text-white">Gemelo Curricular</span>
-                <p className="text-[10px] text-white/40 leading-tight">Marco legal LOMLOE automatizado</p>
+              <div className="space-y-0.5 sm:space-y-1">
+                <span className="text-[10px] sm:text-sm font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-white">Currículo</span>
+                <p className="hidden sm:block text-[10px] text-white/40 leading-tight">Marco legal LOMLOE</p>
+              </div>
+            </button>
+
+            {/* Feature 4: Sincronía para Padres */}
+            <button 
+              onClick={triggerParentSummary}
+              disabled={isGettingParentSummary}
+              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel hover:bg-emerald-500/5 hover:border-emerald-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
+            >
+               <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-emerald-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-emerald-500/20 transition-all duration-500">
+                {isGettingParentSummary ? <Loader2 className="w-5 h-5 sm:w-7 sm:h-7 text-emerald-400 animate-spin" /> : <Info className="w-5 h-5 sm:w-7 sm:h-7 text-emerald-400" /> }
+              </div>
+              <div className="space-y-0.5 sm:space-y-1">
+                <span className="text-[10px] sm:text-sm font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-white">Padres</span>
+                <p className="hidden sm:block text-[10px] text-white/40 leading-tight">Comunicación familias</p>
+              </div>
+            </button>
+
+            {/* Feature 5: IA Espejo */}
+            <button 
+              onClick={triggerCriticMirror}
+              disabled={isGettingCriticMirror}
+              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel hover:bg-amber-500/5 hover:border-amber-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
+            >
+               <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-amber-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-amber-500/20 transition-all duration-500">
+                {isGettingCriticMirror ? <Loader2 className="w-5 h-5 sm:w-7 sm:h-7 text-amber-400 animate-spin" /> : <Zap className="w-5 h-5 sm:w-7 sm:h-7 text-amber-400" /> }
+              </div>
+              <div className="space-y-0.5 sm:space-y-1">
+                <span className="text-[10px] sm:text-sm font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-white">Espejo</span>
+                <p className="hidden sm:block text-[10px] text-white/40 leading-tight">Crítica radical honesta</p>
               </div>
             </button>
           </div>
@@ -527,6 +587,88 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
                   className="w-full text-center text-[10px] text-white/20 hover:text-white/40 py-2 mt-4"
                 >
                   Cerrar vista legal
+                </button>
+              </motion.div>
+            )}
+
+            {/* Parent Summary results */}
+            {parentSummary && (
+              <motion.div 
+                 key="parent"
+                 initial={{ height: 0, opacity: 0 }}
+                 animate={{ height: 'auto', opacity: 1 }}
+                 exit={{ height: 0, opacity: 0 }}
+                 className="mt-6 p-6 glass-panel bg-emerald-500/[0.02] border-emerald-500/10 rounded-2xl overflow-hidden"
+              >
+                 <div className="flex items-center gap-2 mb-6">
+                    <Info className="w-5 h-5 text-emerald-400" />
+                    <span className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-400">Sincronía para Padres (Zero Jargon)</span>
+                 </div>
+                 <div className="bg-white/[0.04] border border-white/10 rounded-3xl p-10 max-h-[700px] overflow-y-auto scrollbar-hide">
+                    <div className="markdown-body text-base text-white/90 leading-relaxed italic">
+                       <Markdown>{parentSummary}</Markdown>
+                    </div>
+                 </div>
+                 <button 
+                  onClick={() => setParentSummary(null)}
+                  className="w-full text-center text-[10px] text-white/20 hover:text-white/40 py-2 mt-4"
+                >
+                  Cerrar comunicación familias
+                </button>
+              </motion.div>
+            )}
+
+            {/* Critic Mirror results */}
+            {criticMirror && (
+              <motion.div 
+                 key="critic"
+                 initial={{ height: 0, opacity: 0 }}
+                 animate={{ height: 'auto', opacity: 1 }}
+                 exit={{ height: 0, opacity: 0 }}
+                 className="mt-6 p-10 glass-panel bg-amber-500/[0.03] border-amber-500/20 rounded-[2.5rem] overflow-hidden relative"
+              >
+                 <div className="absolute top-0 right-0 p-8">
+                    <Zap className="w-12 h-12 text-amber-500/20 rotate-12" />
+                 </div>
+                 
+                 <div className="flex items-center gap-3 mb-10">
+                    <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/30">
+                       <Shield className="w-5 h-5 text-amber-400" />
+                    </div>
+                    <div>
+                      <span className="text-sm font-bold uppercase tracking-[0.2em] text-amber-400 block">IA ESPEJO</span>
+                      <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold">The Critic Anti-Agent</p>
+                    </div>
+                 </div>
+
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                    <div className="space-y-4">
+                       <h5 className="text-[11px] font-bold text-amber-500 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full w-fit">Elefante en la Habitación</h5>
+                       <p className="text-lg text-white font-medium leading-tight">{criticMirror.elephant}</p>
+                    </div>
+                    <div className="space-y-4">
+                       <h5 className="text-[11px] font-bold text-red-400 uppercase tracking-widest bg-red-500/10 px-3 py-1 rounded-full w-fit">Sesgo Potencial</h5>
+                       <p className="text-lg text-white font-medium leading-tight">{criticMirror.bias}</p>
+                    </div>
+                    <div className="space-y-4">
+                       <h5 className="text-[11px] font-bold text-cyan-400 uppercase tracking-widest bg-cyan-500/10 px-3 py-1 rounded-full w-fit">Efecto Placebo</h5>
+                       <p className="text-lg text-white font-medium leading-tight">{criticMirror.placebo_effect}</p>
+                    </div>
+                 </div>
+
+                 <div className="p-6 bg-white/[0.05] rounded-2xl border border-white/10 shadow-2xl">
+                    <div className="flex items-center gap-2 mb-3">
+                       <Sparkles className="w-4 h-4 text-emerald-400" />
+                       <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Sugerencia Evolutiva</span>
+                    </div>
+                    <p className="text-white/80 leading-relaxed italic pr-4">{criticMirror.suggestion}</p>
+                 </div>
+
+                 <button 
+                  onClick={() => setCriticMirror(null)}
+                  className="w-full text-center text-[10px] text-white/20 hover:text-white/40 py-2 mt-8"
+                >
+                  Cerrar IA Espejo
                 </button>
               </motion.div>
             )}
