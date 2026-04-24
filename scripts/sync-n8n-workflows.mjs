@@ -205,6 +205,16 @@ function summarizeRaw(raw) {
   return text ? text.slice(0, 800) : '';
 }
 
+function summarizeError(value) {
+  if (!value) return '';
+  if (typeof value === 'string') return clean(value).slice(0, 800);
+  try {
+    return JSON.stringify(value).slice(0, 800);
+  } catch (error) {
+    return clean(String(value)).slice(0, 800);
+  }
+}
+
 const invalidBranch = !source.shouldCallModel;
 const raw = current?.choices?.[0]?.message?.content
   ?? current?.data?.choices?.[0]?.message?.content
@@ -258,7 +268,10 @@ if (invalidBranch) {
     responseDiagnostics: {
       providerCallAttempted,
       providerHttpStatus,
-      providerRawContent: summarizeRaw(raw)
+      providerRawContent: summarizeRaw(raw),
+      providerEndpoint: source.config.lmStudioUrl,
+      providerModel: source.config.lmModel,
+      providerErrorMessage: summarizeError(current?.error || current?.message || current?.reason)
     }
   };
 } else {
@@ -280,7 +293,10 @@ if (invalidBranch) {
     responseDiagnostics: {
       providerCallAttempted,
       providerHttpStatus,
-      providerRawContent: summarizeRaw(raw)
+      providerRawContent: summarizeRaw(raw),
+      providerEndpoint: source.config.lmStudioUrl,
+      providerModel: source.config.lmModel,
+      providerErrorMessage: summarizeError(current?.error || current?.message || current?.reason)
     }
   };
 }
@@ -434,6 +450,16 @@ function summarizeRaw(raw) {
   return text ? text.slice(0, 800) : '';
 }
 
+function summarizeError(value) {
+  if (!value) return '';
+  if (typeof value === 'string') return clean(value).slice(0, 800);
+  try {
+    return JSON.stringify(value).slice(0, 800);
+  } catch (error) {
+    return clean(String(value)).slice(0, 800);
+  }
+}
+
 const providerCallAttempted = Boolean(source.shouldCallModel);
 const providerHttpStatus = typeof current?.statusCode === 'number' ? current.statusCode : null;
 const raw = current?.choices?.[0]?.message?.content
@@ -450,7 +476,10 @@ if (!source.shouldCallModel) {
       responseDiagnostics: {
         providerCallAttempted,
         providerHttpStatus,
-        providerRawContent: summarizeRaw(raw)
+        providerRawContent: summarizeRaw(raw),
+      providerEndpoint: source.config.lmStudioUrl,
+      providerModel: source.config.lmModel,
+      providerErrorMessage: summarizeError(current?.error || current?.message || current?.reason)
       }
     }
   }];
@@ -483,7 +512,10 @@ if (source.actionConfig.mode === 'markdown') {
       responseDiagnostics: {
         providerCallAttempted,
         providerHttpStatus,
-        providerRawContent: summarizeRaw(raw)
+        providerRawContent: summarizeRaw(raw),
+      providerEndpoint: source.config.lmStudioUrl,
+      providerModel: source.config.lmModel,
+      providerErrorMessage: summarizeError(current?.error || current?.message || current?.reason)
       }
     }
   }];
@@ -560,7 +592,10 @@ return [{
     responseDiagnostics: {
       providerCallAttempted,
       providerHttpStatus,
-      providerRawContent: summarizeRaw(raw)
+      providerRawContent: summarizeRaw(raw),
+      providerEndpoint: source.config.lmStudioUrl,
+      providerModel: source.config.lmModel,
+      providerErrorMessage: summarizeError(current?.error || current?.message || current?.reason)
     }
   }
 }];`;
