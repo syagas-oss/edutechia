@@ -1,0 +1,28 @@
+Teacher Assistant workflows exported in this repository
+
+1. Teacher Assistant Conversational Flow.json
+- Webhook: POST /webhook/teacher-assistant
+- Responsibility: main teacher chat for activity generation
+- Stable response for frontend:
+  - type: clarification | final_activity | error
+  - message
+  - activity?
+  - missingFields?
+  - profile?
+
+2. Teacher Assistant Lab Flow.json
+- Webhook: POST /webhook/teacher-assistant-lab
+- Responsibility: innovation lab actions routed through n8n
+- Stable response for frontend:
+  - ok
+  - type
+  - data
+  - message
+  - error?
+
+Shared implementation rules
+- LM Studio is only called from n8n.
+- Both workflows build OpenAI-compatible payloads with model + messages + stream:false.
+- stage/subject/duration are the public canonical context keys.
+- level/nivel/etapa remain supported only as input aliases.
+- The exported JSON files are the source of truth; update them together with docs when behavior changes.

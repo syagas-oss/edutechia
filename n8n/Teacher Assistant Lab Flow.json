@@ -1,0 +1,229 @@
+{
+  "name": "Teacher Assistant Lab Flow",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Laboratorio IA\n- `POST /webhook/teacher-assistant-lab`\n- Valida `sessionId`, `action` y `activity.title`\n- Enruta prompts por modulo\n- Responde `{ ok, type, data, message, error? }`",
+        "height": 392,
+        "width": 420,
+        "color": 6
+      },
+      "id": "sticky-lab-overview",
+      "name": "Lab Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1088,
+        264
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "teacher-assistant-lab",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "lab-webhook",
+      "name": "Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1024,
+        592
+      ],
+      "webhookId": "teacher-assistant-lab"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $json.body || $json || {};\n\nfunction clean(value) {\n  return String(value ?? '').replace(/\\s+/g, ' ').trim();\n}\n\nfunction normalized(value) {\n  return clean(value)\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase();\n}\n\nfunction toArray(value) {\n  if (Array.isArray(value)) return value.map((item) => clean(item)).filter(Boolean);\n  const text = clean(value);\n  return text ? [text] : [];\n}\n\nfunction normalizeProbability(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  if (/alta/.test(text)) return 'Alta';\n  if (/media/.test(text)) return 'Media';\n  if (/baja/.test(text)) return 'Baja';\n  return clean(value);\n}\n\nconst rawContext = input.context && typeof input.context === 'object' && !Array.isArray(input.context)\n  ? input.context\n  : {};\n\nconst context = {\n  stage: clean(rawContext.stage || rawContext.level || rawContext.nivel || rawContext.etapa),\n  subject: clean(rawContext.subject || rawContext.materia || rawContext.asignatura),\n  duration: clean(rawContext.duration || rawContext.duracion || rawContext.tiempo)\n};\n\nconst rawActivity = input.activity && typeof input.activity === 'object' && !Array.isArray(input.activity)\n  ? input.activity\n  : {};\n\nconst activity = {\n  ...rawActivity,\n  title: clean(rawActivity.title || rawActivity.taskTitle || rawActivity.activityTitle || rawActivity.name),\n  objective: clean(rawActivity.objective || rawActivity.goal || rawActivity.description),\n  steps: toArray(rawActivity.steps || rawActivity.instructions),\n  assessment: toArray(rawActivity.assessment || rawActivity.evaluation),\n  resources_required: toArray(rawActivity.resources_required || rawActivity.resources || rawActivity.materials),\n  closure: clean(rawActivity.closure || rawActivity.conclusion)\n};\n\nconst supportedActions = {\n  expert_debate: {\n    mode: 'json',\n    systemPrompt: 'Analiza una actividad didactica desde tres perspectivas expertas complementarias. Devuelve solo JSON valido con un array de 3 objetos usando las claves exactas: expert, role, pros, cons.'\n  },\n  stress_test: {\n    mode: 'json',\n    systemPrompt: 'Evalua riesgos reales de aula. Devuelve solo JSON valido con este shape exacto: {\"score\":0,\"risks\":[{\"event\":\"\",\"probability\":\"Alta|Media|Baja\",\"extinguisher\":\"\"}]}. score debe ser entero de 0 a 100.'\n  },\n  curriculum_mapping: {\n    mode: 'markdown',\n    systemPrompt: 'Mapea la actividad al marco LOMLOE. Devuelve solo Markdown estructurado con secciones breves y accionables para docente.'\n  },\n  parent_summary: {\n    mode: 'markdown',\n    systemPrompt: 'Resume la actividad para familias en lenguaje claro, sin jerga pedagogica. Devuelve solo texto o Markdown breve y comprensible.'\n  },\n  critic_mirror: {\n    mode: 'json',\n    systemPrompt: 'Haz una critica honesta de la actividad. Devuelve solo JSON valido con estas claves exactas: elephant, bias, placebo_effect, suggestion.'\n  }\n};\n\nconst action = clean(input.action);\nconst actionConfig = supportedActions[action] || null;\n\nlet shouldCallModel = true;\nlet response = null;\nif (!clean(input.sessionId)) {\n  shouldCallModel = false;\n  response = {\n    ok: false,\n    type: 'validation_error',\n    data: null,\n    message: 'sessionId is required.',\n    error: {\n      code: 'SESSION_ID_REQUIRED',\n      message: 'The lab workflow requires a non-empty sessionId.'\n    }\n  };\n} else if (!action) {\n  shouldCallModel = false;\n  response = {\n    ok: false,\n    type: 'validation_error',\n    data: null,\n    message: 'action is required.',\n    error: {\n      code: 'ACTION_REQUIRED',\n      message: 'The lab workflow requires an action.'\n    }\n  };\n} else if (!actionConfig) {\n  shouldCallModel = false;\n  response = {\n    ok: false,\n    type: 'validation_error',\n    data: null,\n    message: 'Unsupported lab action.',\n    error: {\n      code: 'UNSUPPORTED_ACTION',\n      message: 'The provided action is not supported by the lab workflow.'\n    }\n  };\n} else if (!activity.title) {\n  shouldCallModel = false;\n  response = {\n    ok: false,\n    type: 'validation_error',\n    data: null,\n    message: 'activity.title is required.',\n    error: {\n      code: 'ACTIVITY_TITLE_REQUIRED',\n      message: 'The lab workflow requires activity.title with meaningful content.'\n    }\n  };\n}\n\nreturn [{\n  json: {\n    sessionId: clean(input.sessionId),\n    action,\n    actionConfig,\n    activity,\n    context,\n    requestedAt: clean(input.timestamp) || new Date().toISOString(),\n    shouldCallModel,\n    validationResponse: response,\n    helpers: {\n      normalizeProbabilityExample: normalizeProbability('alta')\n    }\n  }\n}];"
+      },
+      "id": "lab-normalize",
+      "name": "Normalize Lab Request1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -768,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const config = {\n  lmStudioUrl: 'https://realtor-employee-cafe-offshore.trycloudflare.com/v1/chat/completions',\n  lmStudioKey: 'CHANGE_ME_LM_STUDIO_TOKEN',\n  lmModel: 'google/gemma-4-e2b',\n  timeout: 45000\n};\n\nreturn [{ json: { ...$json, config } }];"
+      },
+      "id": "lab-config",
+      "name": "AI Config1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "numberOutputs": 2,
+        "output": "={{ $json.shouldCallModel ? 0 : 1 }}"
+      },
+      "id": "lab-route",
+      "name": "Route Action1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -256,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"AI Config1\").item.json.config.lmStudioUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ \"Bearer \" + $(\"AI Config1\").item.json.config.lmStudioKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ (() => {\n  const source = $(\"AI Config1\").item.json;\n  return {\n    model: source.config.lmModel,\n    temperature: source.action === 'curriculum_mapping' ? 0.2 : 0.3,\n    stream: false,\n    messages: [\n      {\n        role: 'system',\n        content: source.actionConfig.systemPrompt\n      },\n      {\n        role: 'user',\n        content: JSON.stringify({\n          sessionId: source.sessionId,\n          action: source.action,\n          requestedAt: source.requestedAt,\n          context: source.context,\n          activity: source.activity\n        })\n      }\n    ]\n  };\n})() }}"
+      },
+      "id": "lab-call-provider",
+      "name": "Call LM Studio1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        0,
+        496
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const current = $json || {};\nconst source = $(\"AI Config1\").item.json;\n\nfunction clean(value) {\n  return String(value ?? '').replace(/\\s+/g, ' ').trim();\n}\n\nfunction normalized(value) {\n  return clean(value)\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase();\n}\n\nfunction parseJson(text) {\n  if (!text || typeof text !== 'string') return null;\n  const trimmed = text.trim().replace(/^```json\\s*/i, '').replace(/^```\\s*/i, '').replace(/\\s*```$/i, '').trim();\n  try {\n    return JSON.parse(trimmed);\n  } catch (error) {}\n  const firstBrace = trimmed.indexOf('{');\n  const lastBrace = trimmed.lastIndexOf('}');\n  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {\n    try {\n      return JSON.parse(trimmed.slice(firstBrace, lastBrace + 1));\n    } catch (error) {}\n  }\n  const firstBracket = trimmed.indexOf('[');\n  const lastBracket = trimmed.lastIndexOf(']');\n  if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {\n    try {\n      return JSON.parse(trimmed.slice(firstBracket, lastBracket + 1));\n    } catch (error) {}\n  }\n  return null;\n}\n\nfunction normalizeProbability(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  if (/alta/.test(text)) return 'Alta';\n  if (/media/.test(text)) return 'Media';\n  if (/baja/.test(text)) return 'Baja';\n  return clean(value);\n}\n\nfunction buildFallback(action, activity, context) {\n  if (action === 'expert_debate') {\n    return [\n      {\n        expert: 'Didactica Activa',\n        role: 'Especialista en aprendizaje activo',\n        pros: `La actividad ${activity.title} tiene potencial para conectar con ${context.subject || 'el contenido'} desde una tarea concreta.`,\n        cons: 'Puede quedarse corta si no se explicitan criterios de exito y cierre observable.'\n      },\n      {\n        expert: 'Atencion a la Diversidad',\n        role: 'Especialista en inclusion',\n        pros: 'Permite introducir apoyos visuales o andamiaje sin cambiar la esencia de la propuesta.',\n        cons: 'Necesita prever ritmos distintos y una instruccion inicial mas fragmentada.'\n      },\n      {\n        expert: 'Evaluacion Formativa',\n        role: 'Especialista en evaluacion autentica',\n        pros: 'Se presta a una verificacion rapida del aprendizaje si se define un producto final simple.',\n        cons: 'Sin evidencia observable, el docente puede confundir actividad atractiva con aprendizaje real.'\n      }\n    ];\n  }\n\n  if (action === 'stress_test') {\n    return {\n      score: 68,\n      risks: [\n        {\n          event: 'La consigna inicial no queda suficientemente concreta para todo el grupo.',\n          probability: 'Alta',\n          extinguisher: 'Modelar un ejemplo resuelto y comprobar comprension antes de soltar la tarea.'\n        },\n        {\n          event: 'El tiempo se consume en transiciones o reparto de materiales.',\n          probability: 'Media',\n          extinguisher: 'Preparar materiales por estaciones o roles antes de iniciar la actividad.'\n        }\n      ]\n    };\n  }\n\n  if (action === 'curriculum_mapping') {\n    return `## Encaje curricular\\n\\n- **Actividad:** ${activity.title}\\n- **Area:** ${context.subject || 'Pendiente de concretar'}\\n- **Etapa:** ${context.stage || 'Pendiente de concretar'}\\n\\n### Lectura rapida\\nLa propuesta es compatible con una formulacion competencial si se explicitan saberes, criterio de evaluacion y producto observable.\\n\\n### Recomendacion\\nAñadir una evidencia final breve y un criterio de exito que pueda observarse en aula.`;\n  }\n\n  if (action === 'parent_summary') {\n    return `### Resumen para familias\\n\\nHoy trabajaremos **${activity.title}** con una actividad breve y guiada. El objetivo es que el alumnado practique de forma clara y participe con seguridad.\\n\\nSi queréis reforzarlo en casa, basta con pedirles que os expliquen con sus palabras que han hecho y que han aprendido.`;\n  }\n\n  return {\n    elephant: 'La actividad puede estar mejor explicada que estructurada para demostrar aprendizaje.',\n    bias: 'Puede asumir que todo el grupo responde igual al mismo ritmo y al mismo tipo de instruccion.',\n    placebo_effect: 'Una dinamica atractiva puede dar sensacion de exito sin evidencia clara de comprension.',\n    suggestion: 'Definir una evidencia final observable y un apoyo especifico para quien necesite mas andamiaje.'\n  };\n}\n\nif (!source.shouldCallModel) {\n  return [{ json: source.validationResponse }];\n}\n\nconst raw = current?.choices?.[0]?.message?.content\n  ?? current?.data?.choices?.[0]?.message?.content\n  ?? (typeof current?.message === 'string' ? current.message : '');\nconst providerFailed = Boolean(current.error || current.statusCode >= 400 || !clean(raw));\n\nif (source.actionConfig.mode === 'markdown') {\n  const text = clean(raw);\n  const data = providerFailed || !text\n    ? buildFallback(source.action, source.activity, source.context)\n    : raw;\n  return [{\n    json: {\n      ok: true,\n      type: source.action,\n      data,\n      message: providerFailed\n        ? 'Operation completed with degraded fallback.'\n        : 'Operation completed successfully.'\n    }\n  }];\n}\n\nconst parsed = parseJson(raw);\nlet data = parsed;\nlet fallbackUsed = false;\n\nif (source.action === 'expert_debate') {\n  const valid = Array.isArray(parsed) && parsed.length > 0 && parsed.every((item) => item && typeof item === 'object' && clean(item.role) && clean(item.pros) && clean(item.cons));\n  if (!valid) {\n    data = buildFallback(source.action, source.activity, source.context);\n    fallbackUsed = true;\n  }\n}\n\nif (source.action === 'stress_test') {\n  const valid = parsed && typeof parsed === 'object' && Number.isFinite(Number(parsed.score)) && Array.isArray(parsed.risks);\n  if (!valid) {\n    data = buildFallback(source.action, source.activity, source.context);\n    fallbackUsed = true;\n  } else {\n    data = {\n      score: Number(parsed.score),\n      risks: parsed.risks.map((risk) => ({\n        event: clean(risk?.event),\n        probability: normalizeProbability(risk?.probability),\n        extinguisher: clean(risk?.extinguisher)\n      })).filter((risk) => risk.event && risk.probability && risk.extinguisher)\n    };\n    if (!data.risks.length) {\n      data = buildFallback(source.action, source.activity, source.context);\n      fallbackUsed = true;\n    }\n  }\n}\n\nif (source.action === 'critic_mirror') {\n  const valid = parsed && typeof parsed === 'object' && clean(parsed.elephant) && clean(parsed.bias) && clean(parsed.placebo_effect) && clean(parsed.suggestion);\n  if (!valid) {\n    data = buildFallback(source.action, source.activity, source.context);\n    fallbackUsed = true;\n  } else {\n    data = {\n      elephant: clean(parsed.elephant),\n      bias: clean(parsed.bias),\n      placebo_effect: clean(parsed.placebo_effect),\n      suggestion: clean(parsed.suggestion)\n    };\n  }\n}\n\nreturn [{\n  json: {\n    ok: true,\n    type: source.action,\n    data,\n    message: providerFailed || fallbackUsed\n      ? 'Operation completed with degraded fallback.'\n      : 'Operation completed successfully.'\n  }\n}];"
+      },
+      "id": "lab-build-response",
+      "name": "Build Lab Response1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "lab-respond",
+      "name": "Respond1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        512,
+        592
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Normalize Lab Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Lab Request1": {
+      "main": [
+        [
+          {
+            "node": "AI Config1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Config1": {
+      "main": [
+        [
+          {
+            "node": "Route Action1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Action1": {
+      "main": [
+        [
+          {
+            "node": "Call LM Studio1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Lab Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call LM Studio1": {
+      "main": [
+        [
+          {
+            "node": "Build Lab Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Lab Response1": {
+      "main": [
+        [
+          {
+            "node": "Respond1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timezone": "Europe/Madrid",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "lab-flow-contract-v1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "id": "teacherAssistantLabFlow",
+  "tags": []
+}

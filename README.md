@@ -1,65 +1,88 @@
-# EduTEchIA - Laboratorio de Innovación Pedagógica 4.0 🚀
+# EduTEchIA - Laboratorio de Innovacion Pedagogica 4.0
 
-**EduTEchIA** es un ecosistema avanzado diseñado para transformar la planificación docente mediante Inteligencia Artificial disruptiva. Más allá de un chatbot, es un motor de diseño curricular que integra auditoría pedagógica, estrés de aula y alineación legal automatizada.
+**EduTEchIA** es un ecosistema orientado a transformar la planificacion docente mediante IA. El frontend genera actividades con ayuda de `n8n` y expone un laboratorio de analisis pedagogico sobre cada actividad.
 
-## ✨ Características Premium & Innovación
+## Caracteristicas
 
-### 🧪 Laboratorio de Innovación (Gemini Powered)
-Suite de herramientas disruptivas para elevar la calidad de cada actividad:
-- **Consejo de Sabios**: Debate pedagógico multi-agente donde expertos virtuales (Piaget, Vygotsky, Robinson) auditan tu propuesta.
-- **Simulacro de Estrés**: Identificación de puntos de fricción reales en el aula y generación de protocolos de respuesta inmediata.
-- **Gemelo Curricular LOMLOE**: Traducción profunda de la actividad al marco legal español, mapeando competencias y criterios.
-- **Zero Jargon (Padres)**: Traducción de la jerga pedagógica a un lenguaje cálido y directo para la comunicación con familias.
-- **IA Espejo (Anti-Agent)**: Crítica radical que detecta sesgos, "efectos placebo" y debilidades ocultas en la propuesta.
+### Laboratorio de innovacion
 
-### 💎 Diseño Luxury & Experiencia de Usuario
-- **Sistema Background de Partículas**: Fondo dinámico con tsparticles y orbes de luz para una atmósfera premium.
-- **Interfaz Neuro-Adaptativa**: Feedback visual (glow adaptativo) cuando la IA detecta patrones de aprendizaje disruptivo.
-- **Arquitectura de Cristal (Glassmorphism)**: Paneles con efectos de brillo, shimmer y desenfoque de alta fidelidad.
-- **Responsive Mastery**: Maquetación optimizada para máxima densidad en pantallas ultra-wide y rejilla adaptable en móviles.
+- **Consejo de Sabios**: debate pedagogico multiagente.
+- **Simulacro de Estres**: deteccion de puntos de friccion en aula.
+- **Gemelo Curricular LOMLOE**: vinculacion al marco legal espanol.
+- **Zero Jargon (Padres)**: traduccion de la actividad a lenguaje familiar.
+- **IA Espejo**: critica de sesgos, placebo pedagogico y debilidades.
 
-### 🎙️ Funcionalidades Core
-- **Interacción Multimodal**: Dictado por voz (Mic) integrado para una entrada de datos natural.
-- **Exportación Profesional**: Sistema optimizado de impresión y PDF para materiales listos para el aula.
-- **Persistencia Inteligente**: Gestión de sesiones local para recuperación inmediata de hilos de trabajo.
+### Experiencia de usuario
 
-## 🛠️ Stack Tecnológico
+- Dictado por voz.
+- Exportacion para impresion y PDF.
+- Persistencia de sesion en navegador.
+- Interfaz visual con Motion y fondo de particulas.
+
+## Stack tecnologico
 
 - **Frontend:** React 18 + Vite
-- **Estilos:** Tailwind CSS 4.0 + Custom Design System
-- **Inteligencia Artificial:** Google Gemini AI SDK (Gemini 3 Flash Preview)
-- **Visuales & Efectos:** Motion (react-motion) + tsParticles
-- **Orquestación:** Webhook de n8n para generación de contenido base
+- **Estilos:** Tailwind CSS 4.0
+- **Visuales:** Motion + tsParticles
+- **Backend IA:** `n8n`
+- **Proveedor de modelo:** `LM Studio`, consumido solo desde `n8n`
 
-## 🔌 Integración de n8n
-La aplicación consulta un flujo de n8n que centraliza la lógica pedagógica inicial:
+## Integracion de n8n
+
+La aplicacion usa `n8n` como backend unico para IA:
+
+- `POST /webhook/teacher-assistant` para la generacion principal de actividades.
+- `POST /webhook/teacher-assistant-lab` para los modulos del laboratorio de innovacion.
+- Export del chat principal: `n8n/Teacher Assistant Conversational Flow.json`
+- Export del laboratorio: `n8n/Teacher Assistant Lab Flow.json`
+
+En produccion, el frontend no debe llamar directamente a `LM Studio`. Toda llamada debe seguir el circuito `frontend -> n8n -> LM Studio`.
+
+### Contrato recomendado para laboratorio
 
 ```json
 {
-  "type": "final_activity",
-  "message": "Mensaje de la IA...",
+  "sessionId": "abc123",
+  "action": "expert_debate",
   "activity": {
     "title": "Nombre",
     "objective": "Objetivo",
-    "steps": ["Paso 1"],
-    "adaptations": ["Estrategias"],
-    "assessment": ["Criterios"]
-  }
+    "steps": ["Paso 1"]
+  },
+  "timestamp": "2026-04-24T20:00:00.000Z"
 }
 ```
 
-## 🚀 Instalación y Desarrollo
+Respuesta esperada:
 
-1. **Instalar Dependencias:**
-   ```bash
-   npm install
-   ```
-2. **Configurar Entorno:**
-   - Crear `.env` con `GEMINI_API_KEY`.
-3. **Desarrollo:**
-   ```bash
-   npm run dev
-   ```
+```json
+{
+  "ok": true,
+  "type": "expert_debate",
+  "data": [],
+  "message": "Operation completed successfully."
+}
+```
 
----
-*Desarrollado con ❤️ para potenciar la educación del siglo XXI.*
+Consulta `docs/n8n-lmstudio-contract.md` para la especificacion completa del flujo esperado.
+
+## Instalacion y desarrollo
+
+1. Instalar dependencias:
+
+```bash
+npm install
+```
+
+2. Crear `.env`:
+
+```bash
+VITE_N8N_CHAT_WEBHOOK_URL="https://n8n-i9qf.onrender.com/webhook/teacher-assistant"
+VITE_N8N_LAB_WEBHOOK_URL="https://n8n-i9qf.onrender.com/webhook/teacher-assistant-lab"
+```
+
+3. Ejecutar en desarrollo:
+
+```bash
+npm run dev
+```

@@ -7,9 +7,10 @@ import { Message, WebhookResponse, Activity } from './types';
 import { saveChatHistory, getSessionId, getChatHistory, clearSession as clearStorageSession } from './lib/storage';
 import ActivityCard from './components/ActivityCard';
 import { ParticlesBackground } from './components/ParticlesBackground';
+import { API_CONFIG } from './config/api';
 
 // === CONFIGURACIÓN ===
-const N8N_WEBHOOK_URL = "https://n8n-i9qf.onrender.com/webhook/teacher-assistant";
+const N8N_WEBHOOK_URL = API_CONFIG.chatWebhookUrl;
 // =====================
 
 const STAGES = ["Infantil", "Primaria", "Secundaria", "Bachillerato"];

@@ -1,0 +1,360 @@
+{
+  "name": "Teacher Assistant Conversational Flow",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Chat principal\n- `POST /webhook/teacher-assistant`\n- Normaliza `stage/subject/duration`\n- Genera actividad y responde JSON estable\n- Persiste sesion en Supabase si hay `sessionId`",
+        "height": 396,
+        "width": 428,
+        "color": 4
+      },
+      "id": "sticky-chat-overview",
+      "name": "Chat Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1200,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "teacher-assistant",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "chat-webhook",
+      "name": "Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        592
+      ],
+      "webhookId": "teacher-assistant-chat"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $json.body || $json || {};\n\nfunction clean(value) {\n  return String(value ?? '').replace(/\\s+/g, ' ').trim();\n}\n\nfunction normalized(value) {\n  return clean(value)\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase();\n}\n\nfunction pick(source, keys) {\n  if (!source || typeof source !== 'object' || Array.isArray(source)) return '';\n  for (const key of keys) {\n    if (source[key] !== undefined && source[key] !== null && clean(source[key])) {\n      return clean(source[key]);\n    }\n  }\n  return '';\n}\n\nfunction normalizeStage(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  if (/infantil|preescolar/.test(text)) return 'Infantil';\n  if (/primaria/.test(text)) return 'Primaria';\n  if (/secundaria/.test(text)) return 'Secundaria';\n  if (/bachillerato/.test(text)) return 'Bachillerato';\n  return clean(value);\n}\n\nfunction normalizeSubject(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  if (/educacion fisica|ed\\.? fisica/.test(text)) return 'Ed. Fisica';\n  if (/matematic/.test(text)) return 'Matematicas';\n  if (/lengua|lenguaje/.test(text)) return 'Lengua';\n  if (/ciencias?/.test(text)) return 'Ciencias';\n  if (/historia/.test(text)) return 'Historia';\n  if (/ingles/.test(text)) return 'Ingles';\n  if (/musica/.test(text)) return 'Musica';\n  if (/arte/.test(text)) return 'Arte';\n  return clean(value);\n}\n\nfunction normalizeDuration(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  const match = text.match(/\\b(\\d{1,3})\\s*(min|minutos|hora|horas)\\b/);\n  if (!match) return clean(value);\n  const amount = Number(match[1]);\n  if (!Number.isFinite(amount)) return clean(value);\n  if (match[2].startsWith('hora')) {\n    return amount === 1 ? '1 hora' : `${amount} horas`;\n  }\n  return `${amount} min`;\n}\n\nconst rawMessage = clean(input.message || input.text);\nconst embeddedContextMatch = rawMessage.match(/^\\[CONTEXTO PRE-CARGADO:\\s*([^\\]]+)\\]/i);\nconst embeddedContext = {};\nif (embeddedContextMatch) {\n  const block = clean(embeddedContextMatch[1]);\n  for (const piece of block.split('|')) {\n    const [rawKey, ...rest] = piece.split(':');\n    const key = normalized(rawKey);\n    const value = clean(rest.join(':'));\n    if (!value) continue;\n    if (['nivel', 'stage', 'etapa', 'level'].includes(key)) embeddedContext.stage = value;\n    if (['subject', 'materia', 'asignatura'].includes(key)) embeddedContext.subject = value;\n    if (key.startsWith('duraci') || ['duration', 'tiempo'].includes(key)) embeddedContext.duration = value;\n  }\n}\n\nconst context = input.context && typeof input.context === 'object' && !Array.isArray(input.context)\n  ? input.context\n  : {};\n\nconst profile = {\n  stage: normalizeStage(pick(context, ['stage', 'nivel', 'etapa', 'level']) || embeddedContext.stage),\n  subject: normalizeSubject(pick(context, ['subject', 'materia', 'asignatura']) || embeddedContext.subject),\n  duration: normalizeDuration(pick(context, ['duration', 'duracion', 'tiempo']) || embeddedContext.duration)\n};\n\nreturn [{\n  json: {\n    sessionId: clean(input.sessionId),\n    message: clean(rawMessage.replace(/^\\[CONTEXTO PRE-CARGADO:[^\\]]+\\]\\s*/i, '')),\n    profile,\n    requestedAt: clean(input.timestamp) || new Date().toISOString()\n  }\n}];"
+      },
+      "id": "chat-normalize",
+      "name": "Normalize Input1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -864,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = { ...$json };\n\nfunction clean(value) {\n  return String(value ?? '').replace(/\\s+/g, ' ').trim();\n}\n\nconst hasProfile = Object.values(input.profile || {}).some((value) => clean(value));\nconst missingFields = ['stage', 'subject', 'duration'].filter((key) => !clean(input.profile?.[key]));\nconst hasUsefulRequest = Boolean(clean(input.message) || hasProfile);\n\nlet type = 'clarification';\nlet message = '';\nlet shouldCallModel = true;\n\nif (!clean(input.sessionId)) {\n  type = 'error';\n  message = 'sessionId es obligatorio para usar el asistente docente.';\n  shouldCallModel = false;\n} else if (!hasUsefulRequest) {\n  type = 'clarification';\n  message = 'Necesito un mensaje o contexto educativo para ayudarte a planificar la actividad.';\n  shouldCallModel = false;\n} else if (!clean(input.message) && missingFields.length > 0) {\n  type = 'clarification';\n  message = `Necesito estos datos para seguir: ${missingFields.join(', ')}.`;\n  shouldCallModel = false;\n}\n\nreturn [{\n  json: {\n    ...input,\n    missingFields,\n    shouldCallModel,\n    validationType: type,\n    validationMessage: message\n  }\n}];"
+      },
+      "id": "chat-validate",
+      "name": "Validate Request1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const config = {\n  lmStudioUrl: 'https://realtor-employee-cafe-offshore.trycloudflare.com/v1/chat/completions',\n  lmStudioKey: 'CHANGE_ME_LM_STUDIO_TOKEN',\n  lmModel: 'google/gemma-4-e2b',\n  timeout: 45000,\n  supabaseUrl: 'https://zvsfkafxicgutlrotugz.supabase.co/rest/v1/sessions?on_conflict=session_id',\n  supabaseKey: 'sb_publishable_-PEWfNAp_rfgoSMZZHhHyQ_iKr2qsTn'\n};\n\nreturn [{ json: { ...$json, config } }];"
+      },
+      "id": "chat-config",
+      "name": "AI Config1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "numberOutputs": 2,
+        "output": "={{ $json.shouldCallModel ? 0 : 1 }}"
+      },
+      "id": "chat-route",
+      "name": "Route Request1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -96,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"AI Config1\").item.json.config.lmStudioUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ \"Bearer \" + $(\"AI Config1\").item.json.config.lmStudioKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ (() => {\n  const source = $(\"AI Config1\").item.json;\n  return {\n    model: source.config.lmModel,\n    temperature: 0.3,\n    stream: false,\n    messages: [\n      {\n        role: 'system',\n        content: 'Eres un asistente docente. Debes devolver solo JSON valido con este shape exacto: {\"stage\":\"\",\"subject\":\"\",\"duration\":\"\",\"activity\":{\"title\":\"\",\"objective\":\"\",\"materials\":[],\"steps\":[],\"closure\":\"\",\"assessment\":[]}}. Usa stage, subject y duration como nombres canonicos. Si algun dato falta pero es inferible desde el mensaje, infierelo. No devuelvas markdown ni texto fuera del JSON.'\n      },\n      {\n        role: 'user',\n        content: JSON.stringify({\n          sessionId: source.sessionId,\n          requestedAt: source.requestedAt,\n          profile: source.profile,\n          message: source.message\n        })\n      }\n    ]\n  };\n})() }}"
+      },
+      "id": "chat-generate",
+      "name": "Generate Activity1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        160,
+        496
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const current = $json || {};\nconst source = $(\"AI Config1\").item.json;\n\nfunction clean(value) {\n  return String(value ?? '').replace(/\\s+/g, ' ').trim();\n}\n\nfunction normalized(value) {\n  return clean(value)\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase();\n}\n\nfunction parseJson(text) {\n  if (!text || typeof text !== 'string') return null;\n  const trimmed = text.trim().replace(/^```json\\s*/i, '').replace(/^```\\s*/i, '').replace(/\\s*```$/i, '').trim();\n  try {\n    return JSON.parse(trimmed);\n  } catch (error) {}\n  const firstBrace = trimmed.indexOf('{');\n  const lastBrace = trimmed.lastIndexOf('}');\n  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {\n    try {\n      return JSON.parse(trimmed.slice(firstBrace, lastBrace + 1));\n    } catch (error) {}\n  }\n  return null;\n}\n\nfunction normalizeStage(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  if (/infantil|preescolar/.test(text)) return 'Infantil';\n  if (/primaria/.test(text)) return 'Primaria';\n  if (/secundaria/.test(text)) return 'Secundaria';\n  if (/bachillerato/.test(text)) return 'Bachillerato';\n  return clean(value);\n}\n\nfunction normalizeSubject(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  if (/educacion fisica|ed\\.? fisica/.test(text)) return 'Ed. Fisica';\n  if (/matematic/.test(text)) return 'Matematicas';\n  if (/lengua|lenguaje/.test(text)) return 'Lengua';\n  if (/ciencias?/.test(text)) return 'Ciencias';\n  if (/historia/.test(text)) return 'Historia';\n  if (/ingles/.test(text)) return 'Ingles';\n  if (/musica/.test(text)) return 'Musica';\n  if (/arte/.test(text)) return 'Arte';\n  return clean(value);\n}\n\nfunction normalizeDuration(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  const match = text.match(/\\b(\\d{1,3})\\s*(min|minutos|hora|horas)\\b/);\n  if (!match) return clean(value);\n  const amount = Number(match[1]);\n  if (!Number.isFinite(amount)) return clean(value);\n  if (match[2].startsWith('hora')) return amount === 1 ? '1 hora' : `${amount} horas`;\n  return `${amount} min`;\n}\n\nfunction toArray(value) {\n  if (Array.isArray(value)) return value.map((item) => clean(item)).filter(Boolean);\n  const text = clean(value);\n  return text ? [text] : [];\n}\n\nfunction normalizeActivity(activity) {\n  const safe = activity && typeof activity === 'object' ? activity : {};\n  return {\n    title: clean(safe.title),\n    objective: clean(safe.objective),\n    materials: toArray(safe.materials || safe.resources_required),\n    steps: toArray(safe.steps || safe.instructions),\n    closure: clean(safe.closure),\n    assessment: toArray(safe.assessment || safe.evaluation)\n  };\n}\n\nfunction inferTopic(text, subject) {\n  const safeText = normalized(text);\n  if (/fraccion/.test(safeText)) return 'fracciones';\n  if (/lectura/.test(safeText)) return 'lectura guiada';\n  if (/ciclo del agua/.test(safeText)) return 'ciclo del agua';\n  return clean(subject) ? `contenidos de ${subject}` : 'contenido de clase';\n}\n\nfunction buildFallbackActivity(profile, text) {\n  const topic = inferTopic(text, profile.subject);\n  return {\n    title: `Actividad de ${profile.subject || 'clase'}: ${topic}`,\n    objective: `Trabajar ${topic} con una propuesta breve, clara y aplicable al aula.`,\n    materials: ['Papel y lapiz', 'Pizarra o soporte visual simple'],\n    steps: [\n      `Presenta un ejemplo breve sobre ${topic} conectandolo con el contexto del grupo.`,\n      'Guia una practica corta con una consigna concreta y comprueba la comprension antes de cerrar.',\n      'Cierra con una verificacion oral rapida y una aplicacion individual o en parejas.'\n    ],\n    closure: 'Recoge una idea final del grupo y conecta el aprendizaje con la siguiente sesion.',\n    assessment: ['Observar si siguen la consigna y si aplican el contenido con apoyo minimo.']\n  };\n}\n\nconst invalidBranch = !source.shouldCallModel;\nconst raw = current?.choices?.[0]?.message?.content\n  ?? current?.data?.choices?.[0]?.message?.content\n  ?? (typeof current?.message === 'string' ? current.message : '');\nconst parsed = parseJson(raw);\nconst parsedProfile = {\n  stage: normalizeStage(parsed?.stage),\n  subject: normalizeSubject(parsed?.subject),\n  duration: normalizeDuration(parsed?.duration)\n};\nconst profile = {\n  stage: source.profile.stage || parsedProfile.stage,\n  subject: source.profile.subject || parsedProfile.subject,\n  duration: source.profile.duration || parsedProfile.duration\n};\n\nlet responsePayload;\nif (invalidBranch) {\n  responsePayload = {\n    type: source.validationType,\n    message: source.validationMessage,\n    missingFields: source.missingFields,\n    profile,\n    activity: null\n  };\n} else {\n  const activity = normalizeActivity(parsed?.activity || parsed);\n  const validActivity = Boolean(activity.title && activity.objective && activity.steps.length > 0);\n  const providerFailed = Boolean(current.error || current.statusCode >= 400 || !validActivity);\n  const finalActivity = providerFailed\n    ? buildFallbackActivity(profile, source.message)\n    : activity;\n\n  responsePayload = {\n    type: 'final_activity',\n    message: providerFailed\n      ? 'Actividad generada con fallback controlado porque LM Studio no devolvio un JSON valido.'\n      : 'Actividad generada correctamente.',\n    missingFields: [],\n    profile,\n    activity: finalActivity\n  };\n}\n\nconst shouldPersist = Boolean(clean(source.sessionId));\nconst persistencePayload = shouldPersist\n  ? {\n      session_id: source.sessionId,\n      profile,\n      last_activity: responsePayload.type === 'final_activity' ? responsePayload.activity : {},\n      conversation_state: responsePayload.type === 'final_activity' ? 'generated' : 'collecting_info'\n    }\n  : null;\n\nreturn [{ json: { responsePayload, persistencePayload, shouldPersist } }];"
+      },
+      "id": "chat-build-response",
+      "name": "Build Chat Response1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "numberOutputs": 2,
+        "output": "={{ $json.shouldPersist ? 0 : 1 }}"
+      },
+      "id": "chat-route-persist",
+      "name": "Route Persistence1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        672,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"AI Config1\").item.json.config.supabaseUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $(\"AI Config1\").item.json.config.supabaseKey }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ \"Bearer \" + $(\"AI Config1\").item.json.config.supabaseKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $(\"Build Chat Response1\").item.json.persistencePayload }}"
+      },
+      "id": "chat-persist",
+      "name": "Supabase Upsert1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        928,
+        496
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const base = $(\"Build Chat Response1\").item.json.responsePayload;\nconst current = $json || {};\nconst cameDirect = Object.prototype.hasOwnProperty.call(current, 'responsePayload');\nif (cameDirect) {\n  return [{ json: base }];\n}\n\nconst persistenceFailed = Boolean(\n  current.error ||\n  current.code ||\n  (typeof current.statusCode === 'number' && current.statusCode >= 400)\n);\n\nif (!persistenceFailed) {\n  return [{ json: base }];\n}\n\nreturn [{\n  json: {\n    ...base,\n    message: `${base.message} No se pudo guardar la sesion en Supabase.`\n  }\n}];"
+      },
+      "id": "chat-format-response",
+      "name": "Format Response1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}"
+      },
+      "id": "chat-respond",
+      "name": "Respond1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        592
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Normalize Input1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Input1": {
+      "main": [
+        [
+          {
+            "node": "Validate Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Request1": {
+      "main": [
+        [
+          {
+            "node": "AI Config1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Config1": {
+      "main": [
+        [
+          {
+            "node": "Route Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Request1": {
+      "main": [
+        [
+          {
+            "node": "Generate Activity1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Chat Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Activity1": {
+      "main": [
+        [
+          {
+            "node": "Build Chat Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Chat Response1": {
+      "main": [
+        [
+          {
+            "node": "Route Persistence1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Persistence1": {
+      "main": [
+        [
+          {
+            "node": "Supabase Upsert1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Upsert1": {
+      "main": [
+        [
+          {
+            "node": "Format Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response1": {
+      "main": [
+        [
+          {
+            "node": "Respond1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timezone": "Europe/Madrid",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "chat-flow-contract-v2",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "id": "teacherAssistantChatFlow",
+  "tags": []
+}
