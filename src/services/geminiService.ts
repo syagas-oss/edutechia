@@ -1,13 +1,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Activity } from "../types";
 
-// Lazy initialization to handle missing keys in static deployments
-let aiInstance: any = null;
+// Lazy initialization
+let genAI: any = null;
 
-  const getAI = () => {
-    if (aiInstance) return aiInstance;
-    
-    // Attempt multiple resolution strategies for production/dev compatibility
+const getModel = () => {
+  if (!genAI) {
     const apiKey = 
       import.meta.env.VITE_GEMINI_API_KEY || 
       process.env.GEMINI_API_KEY ||
@@ -16,14 +14,14 @@ let aiInstance: any = null;
     if (!apiKey || apiKey === "" || apiKey === "undefined") {
       throw new Error('CONFIG_REQUIRED_GEMINI');
     }
-    
-    aiInstance = new GoogleGenAI({ apiKey });
-    return aiInstance;
-  };
+    genAI = new GoogleGenAI(apiKey);
+  }
+  return genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+};
 
 export const geminiService = {
   async getExpertDebate(activity: Activity) {
-    const ai = getAI();
+    const model = getModel();
     const prompt = `Analiza esta actividad pedagógica:
     Título: ${activity.title}
     Objetivo: ${activity.objective}
@@ -36,10 +34,9 @@ export const geminiService = {
     
     Cada uno debe dar un punto positivo y una crítica constructiva breve. Responde en JSON.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: prompt,
-      config: {
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.ARRAY,
@@ -57,11 +54,11 @@ export const geminiService = {
       }
     });
 
-    return JSON.parse(response.text);
+    return JSON.parse(result.response.text());
   },
 
   async getStressTest(activity: Activity) {
-    const ai = getAI();
+    const model = getModel();
     const prompt = `Actúa como un simulador de aula de alto estrés. Analiza los riesgos de esta actividad:
     ${JSON.stringify(activity)}
     
@@ -70,10 +67,9 @@ export const geminiService = {
     Da una recomendación de "Extintor" para cada riesgo.
     Responde en JSON.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: prompt,
-      config: {
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -97,25 +93,21 @@ export const geminiService = {
       }
     });
 
-    return JSON.parse(response.text);
+    return JSON.parse(result.response.text());
   },
 
   async getCurriculumMapping(activity: Activity) {
-    const ai = getAI();
+    const model = getModel();
     const prompt = `Analiza esta actividad y vincúlala con el marco legal LOMLOE de España.
     Identifica Competencias Específicas, Criterios de Evaluación y Saberes Básicos que se están trabajando.
     Responde en formato Markdown estructurado.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `Actividad: ${activity.title}\nContexto: ${activity.objective}\n\n${prompt}`,
-    });
-
-    return response.text;
+    const result = await model.generateContent(`Actividad: ${activity.title}\nContexto: ${activity.objective}\n\n${prompt}`);
+    return result.response.text();
   },
 
   async getParentSummary(activity: Activity) {
-    const ai = getAI();
+    const model = getModel();
     const prompt = `Actúa como un puente entre la escuela y la casa. 
     Traduce esta actividad escolar para familias, eliminando cualquier tecnicismo pedagógico (jerga).
     Enfócate en:
@@ -125,16 +117,12 @@ export const geminiService = {
     
     Responde en formato Markdown cálido y directo.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `Actividad: ${JSON.stringify(activity)}\n\n${prompt}`,
-    });
-
-    return response.text;
+    const result = await model.generateContent(`Actividad: ${JSON.stringify(activity)}\n\n${prompt}`);
+    return result.response.text();
   },
 
   async getCriticMirror(activity: Activity) {
-    const ai = getAI();
+    const model = getModel();
     const prompt = `Actúa como el "Abogado del Diablo" pedagógico más escéptico. 
     Tu objetivo es encontrar los puntos ciegos, los sesgos implícitos o las debilidades ocultas de esta actividad.
     No seas destructivo, sé brutalmente sincero para mejorarla.
@@ -145,10 +133,9 @@ export const geminiService = {
     
     Responde en JSON.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `Actividad: ${JSON.stringify(activity)}\n\n${prompt}`,
-      config: {
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -163,6 +150,6 @@ export const geminiService = {
       }
     });
 
-    return JSON.parse(response.text);
+    return JSON.parse(result.response.text());
   }
 };
