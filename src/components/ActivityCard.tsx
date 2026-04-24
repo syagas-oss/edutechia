@@ -1,8 +1,14 @@
-import { useState } from 'react';
-import { motion } from 'motion/react';
-import { Copy, Check, Clock, Target, ListChecks, Sparkles, GraduationCap, Printer, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import Markdown from 'react-markdown';
+import { 
+  Copy, Check, Clock, Target, ListChecks, Sparkles, GraduationCap, 
+  Printer, ThumbsUp, ThumbsDown, Users, Flame, BookOpen, AlertTriangle,
+  Zap, Brain, Shield, Info, ArrowRight, Loader2
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { Activity } from '../types';
+import { geminiService } from '../services/geminiService';
 
 interface ActivityCardProps {
   activity: Activity;
@@ -11,6 +17,27 @@ interface ActivityCardProps {
 export default function ActivityCard({ activity }: ActivityCardProps) {
   const [copied, setCopied] = useState(false);
   const [rating, setRating] = useState<'up' | 'down' | null>(null);
+  
+  // New AI state
+  const [isDebating, setIsDebating] = useState(false);
+  const [debate, setDebate] = useState<any[] | null>(null);
+  const [isStressTesting, setIsStressTesting] = useState(false);
+  const [stressTest, setStressTest] = useState<any | null>(null);
+  const [isMappingCurr, setIsMappingCurr] = useState(false);
+  const [curriculumMarkdown, setCurriculumMarkdown] = useState<string | null>(null);
+
+  // Neuro-morphism detection
+  const isNeuroAdaptative = useMemo(() => {
+    const textToSearch = JSON.stringify(activity).toLowerCase();
+    const keywords = ['adhd', 'tdah', 'dislexia', 'atención', 'concentración', 'especiales', 'neae', 'tea', 'autismo'];
+    return keywords.some(k => textToSearch.includes(k));
+  }, [activity]);
+
+  const morphStyle = isNeuroAdaptative ? {
+    border: '2px solid rgba(16, 185, 129, 0.3)',
+    background: 'rgba(6, 182, 212, 0.02)',
+    boxShadow: '0 0 40px rgba(16, 185, 129, 0.05) inset'
+  } : {};
 
   // Fallback heuristic for the core identity of the card
   const finalTitle = activity.title || (activity as any).taskTitle || (activity as any).activityName || 'Actividad Pedagógica';
@@ -89,16 +116,69 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
     if (navigator.vibrate) navigator.vibrate(10);
   };
 
+  // AI Feature Handlers
+  const triggerDebate = async () => {
+    setIsDebating(true);
+    try {
+      const result = await geminiService.getExpertDebate(activity);
+      setDebate(result);
+      toast.success('Debate generado por el Consejo de Sabios');
+    } catch (e) {
+      toast.error('Error al invocar al Consejo de Sabios');
+    } finally {
+      setIsDebating(false);
+    }
+  };
+
+  const triggerStressTest = async () => {
+    setIsStressTesting(true);
+    try {
+      const result = await geminiService.getStressTest(activity);
+      setStressTest(result);
+      toast.success('Simulación de aula completada');
+    } catch (e) {
+      toast.error('Error en la simulación de estrés');
+    } finally {
+      setIsStressTesting(false);
+    }
+  };
+
+  const triggerCurriculumMapping = async () => {
+    setIsMappingCurr(true);
+    try {
+      const result = await geminiService.getCurriculumMapping(activity);
+      setCurriculumMarkdown(result);
+      toast.success('Vinculación curricular LOMLOE completada');
+    } catch (e) {
+      toast.error('Error al mapear el currículo');
+    } finally {
+      setIsMappingCurr(false);
+    }
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-      className="w-full glass-panel rounded-[2rem] p-6 sm:p-8 relative overflow-hidden group mt-4 mb-2 activity-card-print"
+      style={morphStyle}
+      className={`w-full glass-panel rounded-[2rem] p-6 sm:p-8 relative overflow-hidden group mt-4 mb-2 activity-card-print ${isNeuroAdaptative ? 'neuro-glow' : ''}`}
     >
       {/* Background ambient glow inside the card */}
       <div className="absolute -top-[30%] -right-[10%] w-[60%] h-[80%] bg-cyan-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-cyan-500/20 transition-colors duration-1000 ease-in-out" />
       <div className="absolute -bottom-[30%] -left-[10%] w-[50%] h-[60%] bg-purple-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-purple-500/20 transition-colors duration-1000 ease-in-out" />
+      
+      {isNeuroAdaptative && (
+        <div className="absolute top-0 right-0 p-4 z-20">
+          <motion.div 
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 rounded-full text-emerald-400 text-[10px] font-bold uppercase tracking-widest"
+          >
+            <Brain className="w-3 h-3" /> Morphismo Neuro-Activado
+          </motion.div>
+        </div>
+      )}
       
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 relative z-10 w-full">
         <div className="max-w-2xl">
@@ -276,6 +356,182 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Laboratorio de Innovación - New Disruptive Features Area */}
+        <div className="col-span-full mt-12 sm:mt-16 no-print relative z-10 w-full">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <h4 className="font-display text-[10px] font-bold text-white/30 uppercase tracking-[0.4em] px-4">
+              Laboratorio de Innovación
+            </h4>
+            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Feature 1: Consejo de Sabios */}
+            <button 
+              onClick={triggerDebate}
+              disabled={isDebating}
+              className="flex flex-col items-center gap-4 p-8 glass-panel hover:bg-white/5 hover:border-cyan-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[2rem] cursor-pointer"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-cyan-500/20 transition-all duration-500">
+                {isDebating ? <Loader2 className="w-7 h-7 text-cyan-400 animate-spin" /> : <Users className="w-7 h-7 text-cyan-400" /> }
+              </div>
+              <div className="space-y-1">
+                <span className="text-sm font-bold uppercase tracking-[0.2em] text-white">Consejo de Sabios</span>
+                <p className="text-[10px] text-white/40 leading-tight">Debate pedagógico multi-agente por expertos</p>
+              </div>
+            </button>
+
+            {/* Feature 2:Stress Test */}
+            <button 
+              onClick={triggerStressTest}
+              disabled={isStressTesting}
+              className="flex flex-col items-center gap-4 p-8 glass-panel hover:bg-red-500/5 hover:border-red-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[2rem] cursor-pointer"
+            >
+               <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-red-500/20 transition-all duration-500">
+                {isStressTesting ? <Loader2 className="w-7 h-7 text-red-400 animate-spin" /> : <Flame className="w-7 h-7 text-red-400" /> }
+               </div>
+               <div className="space-y-1">
+                <span className="text-sm font-bold uppercase tracking-[0.2em] text-white">Simulacro de Estrés</span>
+                <p className="text-[10px] text-white/40 leading-tight">Analítica de puntos de fricción reales</p>
+               </div>
+            </button>
+
+            {/* Feature 3: Currículo Twin */}
+            <button 
+              onClick={triggerCurriculumMapping}
+              disabled={isMappingCurr}
+              className="flex flex-col items-center gap-4 p-8 glass-panel hover:bg-purple-500/5 hover:border-purple-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[2rem] cursor-pointer"
+            >
+               <div className="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-purple-500/20 transition-all duration-500">
+                {isMappingCurr ? <Loader2 className="w-7 h-7 text-purple-400 animate-spin" /> : <BookOpen className="w-7 h-7 text-purple-400" /> }
+              </div>
+              <div className="space-y-1">
+                <span className="text-sm font-bold uppercase tracking-[0.2em] text-white">Gemelo Curricular</span>
+                <p className="text-[10px] text-white/40 leading-tight">Marco legal LOMLOE automatizado</p>
+              </div>
+            </button>
+          </div>
+
+          {/* Display Areas for AI features */}
+          <AnimatePresence mode="wait">
+            {/* Debate results */}
+            {debate && (
+              <motion.div 
+                key="debate"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 overflow-hidden"
+              >
+                {debate.map((item, i) => (
+                  <div key={i} className="p-8 glass-panel bg-cyan-500/[0.08] border-cyan-500/30 rounded-[2rem] relative hover:bg-cyan-500/[0.12] transition-colors duration-500">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 rounded-full bg-cyan-400/20 flex items-center justify-center border border-cyan-400/30">
+                        <Brain className="w-5 h-5 text-cyan-400" />
+                      </div>
+                      <span className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">{item.role}</span>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="p-4 bg-emerald-500/15 rounded-2xl border border-emerald-500/30 shadow-sm">
+                        <span className="text-[10px] uppercase font-bold text-emerald-400 block mb-2 tracking-widest">Punto Focal Positivo</span>
+                        <p className="text-[15px] text-white/95 font-medium leading-snug">{item.pros}</p>
+                      </div>
+                      <div className="p-4 bg-red-500/15 rounded-2xl border border-red-500/30 shadow-sm">
+                        <span className="text-[10px] uppercase font-bold text-red-100 block mb-2 tracking-widest opacity-80">Riesgo a Contemplar</span>
+                        <p className="text-[15px] text-red-100/90 italic leading-snug">{item.cons}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <button 
+                  onClick={() => setDebate(null)}
+                  className="col-span-full text-center text-[10px] text-white/20 hover:text-white/40 py-2"
+                >
+                  Cerrar debate
+                </button>
+              </motion.div>
+            )}
+
+            {/* Stress Test results */}
+            {stressTest && (
+              <motion.div 
+                key="stress"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="mt-6 p-6 glass-panel bg-red-500/[0.02] border-red-500/10 rounded-2xl overflow-hidden"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex items-center gap-2">
+                    <Flame className="w-4 h-4 text-red-400" />
+                    <span className="text-xs font-bold uppercase tracking-widest text-red-400">Classroom Stress Test</span>
+                  </div>
+                  <div className="flex flex-col items-end">
+                     <span className="text-[11px] text-white/30 uppercase font-bold mb-1 tracking-widest">Stress Index</span>
+                     <span className="text-4xl font-display font-bold text-red-500">{stressTest.score}/100</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                  {stressTest.risks.map((risk: any, i: number) => (
+                    <div key={i} className="p-8 bg-white/[0.05] rounded-3xl border border-white/10 hover:border-red-500/40 transition-all duration-500 group/risk">
+                      <div className="flex items-center justify-between gap-2 mb-6">
+                         <div className="flex items-center gap-2">
+                           <AlertTriangle className="w-5 h-5 text-amber-500 group-hover/risk:scale-125 transition-transform" />
+                           <span className="text-xs font-bold text-amber-300 uppercase tracking-widest">Punto Crítico</span>
+                         </div>
+                         <span className="bg-red-500/20 text-red-400 text-[11px] px-3 py-1 rounded-full font-bold uppercase ring-1 ring-red-500/20">{risk.probability}</span>
+                      </div>
+                      <p className="text-lg text-white font-medium leading-tight mb-8">{risk.event}</p>
+                      <div className="flex flex-col gap-3 p-5 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 shadow-inner">
+                         <div className="flex items-center gap-2 mb-1">
+                           <Shield className="w-4 h-4 text-emerald-400" />
+                           <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-[0.15em]">Protocolo Extintor</span>
+                         </div>
+                         <p className="text-[13px] text-emerald-200/90 italic leading-relaxed">{risk.extinguisher}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button 
+                  onClick={() => setStressTest(null)}
+                  className="w-full text-center text-[10px] text-white/20 hover:text-white/40 py-2 mt-4"
+                >
+                  Resetear simulación
+                </button>
+              </motion.div>
+            )}
+
+            {/* Curriculum mapping results */}
+            {curriculumMarkdown && (
+              <motion.div 
+                 key="curr"
+                 initial={{ height: 0, opacity: 0 }}
+                 animate={{ height: 'auto', opacity: 1 }}
+                 exit={{ height: 0, opacity: 0 }}
+                 className="mt-6 p-6 glass-panel bg-purple-500/[0.02] border-purple-500/10 rounded-2xl overflow-hidden"
+              >
+                 <div className="flex items-center gap-2 mb-6">
+                    <BookOpen className="w-5 h-5 text-purple-400" />
+                    <span className="text-sm font-bold uppercase tracking-[0.2em] text-purple-400">Gemelo Curricular LOMLOE</span>
+                 </div>
+                 <div className="bg-white/[0.04] border border-white/10 rounded-3xl p-10 max-h-[700px] overflow-y-auto scrollbar-hide">
+                    <div className="markdown-body text-base text-white/90 leading-relaxed">
+                       <Markdown>{curriculumMarkdown}</Markdown>
+                    </div>
+                 </div>
+                 <button 
+                  onClick={() => setCurriculumMarkdown(null)}
+                  className="w-full text-center text-[10px] text-white/20 hover:text-white/40 py-2 mt-4"
+                >
+                  Cerrar vista legal
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
         </div>
 
         {/* Rating System Overlay Bottom Right */}
