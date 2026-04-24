@@ -127,8 +127,12 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
       const result = await geminiService.getExpertDebate(activity);
       setDebate(result);
       toast.success('Debate generado por el Consejo de Sabios');
-    } catch (e) {
-      toast.error('Error al invocar al Consejo de Sabios');
+    } catch (e: any) {
+      if (e.message === 'CONFIG_REQUIRED_GEMINI') {
+        toast.error('Configuración Requerida: Falta la clave de API para el laboratorio. En GitHub Pages, debes configurar VITE_GEMINI_API_KEY.');
+      } else {
+        toast.error('Error al invocar al Consejo de Sabios');
+      }
     } finally {
       setIsDebating(false);
     }
@@ -140,8 +144,12 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
       const result = await geminiService.getStressTest(activity);
       setStressTest(result);
       toast.success('Simulación de aula completada');
-    } catch (e) {
-      toast.error('Error en la simulación de estrés');
+    } catch (e: any) {
+      if (e.message === 'CONFIG_REQUIRED_GEMINI') {
+        toast.error('Configuración Requerida: Falta la clave de API para el laboratorio.');
+      } else {
+        toast.error('Error en la simulación de estrés');
+      }
     } finally {
       setIsStressTesting(false);
     }
@@ -153,8 +161,12 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
       const result = await geminiService.getCurriculumMapping(activity);
       setCurriculumMarkdown(result);
       toast.success('Vinculación curricular LOMLOE completada');
-    } catch (e) {
-      toast.error('Error al mapear el currículo');
+    } catch (e: any) {
+      if (e.message === 'CONFIG_REQUIRED_GEMINI') {
+        toast.error('Configuración Requerida: Falta la clave de API para el laboratorio.');
+      } else {
+        toast.error('Error al mapear el currículo');
+      }
     } finally {
       setIsMappingCurr(false);
     }
@@ -166,8 +178,12 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
       const result = await geminiService.getParentSummary(activity);
       setParentSummary(result);
       toast.success('Sincronía para Padres generada');
-    } catch (e) {
-      toast.error('Error al generar resumen para padres');
+    } catch (e: any) {
+      if (e.message === 'CONFIG_REQUIRED_GEMINI') {
+        toast.error('Configuración Requerida: Falta la clave de API para el laboratorio.');
+      } else {
+        toast.error('Error al generar resumen para padres');
+      }
     } finally {
       setIsGettingParentSummary(false);
     }
@@ -179,8 +195,12 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
       const result = await geminiService.getCriticMirror(activity);
       setCriticMirror(result);
       toast.success('IA Espejo activada: Puntos ciegos detectados');
-    } catch (e) {
-      toast.error('Error al activar IA Espejo');
+    } catch (e: any) {
+      if (e.message === 'CONFIG_REQUIRED_GEMINI') {
+        toast.error('Configuración Requerida: Falta la clave de API para el laboratorio.');
+      } else {
+        toast.error('Error al activar IA Espejo');
+      }
     } finally {
       setIsGettingCriticMirror(false);
     }

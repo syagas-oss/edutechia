@@ -1,12 +1,26 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Activity } from "../types";
 
-const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY || "" 
-});
+// Lazy initialization to handle missing keys in static deployments
+let aiInstance: any = null;
+
+const getAI = () => {
+  if (aiInstance) return aiInstance;
+  
+  // Try both Vite-style (production) and Node-style (dev) keys
+  const apiKey = (import.meta.env?.VITE_GEMINI_API_KEY) || process.env.GEMINI_API_KEY;
+  
+  if (!apiKey || apiKey === "") {
+    throw new Error('CONFIG_REQUIRED_GEMINI');
+  }
+  
+  aiInstance = new GoogleGenAI({ apiKey });
+  return aiInstance;
+};
 
 export const geminiService = {
   async getExpertDebate(activity: Activity) {
+    const ai = getAI();
     const prompt = `Analiza esta actividad pedagógica:
     Título: ${activity.title}
     Objetivo: ${activity.objective}
@@ -44,6 +58,7 @@ export const geminiService = {
   },
 
   async getStressTest(activity: Activity) {
+    const ai = getAI();
     const prompt = `Actúa como un simulador de aula de alto estrés. Analiza los riesgos de esta actividad:
     ${JSON.stringify(activity)}
     
@@ -83,6 +98,7 @@ export const geminiService = {
   },
 
   async getCurriculumMapping(activity: Activity) {
+    const ai = getAI();
     const prompt = `Analiza esta actividad y vincúlala con el marco legal LOMLOE de España.
     Identifica Competencias Específicas, Criterios de Evaluación y Saberes Básicos que se están trabajando.
     Responde en formato Markdown estructurado.`;
@@ -96,6 +112,7 @@ export const geminiService = {
   },
 
   async getParentSummary(activity: Activity) {
+    const ai = getAI();
     const prompt = `Actúa como un puente entre la escuela y la casa. 
     Traduce esta actividad escolar para familias, eliminando cualquier tecnicismo pedagógico (jerga).
     Enfócate en:
@@ -114,6 +131,7 @@ export const geminiService = {
   },
 
   async getCriticMirror(activity: Activity) {
+    const ai = getAI();
     const prompt = `Actúa como el "Abogado del Diablo" pedagógico más escéptico. 
     Tu objetivo es encontrar los puntos ciegos, los sesgos implícitos o las debilidades ocultas de esta actividad.
     No seas destructivo, sé brutalmente sincero para mejorarla.
