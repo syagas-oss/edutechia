@@ -4,19 +4,22 @@ import { Activity } from "../types";
 // Lazy initialization to handle missing keys in static deployments
 let aiInstance: any = null;
 
-const getAI = () => {
-  if (aiInstance) return aiInstance;
-  
-  // Try both Vite-style (production) and Node-style (dev) keys
-  const apiKey = (import.meta.env?.VITE_GEMINI_API_KEY) || process.env.GEMINI_API_KEY;
-  
-  if (!apiKey || apiKey === "") {
-    throw new Error('CONFIG_REQUIRED_GEMINI');
-  }
-  
-  aiInstance = new GoogleGenAI({ apiKey });
-  return aiInstance;
-};
+  const getAI = () => {
+    if (aiInstance) return aiInstance;
+    
+    // Attempt multiple resolution strategies for production/dev compatibility
+    const apiKey = 
+      import.meta.env.VITE_GEMINI_API_KEY || 
+      process.env.GEMINI_API_KEY ||
+      (window as any).VITE_GEMINI_API_KEY;
+    
+    if (!apiKey || apiKey === "" || apiKey === "undefined") {
+      throw new Error('CONFIG_REQUIRED_GEMINI');
+    }
+    
+    aiInstance = new GoogleGenAI({ apiKey });
+    return aiInstance;
+  };
 
 export const geminiService = {
   async getExpertDebate(activity: Activity) {
