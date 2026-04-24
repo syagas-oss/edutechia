@@ -9,12 +9,16 @@ async function callLMStudio(prompt: string, jsonMode: boolean = false) {
     const payload = {
       model: LM_MODEL,
       messages: [
-        { role: "system", content: "Eres un experto pedagogo altamente capacitado." },
+        { 
+          role: "system", 
+          content: jsonMode 
+            ? "Eres un asistente docente. Devuelve solo JSON valido. No incluyas markdown ni texto fuera del JSON." 
+            : "Eres un experto pedagogo altamente capacitado." 
+        },
         { role: "user", content: prompt }
       ],
-      temperature: 0.7,
-      stream: false,
-      ...(jsonMode && { response_format: { type: "json_object" } })
+      temperature: 0.3, // Match n8n temperature
+      stream: false
     };
 
     const response = await fetch(LM_STUDIO_URL, {
@@ -38,6 +42,30 @@ async function callLMStudio(prompt: string, jsonMode: boolean = false) {
   }
 }
 
+function parseRobustJson(text: string) {
+  if (!text || typeof text !== 'string') return null;
+  const trimmed = text.trim().replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
+  try {
+    return JSON.parse(trimmed);
+  } catch (error) {
+    const firstBrace = trimmed.indexOf('{');
+    const lastBrace = trimmed.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+      try {
+        return JSON.parse(trimmed.slice(firstBrace, lastBrace + 1));
+      } catch (e) {}
+    }
+    const firstBracket = trimmed.indexOf('[');
+    const lastBracket = trimmed.lastIndexOf(']');
+    if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {
+      try {
+        return JSON.parse(trimmed.slice(firstBracket, lastBracket + 1));
+      } catch (e) {}
+    }
+    throw error;
+  }
+}
+
 export const aiService = {
   async getExpertDebate(activity: Activity) {
     const prompt = `Analiza esta actividad pedagógica:
@@ -53,7 +81,7 @@ export const aiService = {
     Responde estrictamente en formato JSON como un array de objetos con las llaves exactamente así: [{"expert": "...", "role": "...", "pros": "...", "cons": "..."}]`;
 
     const response = await callLMStudio(prompt, true);
-    return JSON.parse(response);
+    return parseRobustJson(response);
   },
 
   async getStressTest(activity: Activity) {
@@ -65,7 +93,7 @@ export const aiService = {
     Responde estrictamente en formato JSON con llaves exactamente así: {"score": 85, "risks": [{"event": "...", "probability": "...", "extinguisher": "..."}]}`;
 
     const response = await callLMStudio(prompt, true);
-    return JSON.parse(response);
+    return parseRobustJson(response);
   },
 
   async getCurriculumMapping(activity: Activity) {
@@ -93,6 +121,6 @@ export const aiService = {
     Responde estrictamente en formato JSON con llaves exactamente así: {"elephant": "...", "bias": "...", "placebo_effect": "...", "suggestion": "..."}`;
 
     const response = await callLMStudio(prompt, true);
-    return JSON.parse(response);
+    return parseRobustJson(response);
   }
 };
