@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Activity } from '../types';
-import { geminiService } from '../services/geminiService';
+import { aiService } from '../services/aiService';
 
 interface ActivityCardProps {
   activity: Activity;
@@ -124,15 +124,11 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   const triggerDebate = async () => {
     setIsDebating(true);
     try {
-      const result = await geminiService.getExpertDebate(activity);
+      const result = await aiService.getExpertDebate(activity);
       setDebate(result);
       toast.success('Debate generado por el Consejo de Sabios');
     } catch (e: any) {
-      if (e.message === 'CONFIG_REQUIRED_GEMINI') {
-        toast.error('Configuración Requerida: Falta la clave de API para el laboratorio. En GitHub Pages, debes configurar VITE_GEMINI_API_KEY.');
-      } else {
-        toast.error('Error al invocar al Consejo de Sabios');
-      }
+      toast.error('Error al invocar al Consejo de Sabios');
     } finally {
       setIsDebating(false);
     }
@@ -141,15 +137,11 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   const triggerStressTest = async () => {
     setIsStressTesting(true);
     try {
-      const result = await geminiService.getStressTest(activity);
+      const result = await aiService.getStressTest(activity);
       setStressTest(result);
       toast.success('Simulación de aula completada');
     } catch (e: any) {
-      if (e.message === 'CONFIG_REQUIRED_GEMINI') {
-        toast.error('Configuración Requerida: Falta la clave de API para el laboratorio.');
-      } else {
-        toast.error('Error en la simulación de estrés');
-      }
+      toast.error('Error en la simulación de estrés');
     } finally {
       setIsStressTesting(false);
     }
@@ -158,15 +150,11 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   const triggerCurriculumMapping = async () => {
     setIsMappingCurr(true);
     try {
-      const result = await geminiService.getCurriculumMapping(activity);
+      const result = await aiService.getCurriculumMapping(activity);
       setCurriculumMarkdown(result);
       toast.success('Vinculación curricular LOMLOE completada');
     } catch (e: any) {
-      if (e.message === 'CONFIG_REQUIRED_GEMINI') {
-        toast.error('Configuración Requerida: Falta la clave de API para el laboratorio.');
-      } else {
-        toast.error('Error al mapear el currículo');
-      }
+      toast.error('Error al mapear el currículo');
     } finally {
       setIsMappingCurr(false);
     }
@@ -175,15 +163,11 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   const triggerParentSummary = async () => {
     setIsGettingParentSummary(true);
     try {
-      const result = await geminiService.getParentSummary(activity);
+      const result = await aiService.getParentSummary(activity);
       setParentSummary(result);
       toast.success('Sincronía para Padres generada');
     } catch (e: any) {
-      if (e.message === 'CONFIG_REQUIRED_GEMINI') {
-        toast.error('Configuración Requerida: Falta la clave de API para el laboratorio.');
-      } else {
-        toast.error('Error al generar resumen para padres');
-      }
+      toast.error('Error al generar resumen para padres');
     } finally {
       setIsGettingParentSummary(false);
     }
@@ -192,15 +176,11 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   const triggerCriticMirror = async () => {
     setIsGettingCriticMirror(true);
     try {
-      const result = await geminiService.getCriticMirror(activity);
+      const result = await aiService.getCriticMirror(activity);
       setCriticMirror(result);
       toast.success('IA Espejo activada: Puntos ciegos detectados');
     } catch (e: any) {
-      if (e.message === 'CONFIG_REQUIRED_GEMINI') {
-        toast.error('Configuración Requerida: Falta la clave de API para el laboratorio.');
-      } else {
-        toast.error('Error al activar IA Espejo');
-      }
+      toast.error('Error al activar IA Espejo');
     } finally {
       setIsGettingCriticMirror(false);
     }
