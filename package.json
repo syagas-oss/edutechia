@@ -13,6 +13,8 @@
   "dependencies": {
     "@google/genai": "^1.50.1",
     "@tailwindcss/vite": "^4.1.14",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.9.1",
     "@vitejs/plugin-react": "^5.0.4",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",

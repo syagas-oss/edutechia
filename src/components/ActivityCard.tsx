@@ -192,7 +192,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       style={morphStyle}
-      className={`w-full glass-panel rounded-[2rem] p-6 sm:p-8 relative overflow-hidden group mt-4 mb-2 activity-card-print ${isNeuroAdaptative ? 'neuro-glow' : ''}`}
+      className={`w-full glass-panel luxury-card shimmer-effect rounded-[2.5rem] p-6 sm:p-8 relative overflow-hidden group mt-4 mb-2 activity-card-print ${isNeuroAdaptative ? 'neuro-glow' : ''}`}
     >
       {/* Background ambient glow inside the card */}
       <div className="absolute -top-[30%] -right-[10%] w-[60%] h-[80%] bg-cyan-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-cyan-500/20 transition-colors duration-1000 ease-in-out" />
@@ -403,7 +403,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
             <button 
               onClick={triggerDebate}
               disabled={isDebating}
-              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel hover:bg-white/5 hover:border-cyan-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
+              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel shimmer-effect hover:bg-white/5 hover:border-cyan-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
             >
               <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-cyan-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-cyan-500/20 transition-all duration-500">
                 {isDebating ? <Loader2 className="w-5 h-5 sm:w-7 sm:h-7 text-cyan-400 animate-spin" /> : <Users className="w-5 h-5 sm:w-7 sm:h-7 text-cyan-400" /> }
@@ -418,7 +418,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
             <button 
               onClick={triggerStressTest}
               disabled={isStressTesting}
-              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel hover:bg-red-500/5 hover:border-red-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
+              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel shimmer-effect hover:bg-red-500/5 hover:border-red-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
             >
                <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-red-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-red-500/20 transition-all duration-500">
                 {isStressTesting ? <Loader2 className="w-5 h-5 sm:w-7 sm:h-7 text-red-400 animate-spin" /> : <Flame className="w-5 h-5 sm:w-7 sm:h-7 text-red-400" /> }
@@ -433,7 +433,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
             <button 
               onClick={triggerCurriculumMapping}
               disabled={isMappingCurr}
-              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel hover:bg-purple-500/5 hover:border-purple-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
+              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel shimmer-effect hover:bg-purple-500/5 hover:border-purple-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
             >
                <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-purple-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-purple-500/20 transition-all duration-500">
                 {isMappingCurr ? <Loader2 className="w-5 h-5 sm:w-7 sm:h-7 text-purple-400 animate-spin" /> : <BookOpen className="w-5 h-5 sm:w-7 sm:h-7 text-purple-400" /> }
@@ -448,7 +448,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
             <button 
               onClick={triggerParentSummary}
               disabled={isGettingParentSummary}
-              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel hover:bg-emerald-500/5 hover:border-emerald-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
+              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel shimmer-effect hover:bg-emerald-500/5 hover:border-emerald-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
             >
                <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-emerald-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-emerald-500/20 transition-all duration-500">
                 {isGettingParentSummary ? <Loader2 className="w-5 h-5 sm:w-7 sm:h-7 text-emerald-400 animate-spin" /> : <Info className="w-5 h-5 sm:w-7 sm:h-7 text-emerald-400" /> }
@@ -463,7 +463,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
             <button 
               onClick={triggerCriticMirror}
               disabled={isGettingCriticMirror}
-              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel hover:bg-amber-500/5 hover:border-amber-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
+              className="flex flex-col items-center gap-3 sm:gap-4 p-4 sm:p-8 glass-panel shimmer-effect hover:bg-amber-500/5 hover:border-amber-400/30 transition-all text-center group/lab disabled:opacity-50 rounded-[1.5rem] sm:rounded-[2rem] cursor-pointer"
             >
                <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-amber-500/10 flex items-center justify-center group-hover/lab:scale-110 group-hover/lab:bg-amber-500/20 transition-all duration-500">
                 {isGettingCriticMirror ? <Loader2 className="w-5 h-5 sm:w-7 sm:h-7 text-amber-400 animate-spin" /> : <Zap className="w-5 h-5 sm:w-7 sm:h-7 text-amber-400" /> }
