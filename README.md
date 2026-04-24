@@ -1,73 +1,65 @@
-# EduTEchIA - Copiloto Pedagógico 4.0 🚀
+# EduTEchIA - Laboratorio de Innovación Pedagógica 4.0 🚀
 
-**EduTEchIA** es un asistente conversacional avanzado diseñado para transformar la planificación docente mediante Inteligencia Artificial. No es solo un chatbot; es un motor de diseño curricular que entiende el contexto educativo y genera materiales listos para el aula.
+**EduTEchIA** es un ecosistema avanzado diseñado para transformar la planificación docente mediante Inteligencia Artificial disruptiva. Más allá de un chatbot, es un motor de diseño curricular que integra auditoría pedagógica, estrés de aula y alineación legal automatizada.
 
-## ✨ Características Principales
+## ✨ Características Premium & Innovación
 
-- **🧠 Inteligencia Adaptativa:** Capaz de procesar respuestas de IA complejas y variables gracias a una capa de normalización inteligente y renderizado dinámico de "Datos Adicionales".
-- **🎙️ Interfaz Multimodal:** Soporta dictado por voz (Mic) para una interacción manos libres más natural para el docente.
-- **📱 Experiencia PWA:** Instalable como aplicación en dispositivos móviles y escritorio, con soporte para modo offline básico.
-- **📄 Exportación a PDF e Impresión:** Genera hojas de actividad limpias y profesionales con un solo clic, optimizadas para impresión física.
-- **⚡ Feedback Táctil y Sonoro:** Respuesta inmediata mediante micro-vibraciones (hápticos) y sonidos sutiles para una mejor experiencia de usuario.
-- **📊 Sistema de Bento-Grid:** Visualización estructurada de actividades pedagógicas (Objetivos, Dinámicas, Adaptaciones y Evaluación).
-- **🔄 Persistencia Inteligente:** Gestión de sesiones local para no perder el hilo de la conversación.
+### 🧪 Laboratorio de Innovación (Gemini Powered)
+Suite de herramientas disruptivas para elevar la calidad de cada actividad:
+- **Consejo de Sabios**: Debate pedagógico multi-agente donde expertos virtuales (Piaget, Vygotsky, Robinson) auditan tu propuesta.
+- **Simulacro de Estrés**: Identificación de puntos de fricción reales en el aula y generación de protocolos de respuesta inmediata.
+- **Gemelo Curricular LOMLOE**: Traducción profunda de la actividad al marco legal español, mapeando competencias y criterios.
+- **Zero Jargon (Padres)**: Traducción de la jerga pedagógica a un lenguaje cálido y directo para la comunicación con familias.
+- **IA Espejo (Anti-Agent)**: Crítica radical que detecta sesgos, "efectos placebo" y debilidades ocultas en la propuesta.
+
+### 💎 Diseño Luxury & Experiencia de Usuario
+- **Sistema Background de Partículas**: Fondo dinámico con tsparticles y orbes de luz para una atmósfera premium.
+- **Interfaz Neuro-Adaptativa**: Feedback visual (glow adaptativo) cuando la IA detecta patrones de aprendizaje disruptivo.
+- **Arquitectura de Cristal (Glassmorphism)**: Paneles con efectos de brillo, shimmer y desenfoque de alta fidelidad.
+- **Responsive Mastery**: Maquetación optimizada para máxima densidad en pantallas ultra-wide y rejilla adaptable en móviles.
+
+### 🎙️ Funcionalidades Core
+- **Interacción Multimodal**: Dictado por voz (Mic) integrado para una entrada de datos natural.
+- **Exportación Profesional**: Sistema optimizado de impresión y PDF para materiales listos para el aula.
+- **Persistencia Inteligente**: Gestión de sesiones local para recuperación inmediata de hilos de trabajo.
 
 ## 🛠️ Stack Tecnológico
 
 - **Frontend:** React 18 + Vite
-- **Estilos:** Tailwind CSS (Arquitectura de paneles de cristal / Glassmorphism)
-- **Animaciones:** Framer Motion (Transiciones espaciales y efectos de entrada)
-- **Iconografía:** Lucide React
-- **Notificaciones:** Sonner
-- **Estado & Red:** Hooks de React + Webhook de n8n (o cualquier orquestador compatible)
+- **Estilos:** Tailwind CSS 4.0 + Custom Design System
+- **Inteligencia Artificial:** Google Gemini AI SDK (Gemini 3 Flash Preview)
+- **Visuales & Efectos:** Motion (react-motion) + tsParticles
+- **Orquestación:** Webhook de n8n para generación de contenido base
 
-## 🔌 Integración con IA (n8n)
-
-La aplicación conversa con un flujo de trabajo de n8n mediante un webhook que centraliza la lógica pedagógica.
-
-### Formato de Salida Esperado (JSON)
-EduTEchIA es resiliente a las variaciones de la IA, pero el esquema óptimo incluye:
+## 🔌 Integración de n8n
+La aplicación consulta un flujo de n8n que centraliza la lógica pedagógica inicial:
 
 ```json
 {
   "type": "final_activity",
-  "message": "Mensaje de la IA para el docente...",
+  "message": "Mensaje de la IA...",
   "activity": {
-    "title": "Nombre de la Actividad",
-    "objective": "Objetivo pedagógico central",
-    "duration": "Tiempo estimado",
-    "steps": ["Paso 1", "Paso 2"],
-    "adaptations": ["Estrategias para necesidades especiales"],
-    "assessment": ["Criterios de éxito"],
-    "resources_required": ["Materiales"]
+    "title": "Nombre",
+    "objective": "Objetivo",
+    "steps": ["Paso 1"],
+    "adaptations": ["Estrategias"],
+    "assessment": ["Criterios"]
   }
 }
 ```
-*Si la IA envía campos extra (ej: `curiosidades`, `tips_pro`), EduTEchIA los mostrará automáticamente en la sección "Datos Adicionales".*
 
 ## 🚀 Instalación y Desarrollo
 
-1. **Clonar e Instalar:**
+1. **Instalar Dependencias:**
    ```bash
    npm install
    ```
-
-2. **Ejecutar en Desarrollo:**
+2. **Configurar Entorno:**
+   - Crear `.env` con `GEMINI_API_KEY`.
+3. **Desarrollo:**
    ```bash
    npm run dev
    ```
 
-3. **Verificación de Tipos y Calidad:**
-   ```bash
-   npm run lint
-   ```
-
-## 📦 Despliegue
-
-El proyecto está configurado para desplegarse automáticamente en **GitHub Pages** mediante GitHub Actions en cada `push` a la rama `main`.
-
-- **PWA:** Los Service Workers se generan automáticamente para asegurar que la app se comporte como una aplicación nativa.
-- **Asset Optimization:** Los assets se comprimen y minifican durante el proceso de build.
-
 ---
-*Desarrollado con ❤️ para la comunidad educativa.*
+*Desarrollado con ❤️ para potenciar la educación del siglo XXI.*

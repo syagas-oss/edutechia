@@ -6,6 +6,7 @@ import useSound from 'use-sound';
 import { Message, WebhookResponse, Activity } from './types';
 import { saveChatHistory, getSessionId, getChatHistory, clearSession as clearStorageSession } from './lib/storage';
 import ActivityCard from './components/ActivityCard';
+import { ParticlesBackground } from './components/ParticlesBackground';
 
 // === CONFIGURACIÓN ===
 const N8N_WEBHOOK_URL = "https://n8n-i9qf.onrender.com/webhook/teacher-assistant";
@@ -220,9 +221,15 @@ export default function App() {
            data = data[0]; 
         }
 
-        // Normalize if falling back to direct Supabase record mapping without wrapper
-        if (!data.type && data.conversation_state) {
-          data.type = data.conversation_state === 'generated' ? 'final_activity' : 'clarification';
+        // Normalize if falling back to direct Supabase record mapping or new n8n format
+        if (!data.type) {
+          if (data.conversation_state) {
+            data.type = data.conversation_state === 'generated' ? 'final_activity' : 'clarification';
+          } else if (data.activity || data.last_activity) {
+            data.type = 'final_activity';
+          } else if (data.ok === true) {
+            data.type = 'text';
+          }
         }
         
         const rawActivity = data.activity || data.last_activity || data;
@@ -237,20 +244,33 @@ export default function App() {
 
           const standard: Activity = {
             title: String(findValue(['title', 'taskTitle', 'name', 'activityTitle', 'activity_name']) || 'Actividad Pedagógica'),
-            objective: String(findValue(['objective', 'goal', 'description', 'purpose', 'meta']) || findValue(['profile.objective']) || ''),
+            objective: String(findValue(['objective', 'goal', 'description', 'purpose', 'meta']) || findValue(['profile.objective']) || obj.objective || ''),
             duration: String(findValue(['duration', 'timeLimit', 'estimated_time_minutes', 'time', 'duracion']) || (data.profile?.duration) || 'Variable'),
             passage: findValue(['passage', 'text', 'reading', 'lectura']),
             questions: findValue(['questions', 'preguntas', 'assessment_questions']),
             steps: findValue(['steps', 'instructions', 'pasos', 'dynamic', 'development']),
             adaptations: findValue(['adaptations', 'special_needs', 'ajustes', 'adaptaciones']),
             assessment: findValue(['assessment', 'evaluation', 'evaluacion', 'grading']),
-            resources_required: findValue(['resources_required', 'resources', 'materiales', 'recursos']),
+            resources_required: findValue(['resources_required', 'resources', 'materiales', 'recursos', 'materials']),
+            closure: String(findValue(['closure', 'conclusion', 'cierre', 'finish']) || ''),
             difficulty_level: findValue(['difficulty_level', 'level', 'nivel', 'difficulty']),
           };
 
           // Capture any extra fields that might be useful but aren't in the standard schema
           // We'll store them as an extra hidden field for the card to render optionally
-          const knownKeys = ['title', 'taskTitle', 'name', 'activityTitle', 'activity_name', 'objective', 'goal', 'description', 'purpose', 'duration', 'timeLimit', 'estimated_time_minutes', 'time', 'passage', 'text', 'reading', 'questions', 'steps', 'instructions', 'adaptations', 'assessment', 'resources_required', 'difficulty_level'];
+          const knownKeys = [
+            'title', 'taskTitle', 'name', 'activityTitle', 'activity_name', 
+            'objective', 'goal', 'description', 'purpose', 'meta',
+            'duration', 'timeLimit', 'estimated_time_minutes', 'time', 'duracion',
+            'passage', 'text', 'reading', 'lectura',
+            'questions', 'preguntas', 'assessment_questions',
+            'steps', 'instructions', 'pasos', 'dynamic', 'development',
+            'adaptations', 'special_needs', 'ajustes', 'adaptaciones',
+            'assessment', 'evaluation', 'evaluacion', 'grading',
+            'resources_required', 'resources', 'materiales', 'recursos', 'materials',
+            'closure', 'conclusion', 'cierre', 'finish',
+            'difficulty_level', 'level', 'nivel', 'difficulty'
+          ];
           const extraData: Record<string, any> = {};
           Object.keys(obj).forEach(k => {
             if (!knownKeys.includes(k) && typeof obj[k] !== 'object') {
@@ -334,14 +354,20 @@ export default function App() {
   };
 
   return (
-    <div className="relative flex flex-col h-screen text-white overflow-hidden bg-[#02040a]">
+    <div className="relative flex flex-col h-screen text-white overflow-hidden bg-[#050505] selection:bg-cyan-500/30 selection:text-cyan-200">
       <Toaster position="top-center" richColors theme="dark" />
-      {/* Background Spatial Effects */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-cyan-900/20 blur-[120px] mix-blend-screen opacity-50 animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-fuchsia-900/10 blur-[150px] mix-blend-screen opacity-50 animate-pulse" style={{ animationDuration: '12s' }} />
-        {/* Subtle grid mesh overlay */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxyZWN0IHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgZmlsbD0idHJhbnNwYXJlbnQiPjwvcmVjdD4KPHBhdGggZD0iTTAgNDBoNDBNNDAgMHY0MCIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDMpIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiPjwvcGF0aD4KPC9zdmc+')] opacity-50"></div>
+      
+      {/* luxury background system */}
+      <ParticlesBackground />
+      
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-20">
+        {/* Dynamic Bloom Orbs */}
+        <div className="absolute top-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-cyan-900/10 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-20%] left-[-10%] w-[70vw] h-[70vw] rounded-full bg-purple-900/10 blur-[150px] animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[40vw] rounded-full bg-blue-900/5 blur-[100px]" />
+        
+        {/* Fine Grain Overlay */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay bg-[url('https://res.cloudinary.com/dn7how9as/image/upload/v1661803728/noise_v30px6.png')]" />
       </div>
 
       {/* Floating Header */}
@@ -349,7 +375,7 @@ export default function App() {
         <div className="flex items-center gap-4">
           <div className="relative group cursor-default">
             <div className="absolute inset-0 bg-cyan-500/20 rounded-xl blur-lg group-hover:bg-cyan-500/40 transition-all duration-500"></div>
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl glass-panel bg-white/5 flex items-center justify-center border-white/10 shadow-2xl relative overflow-hidden">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl glass-panel luxury-card shimmer-effect bg-white/5 flex items-center justify-center border-white/10 shadow-2xl relative overflow-hidden">
                <Cpu className="w-6 h-6 text-cyan-400 animate-pulse-slow" />
                <div className="absolute top-0 right-0 w-3 h-3 bg-fuchsia-500 rounded-bl-lg border-l border-b border-white/10"></div>
             </div>
@@ -358,7 +384,7 @@ export default function App() {
             <div className="flex items-center">
               <h1 className="font-display text-xl sm:text-2xl tracking-tighter text-white">
                 <span className="font-extralight opacity-70">Edu</span>
-                <span className="font-bold text-cyan-400">TEch</span>
+                <span className="font-bold luxury-gradient-text">TEch</span>
               </h1>
               <div className="ml-1.5 px-1.5 py-0.5 bg-cyan-400 rounded-md">
                  <span className="text-[10px] sm:text-[11px] font-black text-black leading-none uppercase">IA</span>
@@ -370,14 +396,14 @@ export default function App() {
 
         <button 
           onClick={clearSession} 
-          className="glass-panel px-4 py-2 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/50 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+          className="glass-panel luxury-card shimmer-effect px-4 py-2 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/50 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
         >
           <Trash2 className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Nueva Sesión</span>
         </button>
       </header>
 
       {/* Main Focus Area (Chat / Canvas) */}
-      <main className="flex-1 overflow-y-auto relative z-10 w-full flex flex-col items-center pt-28 pb-40 px-4 sm:px-6">
+      <main className="flex-1 overflow-y-auto relative z-10 w-full flex flex-col items-center pt-28 pb-40 px-4 sm:px-8">
         
         {/* Error Banner Floating Top */}
         <AnimatePresence>
@@ -394,7 +420,7 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        <div className="w-full max-w-4xl space-y-8 flex flex-col pb-8">
+        <div className="w-full max-w-[1400px] space-y-12 flex flex-col pb-8">
           
           <AnimatePresence>
             {messages.length === 0 && (
@@ -554,51 +580,64 @@ export default function App() {
       </main>
 
       {/* Floating Spatial Input Bar */}
-      <div className="absolute bottom-6 sm:bottom-10 w-full px-4 sm:px-8 z-40 flex justify-center pointer-events-none">
-        <div className="w-full max-w-3xl pointer-events-auto">
-          <div className="input-glass p-2 sm:p-2.5 rounded-[2.5rem] flex items-end gap-2 sm:gap-3 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] group focus-within:border-cyan-500/30 focus-within:bg-white/[0.05] focus-within:shadow-[0_20px_60px_-15px_rgba(6,182,212,0.2)] transition-all duration-500">
-            
-            {/* Mic Toggle */}
-            <button
-              onClick={toggleRecording}
-              className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
-                isRecording 
-                  ? 'bg-red-500/20 text-red-400 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-pulse' 
-                  : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white'
-              }`}
-              title={isRecording ? 'Detener dictado' : 'Dictar por voz'}
-            >
-              {isRecording ? <Square className="w-5 h-5 fill-current" /> : <Mic className="w-5 h-5" />}
-            </button>
-            
-            {/* Main Text Input */}
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Explica la actividad que necesitas..."
-              className="flex-1 max-h-32 min-h-[48px] py-3 px-2 bg-transparent border-none focus:ring-0 resize-none text-[15px] text-white placeholder-white/30 font-light"
-              style={{ overflowY: 'auto' }}
-              rows={1}
-            />
-            
-            {/* Send Button */}
-            <button
-              onClick={handleSend}
-              disabled={isLoading || (!input.trim() && !isRecording && Object.values(contextData).every(v => v === ''))}
-              className="w-12 h-12 rounded-full bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 disabled:bg-white/10 disabled:text-white/30 flex items-center justify-center text-black shrink-0 transition-all duration-300 disabled:hover:scale-100 hover:scale-[1.02] active:scale-95 disabled:shadow-none shadow-[0_0_30px_rgba(6,182,212,0.3)]"
-            >
-              <Send className="w-5 h-5 ml-1" />
-            </button>
-            
-          </div>
-          <div className="flex justify-center mt-4">
-             <span className="text-[9px] uppercase tracking-[0.3em] font-bold text-white/20 font-display">
-                Powered by N8N Engine
-             </span>
-          </div>
-        </div>
-      </div>
+      <AnimatePresence>
+        {!messages.some(m => m.type === 'activity') && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="absolute bottom-6 sm:bottom-10 w-full px-4 sm:px-8 z-40 flex justify-center pointer-events-none"
+          >
+            <div className="w-full max-w-3xl pointer-events-auto">
+              <div className="input-glass luxury-card shimmer-effect p-2 sm:p-2.5 rounded-[3rem] flex items-end gap-2 sm:gap-3 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.9)] group focus-within:border-cyan-500/40 focus-within:bg-white/[0.08] focus-within:shadow-[0_40px_100px_-20px_rgba(6,182,212,0.25)] transition-all duration-700">
+                
+                {/* Mic Toggle */}
+                <button
+                  onClick={toggleRecording}
+                  className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
+                    isRecording 
+                      ? 'bg-red-500/20 text-red-400 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-pulse' 
+                      : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white'
+                  }`}
+                  title={isRecording ? 'Detener dictado' : 'Dictar por voz'}
+                >
+                  {isRecording ? <Square className="w-5 h-5 fill-current" /> : <Mic className="w-5 h-5" />}
+                </button>
+                
+                {/* Main Text Input */}
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Explica la actividad que necesitas..."
+                  className="flex-1 max-h-32 min-h-[48px] py-3 px-2 bg-transparent border-none focus:ring-0 resize-none text-[15px] text-white placeholder-white/30 font-light"
+                  style={{ overflowY: 'auto' }}
+                  rows={1}
+                />
+                
+                {/* Send Button */}
+                <button
+                  onClick={handleSend}
+                  disabled={isLoading || (!input.trim() && !isRecording && Object.values(contextData).every(v => v === ''))}
+                  className="w-12 h-12 rounded-full bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 disabled:bg-white/10 disabled:text-white/30 flex items-center justify-center text-black shrink-0 transition-all duration-300 disabled:hover:scale-100 hover:scale-[1.02] active:scale-95 disabled:shadow-none shadow-[0_0_30px_rgba(6,182,212,0.3)]"
+                >
+                  {isLoading ? (
+                    <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                  ) : (
+                    <Send className="w-5 h-5 ml-1" />
+                  )}
+                </button>
+              </div>
+              
+              <div className="flex justify-center mt-4">
+                <span className="text-[9px] uppercase tracking-[0.3em] font-bold text-white/20 font-display">
+                    Powered by N8N Engine
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

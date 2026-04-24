@@ -43,6 +43,8 @@ jobs:
           fi
 
       - name: Build app
+        env:
+          VITE_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: npm run build
 
       - name: Upload Pages artifact

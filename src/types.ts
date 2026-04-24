@@ -12,6 +12,7 @@ export interface Activity {
   difficulty_level?: string;
   assessment?: string[];
   resources_required?: string[];
+  closure?: string;
 }
 
 export interface WebhookResponse {
