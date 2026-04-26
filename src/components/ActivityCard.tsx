@@ -221,7 +221,7 @@ export default function ActivityCard({ activity, providerMeta }: ActivityCardPro
                 Respuesta degradada
               </p>
               <p className="mt-1 text-sm leading-relaxed text-amber-50/85">
-                Esta actividad se devolvió con fallback porque LM Studio no respondió con un resultado válido.
+                Esta actividad se devolvió con fallback porque Gemini y/o LM Studio no respondieron con un resultado válido.
               </p>
               {providerMeta.providerFailureReason && (
                 <p className="mt-2 text-xs leading-relaxed text-amber-100/70">

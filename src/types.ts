@@ -15,7 +15,13 @@ export interface Activity {
   closure?: string;
 }
 
-export type AIProviderStatus = "lmstudio_ok" | "lmstudio_failed" | "degraded_fallback";
+export type AIProviderStatus =
+  | "gemini_ok"
+  | "gemini_failed_lmstudio_ok"
+  | "both_failed_degraded"
+  | "lmstudio_ok"
+  | "lmstudio_failed"
+  | "degraded_fallback";
 
 export interface ProviderMeta {
   aiProviderStatus?: AIProviderStatus;

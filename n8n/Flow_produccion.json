@@ -1,0 +1,809 @@
+{
+  "name": "Teacher Assistant Conversational Flow",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Chat principal\n- `POST /webhook/teacher-assistant`\n- Normaliza `stage/subject/duration`\n- Genera actividad y responde JSON estable\n- Persiste sesion en Supabase si hay `sessionId`",
+        "height": 396,
+        "width": 428,
+        "color": 4
+      },
+      "id": "fb3f97b6-c94f-44de-ad25-a30e08c6100d",
+      "name": "Chat Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1952,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"AI Config1\").item.json.config.lmStudioUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ \"Bearer \" + $(\"AI Config1\").item.json.config.lmStudioKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $(\"Build Provider Payload1\").item.json.lmStudioRequestBodyText }}",
+        "options": {
+          "timeout": "={{ $(\"AI Config1\").item.json.config.timeout }}"
+        }
+      },
+      "id": "generate-lmstudio-fallback-001",
+      "name": "Generate LM Studio Fallback1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        4048,
+        672
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"AI Config1\").item.json.config.geminiUrl + \"?key=\" + $(\"AI Config1\").item.json.config.geminiApiKey }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.providerRequestBodyText }}",
+        "options": {
+          "timeout": "={{ $(\"AI Config1\").item.json.config.timeout }}"
+        }
+      },
+      "id": "ada1df36-9b20-45ee-8811-81d70513d8a1",
+      "name": "Generate Gemini Activity1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        3376,
+        752
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const current = $json || {};\nconst source = $(\"AI Config1\").item.json;\nfunction clean(value) { return String(value ?? '').replace(/\\s+/g, ' ').trim(); }\nfunction stripFence(text) {\n  const fence = String.fromCharCode(96, 96, 96);\n  return text.trim()\n    .replace(new RegExp('^' + fence + 'json\\\\s*', 'i'), '')\n    .replace(new RegExp('^' + fence + '\\\\s*', 'i'), '')\n    .replace(new RegExp('\\\\s*' + fence + '$', 'i'), '')\n    .trim();\n}\nfunction tryParseJson(text) {\n  if (!text || typeof text !== 'string') return null;\n  const trimmed = stripFence(text);\n  try { return JSON.parse(trimmed); } catch (error) {}\n  const firstBrace = trimmed.indexOf('{'); const lastBrace = trimmed.lastIndexOf('}');\n  if (firstBrace !== -1 && lastBrace > firstBrace) { try { return JSON.parse(trimmed.slice(firstBrace, lastBrace + 1)); } catch (error) {} }\n  return null;\n}\nfunction rawFromGemini(payload) { return payload?.candidates?.[0]?.content?.parts?.map((part) => part?.text || '').join('') || payload?.data?.candidates?.[0]?.content?.parts?.map((part) => part?.text || '').join('') || ''; }\nfunction activityValid(raw) {\n  const parsed = tryParseJson(raw);\n  const root = parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};\n  const activity = root.activity && typeof root.activity === 'object' ? root.activity : parsed;\n  return Boolean(activity && typeof activity === 'object' && clean(activity.title) && clean(activity.objective) && Array.isArray(activity.steps) && activity.steps.length > 0);\n}\nconst providerHttpStatus = typeof current?.statusCode === 'number' ? current.statusCode : null;\nconst raw = rawFromGemini(current);\nconst transportFailed = Boolean(current.error || (providerHttpStatus !== null && providerHttpStatus >= 400));\nlet geminiFailureReason = '';\nif (transportFailed) geminiFailureReason = clean(current?.error?.message || current?.message || (providerHttpStatus ? 'Gemini respondio con HTTP ' + providerHttpStatus + '.' : 'Gemini no respondio correctamente.'));\nelse if (!clean(raw)) geminiFailureReason = 'Gemini devolvio contenido vacio.';\nelse if (!activityValid(raw)) geminiFailureReason = 'Gemini devolvio una actividad incompleta o no JSON.';\nreturn [{ json: { ...current, providerAttempt: 'gemini', needsLmStudioFallback: Boolean(source.shouldCallModel && geminiFailureReason), geminiFailureReason, geminiRawContent: raw } }];"
+      },
+      "id": "prepare-chat-gemini-result-001",
+      "name": "Prepare Gemini Activity Result1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3600,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "numberOutputs": 2,
+        "output": "={{ $json.needsLmStudioFallback ? 0 : 1 }}"
+      },
+      "id": "route-chat-gemini-result-001",
+      "name": "Route Gemini Activity Result1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        3824,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const source = $json || {};\n\nconst providerSystemPrompt = 'Eres un asistente docente experto en dise?o de actividades didacticas claras, aplicables y con buena calidad pedagogica. Devuelve solo JSON minificado en una sola linea con una clave activity. activity debe incluir exactamente: title, objective, materials, steps, closure y assessment. Si profile ya trae stage, subject o duration, usalos para ajustar el nivel, el lenguaje y la complejidad. La actividad debe ser concreta, realista y lista para usar en aula. title: especifico y atractivo, no generico. objective: una frase clara que explique que aprendera el alumnado y para que. materials: maximo 6 elementos reales y utiles. steps: entre 4 y 6 pasos, cada uno con suficiente detalle operativo para que el docente sepa que hacer, que decir o que producto pedir; evita pasos vagos como introducir o discutir sin concretar. closure: indica como cerrar la actividad y consolidar el aprendizaje. assessment: entre 1 y 3 evidencias observables o comprobaciones concretas. Prioriza propuestas activas, comprensibles y ajustadas al tiempo disponible. No devuelvas markdown ni texto fuera del JSON.';\n\nconst requestContext = {\n  sessionId: source.sessionId,\n  requestedAt: source.requestedAt,\n  profile: source.profile,\n  message: source.message\n};\n\nconst providerRequestBodyText = JSON.stringify({\n  generationConfig: {\n    temperature: 0.35,\n    maxOutputTokens: 2200\n  },\n  contents: [\n    {\n      role: 'user',\n      parts: [\n        {\n          text: providerSystemPrompt + '\\n\\nDevuelve solamente JSON valido, sin markdown ni explicaciones.\\n\\nPayload:\\n' + JSON.stringify(requestContext)\n        }\n      ]\n    }\n  ]\n});\n\nconst lmStudioRequestBodyText = JSON.stringify({\n  model: source.config?.lmModel,\n  temperature: 0.35,\n  max_tokens: 2200,\n  stream: false,\n  messages: [\n    { role: 'system', content: providerSystemPrompt },\n    { role: 'user', content: JSON.stringify(requestContext) }\n  ]\n});\n\nreturn [{ json: { ...source, providerSystemPrompt, providerRequestBodyText, lmStudioRequestBodyText } }];"
+      },
+      "id": "ea5c03f3-607a-4bad-8ff3-78b9560ad070",
+      "name": "Build Provider Payload1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3152,
+        832
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"AI Config1\").item.json.config.supabaseUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $(\"AI Config1\").item.json.config.supabaseKey }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ \"Bearer \" + $(\"AI Config1\").item.json.config.supabaseKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $(\"Build Chat Response1\").item.json.persistencePayload }}",
+        "options": {}
+      },
+      "id": "7ad4b0be-9514-4c22-b077-3f765321764f",
+      "name": "Supabase Upsert1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        4720,
+        832
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "teacher-assistant",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "6c6b306f-f4b6-4c33-91d9-87b4f52825c3",
+      "name": "Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        2032,
+        912
+      ],
+      "webhookId": "teacher-assistant-chat"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $json.body || $json || {};\n\nfunction clean(value) {\n  return String(value ?? '').replace(/\\s+/g, ' ').trim();\n}\n\nfunction normalized(value) {\n  return clean(value)\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase();\n}\n\nfunction pick(source, keys) {\n  if (!source || typeof source !== 'object' || Array.isArray(source)) return '';\n  for (const key of keys) {\n    if (source[key] !== undefined && source[key] !== null && clean(source[key])) {\n      return clean(source[key]);\n    }\n  }\n  return '';\n}\n\nfunction normalizeStage(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  if (/infantil|preescolar/.test(text)) return 'Infantil';\n  if (/primaria/.test(text)) return 'Primaria';\n  if (/secundaria/.test(text)) return 'Secundaria';\n  if (/bachillerato/.test(text)) return 'Bachillerato';\n  return clean(value);\n}\n\nfunction normalizeSubject(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  if (/educacion fisica|ed\\.? fisica/.test(text)) return 'Ed. Fisica';\n  if (/matematic/.test(text)) return 'Matematicas';\n  if (/lengua|lenguaje/.test(text)) return 'Lengua';\n  if (/ciencias?/.test(text)) return 'Ciencias';\n  if (/historia/.test(text)) return 'Historia';\n  if (/ingles/.test(text)) return 'Ingles';\n  if (/musica/.test(text)) return 'Musica';\n  if (/arte/.test(text)) return 'Arte';\n  return clean(value);\n}\n\nfunction normalizeDuration(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  const match = text.match(/\\b(\\d{1,3})\\s*(min|minutos|hora|horas)\\b/);\n  if (!match) return clean(value);\n  const amount = Number(match[1]);\n  if (!Number.isFinite(amount)) return clean(value);\n  if (match[2].startsWith('hora')) {\n    return amount === 1 ? '1 hora' : `${amount} horas`;\n  }\n  return `${amount} min`;\n}\n\nconst rawMessage = clean(input.message || input.text);\nconst embeddedContextMatch = rawMessage.match(/^\\[CONTEXTO PRE-CARGADO:\\s*([^\\]]+)\\]/i);\nconst embeddedContext = {};\nif (embeddedContextMatch) {\n  const block = clean(embeddedContextMatch[1]);\n  for (const piece of block.split('|')) {\n    const [rawKey, ...rest] = piece.split(':');\n    const key = normalized(rawKey);\n    const value = clean(rest.join(':'));\n    if (!value) continue;\n    if (['nivel', 'stage', 'etapa', 'level'].includes(key)) embeddedContext.stage = value;\n    if (['subject', 'materia', 'asignatura'].includes(key)) embeddedContext.subject = value;\n    if (key.startsWith('duraci') || ['duration', 'tiempo'].includes(key)) embeddedContext.duration = value;\n  }\n}\n\nconst context = input.context && typeof input.context === 'object' && !Array.isArray(input.context)\n  ? input.context\n  : {};\n\nconst profile = {\n  stage: normalizeStage(pick(context, ['stage', 'nivel', 'etapa', 'level']) || embeddedContext.stage),\n  subject: normalizeSubject(pick(context, ['subject', 'materia', 'asignatura']) || embeddedContext.subject),\n  duration: normalizeDuration(pick(context, ['duration', 'duracion', 'tiempo']) || embeddedContext.duration)\n};\n\nreturn [{\n  json: {\n    sessionId: clean(input.sessionId),\n    message: clean(rawMessage.replace(/^\\[CONTEXTO PRE-CARGADO:[^\\]]+\\]\\s*/i, '')),\n    profile,\n    requestedAt: clean(input.timestamp) || new Date().toISOString()\n  }\n}];"
+      },
+      "id": "53982666-7861-4ef5-a573-81104bebdcee",
+      "name": "Normalize Input1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2256,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = { ...$json };\n\nfunction clean(value) {\n  return String(value ?? '').replace(/\\s+/g, ' ').trim();\n}\n\nconst hasProfile = Object.values(input.profile || {}).some((value) => clean(value));\nconst missingFields = ['stage', 'subject', 'duration'].filter((key) => !clean(input.profile?.[key]));\nconst hasUsefulRequest = Boolean(clean(input.message) || hasProfile);\n\nlet type = 'clarification';\nlet message = '';\nlet shouldCallModel = true;\n\nif (!clean(input.sessionId)) {\n  type = 'error';\n  message = 'sessionId es obligatorio para usar el asistente docente.';\n  shouldCallModel = false;\n} else if (!hasUsefulRequest) {\n  type = 'clarification';\n  message = 'Necesito un mensaje o contexto educativo para ayudarte a planificar la actividad.';\n  shouldCallModel = false;\n} else if (!clean(input.message) && missingFields.length > 0) {\n  type = 'clarification';\n  message = `Necesito estos datos para seguir: ${missingFields.join(', ')}.`;\n  shouldCallModel = false;\n}\n\nreturn [{\n  json: {\n    ...input,\n    missingFields,\n    shouldCallModel,\n    validationType: type,\n    validationMessage: message\n  }\n}];"
+      },
+      "id": "55d23479-5ca2-4692-9e58-fc6046822ecf",
+      "name": "Validate Request1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2480,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const config = {\n  geminiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',\n  geminiApiKey: $env.GEMINI_API_KEY || 'CHANGE_ME_GEMINI_API_KEY',\n  geminiModel: 'gemini-1.5-flash',\n  lmStudioUrl: 'https://realtor-employee-cafe-offshore.trycloudflare.com/v1/chat/completions',\n  lmStudioKey: 'CHANGE_ME_LM_STUDIO_TOKEN',\n  lmModel: 'google/gemma-4-e2b',\n  timeout: 45000,\n  supabaseUrl: 'https://zvsfkafxicgutlrotugz.supabase.co/rest/v1/sessions?on_conflict=session_id',\n  supabaseKey: 'sb_publishable_-PEWfNAp_rfgoSMZZHhHyQ_iKr2qsTn'\n};\n\nreturn [{ json: { ...$json, config } }];"
+      },
+      "id": "7d8fa8d0-1c88-4016-b577-bfa34e9f5c07",
+      "name": "AI Config1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2704,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "numberOutputs": 2,
+        "output": "={{ $json.shouldCallModel ? 0 : 1 }}"
+      },
+      "id": "adf2292e-75dc-4d1d-a231-42b36972756e",
+      "name": "Route Request1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2928,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const current = $json || {};\nconst source = $(\"AI Config1\").item.json;\n\nfunction clean(value) {\n  return String(value ?? '').replace(/\\s+/g, ' ').trim();\n}\n\nfunction normalized(value) {\n  return clean(value)\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase();\n}\n\nfunction pick(sourceObject, keys) {\n  if (!sourceObject || typeof sourceObject !== 'object' || Array.isArray(sourceObject)) return '';\n  for (const key of keys) {\n    const value = sourceObject[key];\n    if (value !== undefined && value !== null && clean(value)) return value;\n  }\n  return '';\n}\n\nfunction tryParseJson(text) {\n  if (!text || typeof text !== 'string') return null;\n  try {\n    return JSON.parse(text);\n  } catch (error) {\n    return null;\n  }\n}\n\nfunction closeOpenJson(text) {\n  let inString = false;\n  let escaped = false;\n  let curly = 0;\n  let square = 0;\n\n  for (const char of text) {\n    if (escaped) {\n      escaped = false;\n      continue;\n    }\n    if (char === '\\\\') {\n      escaped = true;\n      continue;\n    }\n    if (char === '\"') {\n      inString = !inString;\n      continue;\n    }\n    if (inString) continue;\n    if (char === '{') curly += 1;\n    if (char === '}') curly = Math.max(0, curly - 1);\n    if (char === '[') square += 1;\n    if (char === ']') square = Math.max(0, square - 1);\n  }\n\n  let fixed = text;\n  if (inString) fixed += '\"';\n  fixed += ']'.repeat(square);\n  fixed += '}'.repeat(curly);\n  return fixed;\n}\n\nfunction parseJson(text) {\n  if (!text || typeof text !== 'string') return null;\n  const trimmed = text\n    .trim()\n    .replace(/^\\`\\`\\`json\\s*/i, '')\n    .replace(/^\\`\\`\\`\\s*/i, '')\n    .replace(/\\s*\\`\\`\\`$/i, '')\n    .trim();\n\n  const direct = tryParseJson(trimmed);\n  if (direct) return direct;\n\n  const firstBrace = trimmed.indexOf('{');\n  const lastBrace = trimmed.lastIndexOf('}');\n  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {\n    const parsedObject = tryParseJson(trimmed.slice(firstBrace, lastBrace + 1));\n    if (parsedObject) return parsedObject;\n  }\n\n  const firstBracket = trimmed.indexOf('[');\n  const lastBracket = trimmed.lastIndexOf(']');\n  if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {\n    const parsedArray = tryParseJson(trimmed.slice(firstBracket, lastBracket + 1));\n    if (parsedArray) return parsedArray;\n  }\n\n  const repaired = closeOpenJson(trimmed);\n  if (repaired !== trimmed) {\n    const repairedDirect = tryParseJson(repaired);\n    if (repairedDirect) return repairedDirect;\n\n    const repairedFirstBrace = repaired.indexOf('{');\n    const repairedLastBrace = repaired.lastIndexOf('}');\n    if (repairedFirstBrace !== -1 && repairedLastBrace !== -1 && repairedLastBrace > repairedFirstBrace) {\n      const repairedObject = tryParseJson(repaired.slice(repairedFirstBrace, repairedLastBrace + 1));\n      if (repairedObject) return repairedObject;\n    }\n  }\n\n  return null;\n}\n\nfunction normalizeStage(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  if (/infantil|preescolar/.test(text)) return 'Infantil';\n  if (/primaria/.test(text)) return 'Primaria';\n  if (/secundaria/.test(text)) return 'Secundaria';\n  if (/bachillerato/.test(text)) return 'Bachillerato';\n  return clean(value);\n}\n\nfunction normalizeSubject(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  if (/educacion fisica|ed\\.? fisica/.test(text)) return 'Ed. Fisica';\n  if (/matematic/.test(text)) return 'Matematicas';\n  if (/lengua|lenguaje/.test(text)) return 'Lengua';\n  if (/ciencias?/.test(text)) return 'Ciencias';\n  if (/historia/.test(text)) return 'Historia';\n  if (/ingles/.test(text)) return 'Ingles';\n  if (/musica/.test(text)) return 'Musica';\n  if (/arte/.test(text)) return 'Arte';\n  return clean(value);\n}\n\nfunction normalizeDuration(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  const match = text.match(/\\b(\\d{1,3})\\s*(min|minutos|hora|horas)\\b/);\n  if (!match) return clean(value);\n  const amount = Number(match[1]);\n  if (!Number.isFinite(amount)) return clean(value);\n  if (match[2].startsWith('hora')) return amount === 1 ? '1 hora' : `${amount} horas`;\n  return `${amount} min`;\n}\n\nfunction toArray(value) {\n  if (Array.isArray(value)) {\n    return value\n      .map((item) => {\n        if (typeof item === 'string') return clean(item);\n        if (item && typeof item === 'object') {\n          return clean(\n            item.instruction ||\n            item.description ||\n            item.text ||\n            item.name ||\n            item.title\n          );\n        }\n        return clean(item);\n      })\n      .filter(Boolean);\n  }\n  if (value && typeof value === 'object') {\n    return toArray([\n      value.instruction ||\n      value.description ||\n      value.text ||\n      value.name ||\n      value.title\n    ]);\n  }\n  const text = clean(value);\n  return text ? [text] : [];\n}\n\nfunction normalizeActivity(activity) {\n  const safe = activity && typeof activity === 'object' ? activity : {};\n  return {\n    title: clean(pick(safe, ['title', 'taskTitle', 'name', 'activityTitle', 'activity_name'])),\n    objective: clean(pick(safe, ['objective', 'goal', 'description', 'purpose', 'meta'])),\n    materials: toArray(pick(safe, ['materials', 'resources_required', 'resources', 'materiales', 'recursos'])),\n    steps: toArray(pick(safe, ['steps', 'instructions', 'pasos', 'dynamic', 'development'])),\n    closure: clean(pick(safe, ['closure', 'conclusion', 'cierre', 'finish'])),\n    assessment: toArray(pick(safe, ['assessment', 'evaluation', 'evaluacion', 'grading'])),\n    passage: clean(pick(safe, ['passage', 'text', 'reading', 'lectura'])),\n    questions: Array.isArray(safe.questions) ? safe.questions : safe.questions ? toArray(safe.questions) : undefined,\n    difficulty_level: clean(pick(safe, ['difficulty_level', 'level', 'nivel', 'difficulty']))\n  };\n}\n\nfunction inferTopic(text, subject) {\n  const safeText = normalized(text);\n  if (/fraccion/.test(safeText)) return 'fracciones';\n  if (/lectura/.test(safeText)) return 'lectura guiada';\n  if (/ciclo del agua/.test(safeText)) return 'ciclo del agua';\n  return clean(subject) ? `contenidos de ${subject}` : 'contenido de clase';\n}\n\nfunction buildFallbackActivity(profile, text) {\n  const topic = inferTopic(text, profile.subject);\n  return {\n    title: `Actividad de ${profile.subject || 'clase'}: ${topic}`,\n    objective: `Trabajar ${topic} con una propuesta breve, clara y aplicable al aula.`,\n    materials: ['Papel y lapiz', 'Pizarra o soporte visual simple'],\n    steps: [\n      `Presenta un ejemplo breve sobre ${topic} conectandolo con el contexto del grupo.`,\n      'Guia una practica corta con una consigna concreta y comprueba la comprension antes de cerrar.',\n      'Cierra con una verificacion oral rapida y una aplicacion individual o en parejas.'\n    ],\n    closure: 'Recoge una idea final del grupo y conecta el aprendizaje con la siguiente sesion.',\n    assessment: ['Observar si siguen la consigna y si aplican el contenido con apoyo minimo.']\n  };\n}\n\nfunction summarizeRaw(raw) {\n  const text = clean(raw);\n  return text ? text.slice(0, 800) : '';\n}\n\nfunction summarizeError(value) {\n  if (!value) return '';\n  if (typeof value === 'string') return clean(value).slice(0, 800);\n  try {\n    return JSON.stringify(value).slice(0, 800);\n  } catch (error) {\n    return clean(String(value)).slice(0, 800);\n  }\n}\n\nfunction extractProviderPayload(payload) {\n  const contentCandidates = [\n    ['geminiRawContent', payload?.geminiRawContent],\n    ['candidates[0].content.parts', payload?.candidates?.[0]?.content?.parts?.map((part) => part?.text || '').join('')],\n    ['data.candidates[0].content.parts', payload?.data?.candidates?.[0]?.content?.parts?.map((part) => part?.text || '').join('')],\n    ['choices[0].message.content', payload?.choices?.[0]?.message?.content],\n    ['data.choices[0].message.content', payload?.data?.choices?.[0]?.message?.content],\n    ['body.choices[0].message.content', payload?.body?.choices?.[0]?.message?.content],\n    ['body.data.choices[0].message.content', payload?.body?.data?.choices?.[0]?.message?.content],\n    ['message', typeof payload?.message === 'string' ? payload.message : '']\n  ];\n\n  for (const [location, value] of contentCandidates) {\n    if (typeof value === 'string' && clean(value)) {\n      return {\n        rawContent: value,\n        rawToolArguments: '',\n        payloadLocation: location\n      };\n    }\n  }\n\n  const toolArgumentCandidates = [\n    ['choices[0].message.tool_calls[0].function.arguments', payload?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments],\n    ['data.choices[0].message.tool_calls[0].function.arguments', payload?.data?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments],\n    ['body.choices[0].message.tool_calls[0].function.arguments', payload?.body?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments],\n    ['body.data.choices[0].message.tool_calls[0].function.arguments', payload?.body?.data?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments]\n  ];\n\n  for (const [location, value] of toolArgumentCandidates) {\n    if (typeof value === 'string' && clean(value)) {\n      return {\n        rawContent: '',\n        rawToolArguments: value,\n        payloadLocation: location\n      };\n    }\n  }\n\n  return {\n    rawContent: '',\n    rawToolArguments: '',\n    payloadLocation: ''\n  };\n}\n\nconst invalidBranch = !source.shouldCallModel;\nconst providerPayload = extractProviderPayload(current);\nconst raw = providerPayload.rawContent || providerPayload.rawToolArguments;\nconst providerPayloadLocation = providerPayload.payloadLocation;\nconst parsed = parseJson(raw);\nconst providerHttpStatus = typeof current?.statusCode === 'number' ? current.statusCode : null;\nconst providerCallAttempted = Boolean(source.shouldCallModel);\nconst providerAttempt = current.providerAttempt === 'gemini' ? 'gemini' : (current.providerAttempt || 'lmstudio');\nfunction previousGeminiFailureReason() {\n  if (clean(current.geminiFailureReason)) return clean(current.geminiFailureReason);\n  try { return clean($(\"Prepare Gemini Activity Result1\").item.json.geminiFailureReason); } catch (error) { return ''; }\n}\nconst geminiFailureReason = previousGeminiFailureReason();\nconst providerTransportFailed = Boolean(current.error || (providerHttpStatus !== null && providerHttpStatus >= 400));\nconst parsedRoot = parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};\nconst candidateActivity = parsedRoot.activity && typeof parsedRoot.activity === 'object'\n  ? parsedRoot.activity\n  : parsed;\nconst activity = normalizeActivity(candidateActivity);\nconst validActivity = Boolean(activity.title && activity.objective && activity.steps.length > 0);\nconst profile = {\n  stage: source.profile.stage || normalizeStage(parsedRoot.stage || parsedRoot?.profile?.stage),\n  subject: source.profile.subject || normalizeSubject(parsedRoot.subject || parsedRoot?.profile?.subject),\n  duration: source.profile.duration || normalizeDuration(parsedRoot.duration || parsedRoot?.profile?.duration)\n};\n\nlet providerFailureReason = '';\nif (!invalidBranch) {\n  if (providerTransportFailed) {\n    providerFailureReason = clean(current?.error?.message || current?.message || (providerHttpStatus ? `LM Studio respondio con HTTP ${providerHttpStatus}.` : 'LM Studio no respondio correctamente.'));\n  } else if (!clean(raw)) {\n    providerFailureReason = 'LM Studio devolvio contenido vacio.';\n  } else if (!parsed) {\n    providerFailureReason = 'LM Studio devolvio contenido no JSON.';\n  } else if (!validActivity) {\n    providerFailureReason = 'LM Studio devolvio JSON, pero la actividad estaba incompleta.';\n  }\n}\n\nconst usedFallback = !invalidBranch && Boolean(providerFailureReason);\nconst aiProviderStatus = invalidBranch\n  ? 'both_failed_degraded'\n  : usedFallback\n    ? 'both_failed_degraded'\n    : (providerAttempt === 'gemini' ? 'gemini_ok' : 'gemini_failed_lmstudio_ok');\n\nlet responsePayload;\nif (invalidBranch) {\n  responsePayload = {\n    type: source.validationType,\n    message: source.validationMessage,\n    missingFields: source.missingFields,\n    profile,\n    activity: null,\n    aiProviderStatus,\n    usedFallback: false,\n    responseDiagnostics: {\n      providerCallAttempted,\n      providerHttpStatus,\n      providerPayloadLocation,\n      providerRawContent: summarizeRaw(raw),\n      providerEndpoint: providerAttempt === 'gemini' ? source.config.geminiUrl : source.config.lmStudioUrl,\n      primaryProviderFailureReason: geminiFailureReason || undefined,\n      providerModel: providerAttempt === 'gemini' ? source.config.geminiModel : source.config.lmModel,\n      providerErrorMessage: summarizeError(current?.error || current?.message || current?.reason)\n    }\n  };\n} else {\n  const finalActivity = usedFallback\n    ? buildFallbackActivity(profile, source.message)\n    : activity;\n\n  responsePayload = {\n    type: 'final_activity',\n    message: usedFallback\n      ? 'Actividad generada con fallback controlado porque LM Studio no devolvio un resultado utilizable.'\n      : 'Actividad generada correctamente.',\n    missingFields: [],\n    profile,\n    activity: finalActivity,\n    aiProviderStatus,\n    usedFallback,\n    providerFailureReason: usedFallback ? [geminiFailureReason, providerFailureReason].filter(Boolean).join(' | ') : undefined,\n    responseDiagnostics: {\n      providerCallAttempted,\n      providerHttpStatus,\n      providerPayloadLocation,\n      providerRawContent: summarizeRaw(raw),\n      providerEndpoint: providerAttempt === 'gemini' ? source.config.geminiUrl : source.config.lmStudioUrl,\n      primaryProviderFailureReason: geminiFailureReason || undefined,\n      providerModel: providerAttempt === 'gemini' ? source.config.geminiModel : source.config.lmModel,\n      providerErrorMessage: summarizeError(current?.error || current?.message || current?.reason)\n    }\n  };\n}\n\nconst shouldPersist = Boolean(clean(source.sessionId));\nconst persistencePayload = shouldPersist\n  ? {\n      session_id: source.sessionId,\n      profile,\n      last_activity: responsePayload.type === 'final_activity' ? responsePayload.activity : {},\n      conversation_state: responsePayload.type === 'final_activity' ? 'generated' : 'collecting_info'\n    }\n  : null;\n\nreturn [{ json: { responsePayload, persistencePayload, shouldPersist } }];"
+      },
+      "id": "29461c70-1faf-4428-b71f-a9efdd55b84a",
+      "name": "Build Chat Response1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4272,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "numberOutputs": 2,
+        "output": "={{ $json.shouldPersist ? 0 : 1 }}"
+      },
+      "id": "53083add-7370-4430-9c0c-a4d2f0c22eb5",
+      "name": "Route Persistence1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        4496,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const base = $(\"Build Chat Response1\").item.json.responsePayload;\nconst current = $json || {};\nconst cameDirect = Object.prototype.hasOwnProperty.call(current, 'responsePayload');\nif (cameDirect) {\n  return [{ json: base }];\n}\n\nconst persistenceFailed = Boolean(\n  current.error ||\n  current.code ||\n  (typeof current.statusCode === 'number' && current.statusCode >= 400)\n);\n\nif (!persistenceFailed) {\n  return [{ json: base }];\n}\n\nreturn [{\n  json: {\n    ...base,\n    message: `${base.message} No se pudo guardar la sesion en Supabase.`,\n    responseDiagnostics: {\n      ...(base.responseDiagnostics || {}),\n      persistenceFailed: true\n    }\n  }\n}];"
+      },
+      "id": "2dcaff72-c8fc-4be7-a61c-ac2639fe79ec",
+      "name": "Format Response1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4944,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "3195cf94-15c2-4e0b-b923-67e024dfd265",
+      "name": "Respond1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        5168,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"AI Config\").item.json.config.lmStudioUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ \"Bearer \" + $(\"AI Config\").item.json.config.lmStudioKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ (() => {\n  const source = $(\"AI Config\").item.json;\n  return {\n    model: source.config.lmModel,\n    temperature: source.action === 'curriculum_mapping' ? 0.2 : 0.3,\n    stream: false,\n    messages: [\n      {\n        role: 'system',\n        content: source.actionConfig.systemPrompt\n      },\n      {\n        role: 'user',\n        content: JSON.stringify({\n          sessionId: source.sessionId,\n          action: source.action,\n          requestedAt: source.requestedAt,\n          context: source.context,\n          activity: source.activity\n        })\n      }\n    ]\n  };\n})() }}",
+        "options": {
+          "timeout": "={{ $(\"AI Config\").item.json.config.timeout }}"
+        }
+      },
+      "id": "9363a593-5473-4b37-abc0-3aac49407fdc",
+      "name": "Call LM Studio Fallback1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        3792,
+        1088
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "content": "## Laboratorio IA\n- `POST /webhook/teacher-assistant-lab`\n- Valida `sessionId`, `action` y `activity.title`\n- Enruta prompts por modulo\n- Responde `{ ok, type, data, message, error? }`",
+        "height": 392,
+        "width": 420,
+        "color": 6
+      },
+      "id": "355504cc-ca66-4fec-8c69-3af87a9e34c2",
+      "name": "Lab Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"AI Config\").item.json.config.geminiUrl + \"?key=\" + $(\"AI Config\").item.json.config.geminiApiKey }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ (() => {\n  const source = $(\"AI Config\").item.json;\n  return {\n    generationConfig: {\n      temperature: source.action === 'curriculum_mapping' ? 0.2 : 0.3,\n      maxOutputTokens: 2200\n    },\n    contents: [\n      {\n        role: 'user',\n        parts: [\n          {\n            text: source.actionConfig.systemPrompt + '\n\nDevuelve solamente la respuesta solicitada, sin explicaciones adicionales.\n\nPayload:\n' + JSON.stringify({\n              sessionId: source.sessionId,\n              action: source.action,\n              requestedAt: source.requestedAt,\n              context: source.context,\n              activity: source.activity\n            })\n          }\n        ]\n      }\n    ]\n  };\n})() }}",
+        "options": {
+          "timeout": "={{ $(\"AI Config\").item.json.config.timeout }}"
+        }
+      },
+      "id": "gemini-lab-primary-001",
+      "name": "Call Gemini1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        3120,
+        1168
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const current = $json || {};\nconst source = $(\"AI Config\").item.json;\nfunction clean(value) { return String(value ?? '').replace(/\\s+/g, ' ').trim(); }\nfunction stripFence(text) {\n  const fence = String.fromCharCode(96, 96, 96);\n  return text.trim()\n    .replace(new RegExp('^' + fence + 'json\\\\s*', 'i'), '')\n    .replace(new RegExp('^' + fence + '\\\\s*', 'i'), '')\n    .replace(new RegExp('\\\\s*' + fence + '$', 'i'), '')\n    .trim();\n}\nfunction tryParseJson(text) {\n  if (!text || typeof text !== 'string') return null;\n  const trimmed = stripFence(text);\n  try { return JSON.parse(trimmed); } catch (error) {}\n  const firstBrace = trimmed.indexOf('{'); const lastBrace = trimmed.lastIndexOf('}');\n  if (firstBrace !== -1 && lastBrace > firstBrace) { try { return JSON.parse(trimmed.slice(firstBrace, lastBrace + 1)); } catch (error) {} }\n  const firstBracket = trimmed.indexOf('['); const lastBracket = trimmed.lastIndexOf(']');\n  if (firstBracket !== -1 && lastBracket > firstBracket) { try { return JSON.parse(trimmed.slice(firstBracket, lastBracket + 1)); } catch (error) {} }\n  return null;\n}\nfunction rawFromGemini(payload) {\n  return payload?.candidates?.[0]?.content?.parts?.map((part) => part?.text || '').join('') || payload?.data?.candidates?.[0]?.content?.parts?.map((part) => part?.text || '').join('') || '';\n}\nfunction isValidForAction(raw) {\n  if (source.actionConfig?.mode === 'markdown') return Boolean(clean(raw));\n  const parsed = tryParseJson(raw);\n  if (source.action === 'expert_debate') return Array.isArray(parsed) && parsed.length > 0;\n  if (source.action === 'stress_test') return Boolean(parsed && typeof parsed === 'object' && Number.isFinite(Number(parsed.score)) && Array.isArray(parsed.risks));\n  if (source.action === 'critic_mirror') return Boolean(parsed && typeof parsed === 'object' && clean(parsed.elephant) && clean(parsed.bias) && clean(parsed.placebo_effect) && clean(parsed.suggestion));\n  return Boolean(parsed);\n}\nconst providerHttpStatus = typeof current?.statusCode === 'number' ? current.statusCode : null;\nconst raw = rawFromGemini(current);\nconst transportFailed = Boolean(current.error || (providerHttpStatus !== null && providerHttpStatus >= 400));\nlet geminiFailureReason = '';\nif (transportFailed) geminiFailureReason = clean(current?.error?.message || current?.message || (providerHttpStatus ? 'Gemini respondio con HTTP ' + providerHttpStatus + '.' : 'Gemini no respondio correctamente.'));\nelse if (!clean(raw)) geminiFailureReason = 'Gemini devolvio contenido vacio.';\nelse if (!isValidForAction(raw)) geminiFailureReason = source.actionConfig?.mode === 'markdown' ? 'Gemini devolvio markdown vacio.' : 'Gemini devolvio contenido no utilizable para esta accion.';\nreturn [{ json: { ...current, providerAttempt: 'gemini', needsLmStudioFallback: Boolean(source.shouldCallModel && geminiFailureReason), geminiFailureReason, geminiRawContent: raw } }];"
+      },
+      "id": "prepare-lab-gemini-result-001",
+      "name": "Prepare Gemini Lab Result1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3344,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "numberOutputs": 2,
+        "output": "={{ $json.needsLmStudioFallback ? 0 : 1 }}"
+      },
+      "id": "route-lab-gemini-result-001",
+      "name": "Route Gemini Lab Result1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        3568,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "teacher-assistant-lab",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "a189ed72-4e24-4dad-acda-31ae85454738",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        2224,
+        1280
+      ],
+      "webhookId": "teacher-assistant-lab"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $json.body || $json || {};\n\nfunction clean(value) {\n  return String(value ?? '').replace(/\\s+/g, ' ').trim();\n}\n\nfunction normalized(value) {\n  return clean(value)\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase();\n}\n\nfunction toArray(value) {\n  if (Array.isArray(value)) return value.map((item) => clean(item)).filter(Boolean);\n  const text = clean(value);\n  return text ? [text] : [];\n}\n\nfunction normalizeProbability(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  if (/alta/.test(text)) return 'Alta';\n  if (/media/.test(text)) return 'Media';\n  if (/baja/.test(text)) return 'Baja';\n  return clean(value);\n}\n\nconst rawContext = input.context && typeof input.context === 'object' && !Array.isArray(input.context)\n  ? input.context\n  : {};\n\nconst context = {\n  stage: clean(rawContext.stage || rawContext.level || rawContext.nivel || rawContext.etapa),\n  subject: clean(rawContext.subject || rawContext.materia || rawContext.asignatura),\n  duration: clean(rawContext.duration || rawContext.duracion || rawContext.tiempo)\n};\n\nconst rawActivity = input.activity && typeof input.activity === 'object' && !Array.isArray(input.activity)\n  ? input.activity\n  : {};\n\nconst activity = {\n  ...rawActivity,\n  title: clean(rawActivity.title || rawActivity.taskTitle || rawActivity.activityTitle || rawActivity.name),\n  objective: clean(rawActivity.objective || rawActivity.goal || rawActivity.description),\n  steps: toArray(rawActivity.steps || rawActivity.instructions),\n  assessment: toArray(rawActivity.assessment || rawActivity.evaluation),\n  resources_required: toArray(rawActivity.resources_required || rawActivity.resources || rawActivity.materials),\n  closure: clean(rawActivity.closure || rawActivity.conclusion)\n};\n\nconst supportedActions = {\n  expert_debate: {\n    mode: 'json',\n    systemPrompt: 'Analiza una actividad didactica desde tres perspectivas expertas complementarias. Devuelve solo JSON valido con un array de 3 objetos usando las claves exactas: expert, role, pros, cons.'\n  },\n  stress_test: {\n    mode: 'json',\n    systemPrompt: 'Evalua riesgos reales de aula. Devuelve solo JSON valido con este shape exacto: {\"score\":0,\"risks\":[{\"event\":\"\",\"probability\":\"Alta|Media|Baja\",\"extinguisher\":\"\"}]}. score debe ser entero de 0 a 100.'\n  },\n  curriculum_mapping: {\n    mode: 'markdown',\n    systemPrompt: 'Mapea la actividad al marco LOMLOE. Devuelve solo Markdown estructurado con secciones breves y accionables para docente.'\n  },\n  parent_summary: {\n    mode: 'markdown',\n    systemPrompt: 'Resume la actividad para familias en lenguaje claro, sin jerga pedagogica. Devuelve solo texto o Markdown breve y comprensible.'\n  },\n  critic_mirror: {\n    mode: 'json',\n    systemPrompt: 'Haz una critica honesta de la actividad. Devuelve solo JSON valido con estas claves exactas: elephant, bias, placebo_effect, suggestion.'\n  }\n};\n\nconst action = clean(input.action);\nconst actionConfig = supportedActions[action] || null;\n\nlet shouldCallModel = true;\nlet response = null;\nif (!clean(input.sessionId)) {\n  shouldCallModel = false;\n  response = {\n    ok: false,\n    type: 'validation_error',\n    data: null,\n    message: 'sessionId is required.',\n    error: {\n      code: 'SESSION_ID_REQUIRED',\n      message: 'The lab workflow requires a non-empty sessionId.'\n    }\n  };\n} else if (!action) {\n  shouldCallModel = false;\n  response = {\n    ok: false,\n    type: 'validation_error',\n    data: null,\n    message: 'action is required.',\n    error: {\n      code: 'ACTION_REQUIRED',\n      message: 'The lab workflow requires an action.'\n    }\n  };\n} else if (!actionConfig) {\n  shouldCallModel = false;\n  response = {\n    ok: false,\n    type: 'validation_error',\n    data: null,\n    message: 'Unsupported lab action.',\n    error: {\n      code: 'UNSUPPORTED_ACTION',\n      message: 'The provided action is not supported by the lab workflow.'\n    }\n  };\n} else if (!activity.title) {\n  shouldCallModel = false;\n  response = {\n    ok: false,\n    type: 'validation_error',\n    data: null,\n    message: 'activity.title is required.',\n    error: {\n      code: 'ACTIVITY_TITLE_REQUIRED',\n      message: 'The lab workflow requires activity.title with meaningful content.'\n    }\n  };\n}\n\nreturn [{\n  json: {\n    sessionId: clean(input.sessionId),\n    action,\n    actionConfig,\n    activity,\n    context,\n    requestedAt: clean(input.timestamp) || new Date().toISOString(),\n    shouldCallModel,\n    validationResponse: response,\n    helpers: {\n      normalizeProbabilityExample: normalizeProbability('alta')\n    }\n  }\n}];"
+      },
+      "id": "e32e626d-926b-44f0-ad1e-e1a7388a7f22",
+      "name": "Normalize Lab Request1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2448,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const config = {\n  geminiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',\n  geminiApiKey: $env.GEMINI_API_KEY || 'CHANGE_ME_GEMINI_API_KEY',\n  geminiModel: 'gemini-1.5-flash',\n  lmStudioUrl: 'https://realtor-employee-cafe-offshore.trycloudflare.com/v1/chat/completions',\n  lmStudioKey: 'CHANGE_ME_LM_STUDIO_TOKEN',\n  lmModel: 'google/gemma-4-e2b',\n  timeout: 45000\n};\n\nreturn [{ json: { ...$json, config } }];"
+      },
+      "id": "3770cf52-00ca-43ff-97fd-b72e7d09cab2",
+      "name": "AI Config",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2672,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "numberOutputs": 2,
+        "output": "={{ $json.shouldCallModel ? 0 : 1 }}"
+      },
+      "id": "45a86c6b-45a0-461d-97b3-ca3b5c9446cd",
+      "name": "Route Action1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2896,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "0c65986a-c79d-4610-beb3-ba6bb33da55a",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        3568,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const current = $json || {};\nconst source = $(\"AI Config\").item.json;\n\nfunction clean(value) {\n  return String(value ?? '').replace(/\\s+/g, ' ').trim();\n}\n\nfunction normalized(value) {\n  return clean(value)\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase();\n}\n\nfunction parseJson(text) {\n  if (!text || typeof text !== 'string') return null;\n  const trimmed = text.trim().replace(/^\\`\\`\\`json\\s*/i, '').replace(/^\\`\\`\\`\\s*/i, '').replace(/\\s*\\`\\`\\`$/i, '').trim();\n  try {\n    return JSON.parse(trimmed);\n  } catch (error) {}\n  const firstBrace = trimmed.indexOf('{');\n  const lastBrace = trimmed.lastIndexOf('}');\n  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {\n    try {\n      return JSON.parse(trimmed.slice(firstBrace, lastBrace + 1));\n    } catch (error) {}\n  }\n  const firstBracket = trimmed.indexOf('[');\n  const lastBracket = trimmed.lastIndexOf(']');\n  if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {\n    try {\n      return JSON.parse(trimmed.slice(firstBracket, lastBracket + 1));\n    } catch (error) {}\n  }\n  return null;\n}\n\nfunction normalizeProbability(value) {\n  const text = normalized(value);\n  if (!text) return '';\n  if (/alta/.test(text)) return 'Alta';\n  if (/media/.test(text)) return 'Media';\n  if (/baja/.test(text)) return 'Baja';\n  return clean(value);\n}\n\nfunction buildFallback(action, activity, context) {\n  if (action === 'expert_debate') {\n    return [\n      {\n        expert: 'Didactica Activa',\n        role: 'Especialista en aprendizaje activo',\n        pros: `La actividad ${activity.title} tiene potencial para conectar con ${context.subject || 'el contenido'} desde una tarea concreta.`,\n        cons: 'Puede quedarse corta si no se explicitan criterios de exito y cierre observable.'\n      },\n      {\n        expert: 'Atencion a la Diversidad',\n        role: 'Especialista en inclusion',\n        pros: 'Permite introducir apoyos visuales o andamiaje sin cambiar la esencia de la propuesta.',\n        cons: 'Necesita prever ritmos distintos y una instruccion inicial mas fragmentada.'\n      },\n      {\n        expert: 'Evaluacion Formativa',\n        role: 'Especialista en evaluacion autentica',\n        pros: 'Se presta a una verificacion rapida del aprendizaje si se define un producto final simple.',\n        cons: 'Sin evidencia observable, el docente puede confundir actividad atractiva con aprendizaje real.'\n      }\n    ];\n  }\n\n  if (action === 'stress_test') {\n    return {\n      score: 68,\n      risks: [\n        {\n          event: 'La consigna inicial no queda suficientemente concreta para todo el grupo.',\n          probability: 'Alta',\n          extinguisher: 'Modelar un ejemplo resuelto y comprobar comprension antes de soltar la tarea.'\n        },\n        {\n          event: 'El tiempo se consume en transiciones o reparto de materiales.',\n          probability: 'Media',\n          extinguisher: 'Preparar materiales por estaciones o roles antes de iniciar la actividad.'\n        }\n      ]\n    };\n  }\n\n  if (action === 'curriculum_mapping') {\n    return `## Encaje curricular\\n\\n- **Actividad:** ${activity.title}\\n- **Area:** ${context.subject || 'Pendiente de concretar'}\\n- **Etapa:** ${context.stage || 'Pendiente de concretar'}\\n\\n### Lectura rapida\\nLa propuesta es compatible con una formulacion competencial si se explicitan saberes, criterio de evaluacion y producto observable.\\n\\n### Recomendacion\\nAñadir una evidencia final breve y un criterio de exito que pueda observarse en aula.`;\n  }\n\n  if (action === 'parent_summary') {\n    return `### Resumen para familias\\n\\nHoy trabajaremos **${activity.title}** con una actividad breve y guiada. El objetivo es que el alumnado practique de forma clara y participe con seguridad.\\n\\nSi queréis reforzarlo en casa, basta con pedirles que os expliquen con sus palabras que han hecho y que han aprendido.`;\n  }\n\n  return {\n    elephant: 'La actividad puede estar mejor explicada que estructurada para demostrar aprendizaje.',\n    bias: 'Puede asumir que todo el grupo responde igual al mismo ritmo y al mismo tipo de instruccion.',\n    placebo_effect: 'Una dinamica atractiva puede dar sensacion de exito sin evidencia clara de comprension.',\n    suggestion: 'Definir una evidencia final observable y un apoyo especifico para quien necesite mas andamiaje.'\n  };\n}\n\nfunction summarizeRaw(raw) {\n  const text = clean(raw);\n  return text ? text.slice(0, 800) : '';\n}\n\nfunction summarizeError(value) {\n  if (!value) return '';\n  if (typeof value === 'string') return clean(value).slice(0, 800);\n  try {\n    return JSON.stringify(value).slice(0, 800);\n  } catch (error) {\n    return clean(String(value)).slice(0, 800);\n  }\n}\n\nconst providerCallAttempted = Boolean(source.shouldCallModel);\nconst providerAttempt = current.providerAttempt === 'gemini' ? 'gemini' : (current.providerAttempt || 'lmstudio');\nfunction previousGeminiFailureReason() {\n  if (clean(current.geminiFailureReason)) return clean(current.geminiFailureReason);\n  try { return clean($(\"Prepare Gemini Lab Result1\").item.json.geminiFailureReason); } catch (error) { return ''; }\n}\nconst geminiFailureReason = previousGeminiFailureReason();\nconst providerHttpStatus = typeof current?.statusCode === 'number' ? current.statusCode : null;\nconst raw = providerAttempt === 'gemini'\n  ? (current.geminiRawContent || current?.candidates?.[0]?.content?.parts?.map((part) => part?.text || '').join('') || current?.data?.candidates?.[0]?.content?.parts?.map((part) => part?.text || '').join('') || '')\n  : (current?.choices?.[0]?.message?.content\n    ?? current?.data?.choices?.[0]?.message?.content\n    ?? (typeof current?.message === 'string' ? current.message : ''));\nconst providerTransportFailed = Boolean(current.error || (providerHttpStatus !== null && providerHttpStatus >= 400));\n\nif (!source.shouldCallModel) {\n  return [{\n    json: {\n      ...source.validationResponse,\n      aiProviderStatus: 'both_failed_degraded',\n      usedFallback: false,\n      responseDiagnostics: {\n        providerCallAttempted,\n        providerHttpStatus,\n        providerRawContent: summarizeRaw(raw),\n      providerEndpoint: providerAttempt === 'gemini' ? source.config.geminiUrl : source.config.lmStudioUrl,\n      primaryProviderFailureReason: geminiFailureReason || undefined,\n      providerModel: providerAttempt === 'gemini' ? source.config.geminiModel : source.config.lmModel,\n      providerErrorMessage: summarizeError(current?.error || current?.message || current?.reason)\n      }\n    }\n  }];\n}\n\nlet providerFailureReason = '';\nif (providerTransportFailed) {\n  providerFailureReason = clean(current?.error?.message || current?.message || (providerHttpStatus ? `LM Studio respondio con HTTP ${providerHttpStatus}.` : 'LM Studio no respondio correctamente.'));\n} else if (!clean(raw)) {\n  providerFailureReason = 'LM Studio devolvio contenido vacio.';\n}\n\nif (source.actionConfig.mode === 'markdown') {\n  const text = clean(raw);\n  const usedFallback = Boolean(providerFailureReason || !text);\n  const data = usedFallback\n    ? buildFallback(source.action, source.activity, source.context)\n    : raw;\n  return [{\n    json: {\n      ok: true,\n      type: source.action,\n      data,\n      message: usedFallback\n        ? 'Operation completed with degraded fallback.'\n        : 'Operation completed successfully.',\n      aiProviderStatus: usedFallback ? 'both_failed_degraded' : (providerAttempt === 'gemini' ? 'gemini_ok' : 'gemini_failed_lmstudio_ok'),\n      usedFallback,\n      providerFailureReason: usedFallback ? [geminiFailureReason, providerFailureReason || 'El proveedor devolvio markdown vacio.'].filter(Boolean).join(' | ') : undefined,\n      responseDiagnostics: {\n        providerCallAttempted,\n        providerHttpStatus,\n        providerRawContent: summarizeRaw(raw),\n      providerEndpoint: providerAttempt === 'gemini' ? source.config.geminiUrl : source.config.lmStudioUrl,\n      primaryProviderFailureReason: geminiFailureReason || undefined,\n      providerModel: providerAttempt === 'gemini' ? source.config.geminiModel : source.config.lmModel,\n      providerErrorMessage: summarizeError(current?.error || current?.message || current?.reason)\n      }\n    }\n  }];\n}\n\nconst parsed = parseJson(raw);\nlet data = parsed;\nlet fallbackUsed = false;\n\nif (!providerFailureReason && !parsed) {\n  providerFailureReason = 'LM Studio devolvio contenido no JSON.';\n}\n\nif (source.action === 'expert_debate') {\n  const valid = Array.isArray(parsed) && parsed.length > 0 && parsed.every((item) => item && typeof item === 'object' && clean(item.role) && clean(item.pros) && clean(item.cons));\n  if (!valid) {\n    data = buildFallback(source.action, source.activity, source.context);\n    fallbackUsed = true;\n    providerFailureReason = providerFailureReason || 'LM Studio devolvio un debate invalido.';\n  }\n}\n\nif (source.action === 'stress_test') {\n  const valid = parsed && typeof parsed === 'object' && Number.isFinite(Number(parsed.score)) && Array.isArray(parsed.risks);\n  if (!valid) {\n    data = buildFallback(source.action, source.activity, source.context);\n    fallbackUsed = true;\n    providerFailureReason = providerFailureReason || 'LM Studio devolvio un stress test invalido.';\n  } else {\n    data = {\n      score: Number(parsed.score),\n      risks: parsed.risks.map((risk) => ({\n        event: clean(risk?.event),\n        probability: normalizeProbability(risk?.probability),\n        extinguisher: clean(risk?.extinguisher)\n      })).filter((risk) => risk.event && risk.probability && risk.extinguisher)\n    };\n    if (!data.risks.length) {\n      data = buildFallback(source.action, source.activity, source.context);\n      fallbackUsed = true;\n      providerFailureReason = providerFailureReason || 'LM Studio devolvio riesgos vacios o incompletos.';\n    }\n  }\n}\n\nif (source.action === 'critic_mirror') {\n  const valid = parsed && typeof parsed === 'object' && clean(parsed.elephant) && clean(parsed.bias) && clean(parsed.placebo_effect) && clean(parsed.suggestion);\n  if (!valid) {\n    data = buildFallback(source.action, source.activity, source.context);\n    fallbackUsed = true;\n    providerFailureReason = providerFailureReason || 'LM Studio devolvio un critic mirror invalido.';\n  } else {\n    data = {\n      elephant: clean(parsed.elephant),\n      bias: clean(parsed.bias),\n      placebo_effect: clean(parsed.placebo_effect),\n      suggestion: clean(parsed.suggestion)\n    };\n  }\n}\n\nconst usedFallback = Boolean(providerFailureReason || fallbackUsed);\nreturn [{\n  json: {\n    ok: true,\n    type: source.action,\n    data,\n    message: usedFallback\n      ? 'Operation completed with degraded fallback.'\n      : 'Operation completed successfully.',\n    aiProviderStatus: usedFallback ? 'both_failed_degraded' : (providerAttempt === 'gemini' ? 'gemini_ok' : 'gemini_failed_lmstudio_ok'),\n    usedFallback,\n    providerFailureReason: usedFallback ? [geminiFailureReason, providerFailureReason].filter(Boolean).join(' | ') : undefined,\n    responseDiagnostics: {\n      providerCallAttempted,\n      providerHttpStatus,\n      providerRawContent: summarizeRaw(raw),\n      providerEndpoint: providerAttempt === 'gemini' ? source.config.geminiUrl : source.config.lmStudioUrl,\n      primaryProviderFailureReason: geminiFailureReason || undefined,\n      providerModel: providerAttempt === 'gemini' ? source.config.geminiModel : source.config.lmModel,\n      providerErrorMessage: summarizeError(current?.error || current?.message || current?.reason)\n    }\n  }\n}];"
+      },
+      "id": "d27e2060-8ebf-4705-87d9-3b3b98b3ca3f",
+      "name": "Build Lab Response1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4016,
+        1280
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Normalize Lab Request1": {
+      "main": [
+        [
+          {
+            "node": "AI Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Action1": {
+      "main": [
+        [
+          {
+            "node": "Call Gemini1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Lab Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Lab Response1": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Lab Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Config": {
+      "main": [
+        [
+          {
+            "node": "Route Action1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Normalize Input1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Input1": {
+      "main": [
+        [
+          {
+            "node": "Validate Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Request1": {
+      "main": [
+        [
+          {
+            "node": "AI Config1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Config1": {
+      "main": [
+        [
+          {
+            "node": "Route Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Request1": {
+      "main": [
+        [
+          {
+            "node": "Build Provider Payload1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Chat Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Provider Payload1": {
+      "main": [
+        [
+          {
+            "node": "Generate Gemini Activity1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Chat Response1": {
+      "main": [
+        [
+          {
+            "node": "Route Persistence1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Persistence1": {
+      "main": [
+        [
+          {
+            "node": "Supabase Upsert1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Upsert1": {
+      "main": [
+        [
+          {
+            "node": "Format Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response1": {
+      "main": [
+        [
+          {
+            "node": "Respond1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Gemini1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Gemini Lab Result1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Gemini Lab Result1": {
+      "main": [
+        [
+          {
+            "node": "Route Gemini Lab Result1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Gemini Lab Result1": {
+      "main": [
+        [
+          {
+            "node": "Call LM Studio Fallback1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Lab Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call LM Studio Fallback1": {
+      "main": [
+        [
+          {
+            "node": "Build Lab Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Gemini Activity1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Gemini Activity Result1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Gemini Activity Result1": {
+      "main": [
+        [
+          {
+            "node": "Route Gemini Activity Result1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Gemini Activity Result1": {
+      "main": [
+        [
+          {
+            "node": "Generate LM Studio Fallback1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Chat Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate LM Studio Fallback1": {
+      "main": [
+        [
+          {
+            "node": "Build Chat Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "680a7652-55d1-4525-89e1-a70d181036c5",
+  "meta": {
+    "instanceId": "4e1311e78d49d355eb18609db577d46dc3dbdd28f223aa813df0e01aaf26c8c0"
+  },
+  "id": "ppHBNz5lWIU6icj0",
+  "tags": []
+}

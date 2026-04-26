@@ -88,7 +88,7 @@ function normalizeWebhookPayload(payload: any): WebhookResponse {
     aiProviderStatus: data.aiProviderStatus,
     usedFallback: typeof data.usedFallback === 'boolean'
       ? data.usedFallback
-      : data.aiProviderStatus === 'degraded_fallback',
+      : data.aiProviderStatus === 'degraded_fallback' || data.aiProviderStatus === 'both_failed_degraded',
     providerFailureReason: data.providerFailureReason,
     responseDiagnostics: data.responseDiagnostics,
   };
