@@ -1,0 +1,1295 @@
+00:11:30.000 --> 00:11:36.000
+Javier Romero: Bueno, pues me presento. Yo me presento. Soy Javier Romero encantado. Soy el responsable.
+
+00:11:36.000 --> 00:11:42.000
+Javier Romero: Del del Lightchallenge, junto con junto con los 8 mentores que ahora.
+
+00:11:42.000 --> 00:11:51.000
+Javier Romero: Que ahora os presentaré. Y bueno, pues vamos a explicar en en qué consiste esta pequeña aventura en la en la que os avisé.
+
+00:11:51.000 --> 00:12:00.000
+Javier Romero: En la que os habéis embarcado y que espero que y que espero que la disfrutéis vale, me podéis interrumpir directamente.
+
+00:12:00.000 --> 00:12:05.000
+Javier Romero: Aunque tengo aquí visto si se levanta o hay algún comentario en el chat o si levantáis la mano.
+
+00:12:05.000 --> 00:12:13.000
+Javier Romero: Pero vamos, si me queréis interrumpir, podéis hacerlo. No hay ningún tipo de no hay ningún tipo de problema. La idea es que hoy, sobre todo, conozcáis en qué consiste.
+
+00:12:14.000 --> 00:12:17.000
+Javier Romero: Y que no, y que no se queden y que no se queden dudas.
+
+00:12:17.000 --> 00:12:19.000
+Javier Romero: De acuerdo.
+
+00:12:21.000 --> 00:12:23.000
+Javier Romero: Vale. Estáis viendo mi pantalla.
+
+00:12:27.000 --> 00:12:33.000
+Javier Romero: Perfecto. Muy bien, y os agradezco mucho eso que si me respondéis por voz, siempre os lo voy a agradecer.
+
+00:12:34.000 --> 00:12:38.000
+Javier Romero: Os lo voy a agradecer. Más ¿vale? Pues nada ya tengo aquí las 2 pantallas preparadas.
+
+00:12:38.000 --> 00:12:47.000
+Javier Romero: Bueno, pues pues vamos allá. Bienvenidos a a la extensión de ida de del Mid. Diecisiete bienvenidos al al.
+
+00:12:47.000 --> 00:12:50.000
+Javier Romero: Al challenge de inteligencia artificial.
+
+00:12:50.000 --> 00:12:58.000
+Javier Romero: Me acuerdo que se que es ese proyecto en el que en el que vais a hacer ese ese han son ese tocar con las manos y aterrizar.
+
+00:12:58.000 --> 00:13:02.000
+Javier Romero: Todo lo que todo lo que vais a todo lo que vais a ver.
+
+00:13:02.000 --> 00:13:07.000
+Javier Romero: Y y todo lo todo lo que queráis probar. Es decir, yo os invito a que seáis.
+
+00:13:08.000 --> 00:13:13.000
+Javier Romero: A que seáis atrevidos y a que probéis a que probéis cosas. Bueno.
+
+00:13:13.000 --> 00:13:28.000
+Javier Romero: Pues vamos para allá. Muy bien. Primero vamos a presentar al equipo y os presento, los tenéis por ahí, Luego tendréis una sesión de de varias horas con ellos, que son Amalia Amalia Martínez, que está por ahí Amalia, buenas.
+
+00:13:29.000 --> 00:13:32.000
+Javier Romero: Alberto segovia, que también le tenemos por ahí.
+
+00:13:32.000 --> 00:13:34.000
+Alberto Segovia: ¿qué tal un placer.
+
+00:13:33.000 --> 00:13:36.000
+Javier Romero: Muy bien nuria. Senosyain.
+
+00:13:36.000 --> 00:13:39.000
+Nuria: dal buenas.
+
+00:13:38.000 --> 00:13:41.000
+Javier Romero: Muy buenas: Nuria Osvaldo Gómez.
+
+00:13:42.000 --> 00:13:46.000
+Javier Romero: Que tenemos por ahí. No lo he visto. Y no sé si llegaba Osvaldo, hoy justo estaba.
+
+00:13:46.000 --> 00:13:50.000
+Javier Romero: Se incorporaba luego a la sesión. Yo creo que se nos incorpora luego marco ruíz.
+
+00:13:51.000 --> 00:13:53.000
+Marco Ruiz: When asked at all.
+
+00:13:52.000 --> 00:13:57.000
+Javier Romero: Marco encantado de saludarte, Fernando Asenjo desde Barcelona. También.
+
+00:13:55.000 --> 00:13:59.000
+Fernando: Moy buenas a todos hola javi.
+
+00:13:58.000 --> 00:14:01.000
+Javier Romero: Tenemos Oscar cordero.
+
+00:14:01.000 --> 00:14:03.000
+Javier Romero: Cómo estás? Óscar.
+
+00:14:04.000 --> 00:14:09.000
+Javier Romero: Ahí también a tope con la I A y Raquel García desde desde Valencia también. No.
+
+00:14:10.000 --> 00:14:12.000
+Raquel García: Hola, Hola, ¿qué tal? ¿cómo estáis.
+
+00:14:12.000 --> 00:14:19.000
+Javier Romero: Muy bien, pues nada, pues pues sois sois bastantes. Por lo tanto, contamos con con un equipo de de 8.
+
+00:14:19.000 --> 00:14:24.000
+Javier Romero: De 8 mentores que luego, más tarde os comunicaremos en un ratito. ¿quién es.
+
+00:14:24.000 --> 00:14:27.000
+Javier Romero: Quiénes son los equipos con los equipos. Siempre intentamos.
+
+00:14:27.000 --> 00:14:40.000
+Javier Romero: Intentamos mezclaros un poco e intentamos que que, bueno, que aprendáis a trabajar con gente diferente con diferentes diferentes Skills. Y bueno, pues porque al final, luego la verdad es que cada vez.
+
+00:14:40.000 --> 00:14:50.000
+Javier Romero: La tecnología y el conocimiento parece que cada vez van valiendo menos. Pero Pero algo que cada vez va a estar más en valor es esas esas Of Skills. Esas habilidades.
+
+00:14:50.000 --> 00:15:01.000
+Javier Romero: De comunicación de trabajo en equipo de trabajo con los compañeros que son cada día más importantes y que yo creo que en una en una etapa donde la tecnología y el conocimiento va a estar tan asequible, pues.
+
+00:15:01.000 --> 00:15:19.000
+Javier Romero: Pues? Bueno, se va a valorar más. Y bueno, pues yo soy Javier Romero coordino. El Challenge ya está. Esta es la extensión, pero bueno, llevamos 5 ediciones del del programa ejecutivo. Una de ellas se combinó con la extensión esta esta dedicado solo a vosotros, a mi vers.
+
+00:15:19.000 --> 00:15:25.000
+Javier Romero: De acuerdo y y bueno, pues, por lo tanto, esto es un modelo que ya tenemos bastante bastante rodado.
+
+00:15:25.000 --> 00:15:37.000
+Javier Romero: Que en algunos momentos sabemos que os podrá dar un poquito de vértigo. Esperamos que no sea mucho. Es un vértigo sano y esperamos que confiéis en el que confiéis en el en el proceso.
+
+00:15:38.000 --> 00:15:48.000
+Javier Romero: Vale. Bueno, pues, ¿cuál es el esta presentación? La vais a tener. Luego la vais a tener por la vais a tener tanto en el campus como yo. Os la enviaré cuando publiquemos los equipos. Os la subiré aquí al Slack.
+
+00:15:49.000 --> 00:15:56.000
+Javier Romero: Vale. ¿cuál es el objetivo del del del Challenge? El objetivo del Challenge es que identifiques un objetivo de negocio.
+
+00:15:56.000 --> 00:16:00.000
+Javier Romero: Para el cual buscaréis herramientas disponibles, porque la I a.
+
+00:16:01.000 --> 00:16:07.000
+Javier Romero: Hace un año era diferente a la I a que tendréis dentro de un año. Por lo tanto, vais a practicar esa búsqueda. Y esa selección de herramientas.
+
+00:16:07.000 --> 00:16:11.000
+Javier Romero: Vais a diseñar una solución y la vais a poner en práctica.
+
+00:16:11.000 --> 00:16:19.000
+Javier Romero: O sea, aquí. La idea es dejar la teoría en las clases, y aquí arremangarnos a trabajar, a montar una solución y hacer que funcione.
+
+00:16:19.000 --> 00:16:22.000
+Javier Romero: Empezando por encontrar cuál es el problema.
+
+00:16:22.000 --> 00:16:33.000
+Javier Romero: De esta forma, pues trabajaréis en equipo con diferentes capacidades, con diferentes herramientas y ante diferentes retos y que aquí, pues desarrolléis vuestras vuestras capacidades de.
+
+00:16:33.000 --> 00:16:37.000
+Javier Romero: De gestionar este tipo. Este tipo de de proyectos no.
+
+00:16:38.000 --> 00:16:45.000
+Javier Romero: Vais a poner en práctica esas lecciones. Vais a explorar y experimentar aquí el límite, lo pondréis vosotros.
+
+00:16:45.000 --> 00:16:50.000
+Javier Romero: Vais a tener que trabajar en equipo. Eso es muy importante. Solo dicen que.
+
+00:16:50.000 --> 00:16:56.000
+Javier Romero: Que la próxima, la próxima startup de 1 000 000 000 va a ser de una persona o de un equipo de menos de 5 personas.
+
+00:16:56.000 --> 00:17:10.000
+Javier Romero: Yo sigo creyendo que que bueno, que los equipos los equipos suman mucho y los que estáis en emprendimiento, los que habéis emprendido y los que estáis montando empresas. Pues Pues yo creo que lo que lo sabéis, y aquí conozco alguno que está.
+
+00:17:10.000 --> 00:17:16.000
+Javier Romero: Que está en ello, que está en ello. Así que, y bueno, siempre como en Insby.
+
+00:17:16.000 --> 00:17:20.000
+Javier Romero: Aquí no se trata de hacerme esta frase. Me gusta mucho la de no se trata de acertar.
+
+00:17:20.000 --> 00:17:33.000
+Javier Romero: Que seguramente en el troncal lo habréis visto, sino sino de aprender. No entonces os invitamos a que a que experimentéis a que a que probéis y a que, ya que, bueno, que a que soñéis un poquito con.
+
+00:17:33.000 --> 00:17:35.000
+Javier Romero: Con el Challenge. Muy bien.
+
+00:17:38.000 --> 00:17:56.000
+Javier Romero: Todos conocéis la metodología de I S. D para el troncal elchannel, no el ichannel, El eyechallenge no es un troncal se parece, tiene cosas comunes, Comparte parte de su metodología, entre ellos los Sprints. Pero no es un troncal. Por lo tanto, no tiene todo entonces.
+
+00:17:56.000 --> 00:18:00.000
+Javier Romero: Vamos a desarrollar el proyecto en 5 Sprints.
+
+00:18:00.000 --> 00:18:04.000
+Javier Romero: Y presentación a tribunal aquí. Yo creo que todos.
+
+00:18:05.000 --> 00:18:10.000
+Javier Romero: Habéis pasado ya por por tribunal o por ley intermedias. Correcto.
+
+00:18:10.000 --> 00:18:20.000
+Javier Romero: Verdad, ya habéis presentado todos. Por lo tanto, pues ya conocéis cómo cómo funcionan las dinámicas, Así que en este caso lo tenéis mucho más fácil que los alumnos que suelen hacer el ejecutivo.
+
+00:18:21.000 --> 00:18:43.000
+Javier Romero: Entonces sabes lo que es un sprint. Aquí vamos a ir a semana a semana y algo hay algún Hay 2 Sprints que tienen 2 semanas. Ahora veremos el calendario. Tenéis que subir un entregable a la plataforma el día de antes de la mentoría. Creo que es a las 8 de la tarde, el Deadline, una de las personas sube el el Esa Present. Normalmente, esa presentación.
+
+00:18:44.000 --> 00:18:54.000
+Javier Romero: Donde exponéis vuestros vuestros avances. Y sabéis que el rol del mentor, pues es llevaros hasta hasta el Tribunal, que es el que va a valorar vuestro vuestro trabajo.
+
+00:18:54.000 --> 00:18:56.000
+Javier Romero: Si tenéis dudas, me preguntáis.
+
+00:18:58.000 --> 00:19:06.000
+Javier Romero: Vale, pues vamos a ver cómo cómo vamos a operativizar esto. Primer Sprint que empieza hoy empieza cuando terminemos esta sesión a las 5 y media.
+
+00:19:07.000 --> 00:19:18.000
+Javier Romero: El reto. Sabéis si lo habéis visto en el Mit que muchas veces se dan soluciones a cosas que no son un problema. Entonces, por lo tanto, primero vamos a buscar un problema real.
+
+00:19:19.000 --> 00:19:24.000
+Javier Romero: Un reto Con la I A. Se pueden encontrar cuestiones de eficiencia.
+
+00:19:24.000 --> 00:19:29.000
+Javier Romero: Cuestiones de de velocidad, de costes.
+
+00:19:29.000 --> 00:19:32.000
+Javier Romero: Cosas que no se podían hacer sin ella.
+
+00:19:32.000 --> 00:19:36.000
+Javier Romero: Pero lo importante aquí es que busquéis un reto como equipo.
+
+00:19:37.000 --> 00:19:50.000
+Javier Romero: Estéis. De acuerdo? Ahí? Amalia Os va a ayudar a montar una sesión de design thinking aplicada a la definición del reto donde vais a trabajar en equipo para ver qué intereses.
+
+00:19:50.000 --> 00:19:56.000
+Javier Romero: Qué ¿Qué cosas tenéis en la cabeza? Seguro que algunos de vosotros ya tiene pensado algún reto o algo que le gustaría resolver con ella.
+
+00:19:56.000 --> 00:20:04.000
+Javier Romero: Pero hay que decidirlo en equipo. Y ahí vais a tener una sesión hoy de 3 h con vuestros mentores y con Amalia, donde vais a poder trabajarlo.
+
+00:20:04.000 --> 00:20:06.000
+Javier Romero: Tiene que quedar terminado hoy.
+
+00:20:06.000 --> 00:20:13.000
+Javier Romero: Si queda terminado hoy. Lo bueno que tenéis es que habéis hecho el primer Sprint hoy, entonces es súper eficiente.
+
+00:20:13.000 --> 00:20:29.000
+Javier Romero: Pero no es obligatorio que quede terminado Hoy o podéis hacer la práctica hoy, y luego incluso darle una vuelta o decidir otro proyecto. Esto os dejamos, tenéis toda la libertad. Lo que os invitamos es a aprovechar al máximo esas 3 esas 3 h. Segundo, Sprint, la búsqueda de soluciones.
+
+00:20:30.000 --> 00:20:37.000
+Javier Romero: Llevamos ya 2 años, 2 años y algo haciendo este programa. Algunos de vosotros estáis en el módulo de agentes.
+
+00:20:37.000 --> 00:20:40.000
+Javier Romero: Y estáis viendo lo rápido que va esto.
+
+00:20:40.000 --> 00:20:46.000
+Javier Romero: Es decir, una solución que hoy en día parece buena interesante. En 6 meses ha desaparecido.
+
+00:20:46.000 --> 00:20:50.000
+Javier Romero: O está superado por otra. Entonces una de las cosas que os vamos a invitar es.
+
+00:20:50.000 --> 00:21:09.000
+Javier Romero: A que busquéis y exploréis, no os vamos a decir, tenéis estas 2 herramientas. Tenéis libertad de herramientas. Hay una recomendación importante de utilizar n 8 N, porque está dentro de las clases, pero pero tenéis una libertad de utilización de herramientas, porque el mercado va así porque cada día salen nuevas y entonces queremos que esa parte también la.
+
+00:21:09.000 --> 00:21:17.000
+Javier Romero: También la conozcáis, la tengáis clara y la y la podáis practicar lo que es lo que es esa búsqueda de herramientas. Y después esa parte de.
+
+00:21:17.000 --> 00:21:24.000
+Javier Romero: De experimentación de experimentación con ellas, no porque hay veces que se prometen muchas cosas.
+
+00:21:24.000 --> 00:21:26.000
+Javier Romero: Pero hay que, pero hay que probarlas.
+
+00:21:27.000 --> 00:21:36.000
+Javier Romero: Una cosa superimportante: el tema del comepliance lo veréis. Pero en cualquier empresa y sobre todo, si son un poco grandes, internacionales.
+
+00:21:36.000 --> 00:21:44.000
+Javier Romero: El Complayants, todo lo que es cumplir tanto con las normas internas, con lo que es con confidencialidad, con lo que son las normas legales, es superimportante.
+
+00:21:44.000 --> 00:21:50.000
+Javier Romero: Todos estamos obligados a cumplir con las legales, pero además, las empresas, pues, suelen tener las propias.
+
+00:21:50.000 --> 00:21:56.000
+Javier Romero: Por lo tanto, en este Sprint tendréis que analizar que os aplica las consideraciones legales.
+
+00:21:56.000 --> 00:22:01.000
+Javier Romero: Y diseñar una prueba de concepto. Y aquí me paro. Me paro unos minutos, porque esto.
+
+00:22:02.000 --> 00:22:07.000
+Javier Romero: Entiendo que todos tenéis la diferencia entre entre M. V, P. Entre.
+
+00:22:07.000 --> 00:22:10.000
+Javier Romero: Producto mínimo viable y Poc, prueba de concepto.
+
+00:22:12.000 --> 00:22:14.000
+Javier Romero: Sí.
+
+00:22:13.000 --> 00:22:15.000
+daniella g.: Oh.
+
+00:22:15.000 --> 00:22:17.000
+Javier Romero: Perdona. He escuchado a alguien.
+
+00:22:19.000 --> 00:22:21.000
+Javier Romero: Bueno, yo yo.
+
+00:22:21.000 --> 00:22:26.000
+Javier Romero: Sí, Yo lo voy a las voy a las voy a recordar para que las tengamos claras.
+
+00:22:26.000 --> 00:22:31.000
+Javier Romero: Un producto mínimo viable, ya incorpora funcionalidades para testar sobre todo.
+
+00:22:31.000 --> 00:22:36.000
+Javier Romero: Como tracción en el mercado. Si hay demanda, si la gente lo compra y cómo lo utiliza.
+
+00:22:36.000 --> 00:22:43.000
+Javier Romero: La E, P, o C. La prueba de concepto viene antes. Y es donde se valida si la tecnología, si nuestra idea.
+
+00:22:43.000 --> 00:22:47.000
+Javier Romero: Funciona. Podemos tener una idea que funcione y que luego el mercado no nos la compre.
+
+00:22:48.000 --> 00:22:52.000
+Javier Romero: Pero nosotros no vamos a validar la salida al mercado, como, por ejemplo, sí se hace en un.
+
+00:22:52.000 --> 00:23:13.000
+Javier Romero: Si se hace en el Mip, sino que nos vamos a quedar en la prueba de concepto tecnológico. ¿por qué? Porque al final tenemos la duración que tenemos y claro para irnos a otro otro tipo de soluciones, habría que contratar otro tipo de herramientas. Lo que queremos es que es que hagáis una prueba de conceptos que validéis que la tecnología que la idea que tenéis.
+
+00:23:13.000 --> 00:23:18.000
+Javier Romero: Funciona. Y hoy en día tenemos la suerte de que con la I A, tenéis un montón.
+
+00:23:18.000 --> 00:23:29.000
+Javier Romero: Un montón, no tenéis el 99 por 100 de tecnología disponible tal y como sale al mercado a un golpe de clic, o sea, se puede contratar por menos de 5 € cualquiera pide.
+
+00:23:29.000 --> 00:23:37.000
+Javier Romero: De prácticamente cualquier plataforma. ¿no? Entonces eso os va a permitir probar probar esa tecnología y os invitamos a que la a que la probéis.
+
+00:23:38.000 --> 00:23:43.000
+Javier Romero: Y con la prueba de concepto. Esto es muy importante que lo recordéis Luego, a medida que avanzan las mentorías.
+
+00:23:43.000 --> 00:23:50.000
+Javier Romero: Es que es que validéis el que realmente la la inteligencia artificial está aportando valor.
+
+00:23:50.000 --> 00:23:56.000
+Javier Romero: Resuelve el problema, es capaz de resolverlo y aporta un tipo de valor. El valor puede ser que lo hace más rápido.
+
+00:23:56.000 --> 00:24:02.000
+Javier Romero: Que lo hace más barato o que resuelve un problema que de otra forma no podía no podía resolverse. Vale no.
+
+00:24:02.000 --> 00:24:07.000
+Javier Romero: Hoy en día hay una. Hay una gran obsesión por la por la eficiencia, por la por la automatización.
+
+00:24:07.000 --> 00:24:09.000
+Javier Romero: Por la reducción de costes.
+
+00:24:09.000 --> 00:24:13.000
+Javier Romero: Pero yo os invito a que penséis aquí un poquito un poquito fuera de la caja.
+
+00:24:13.000 --> 00:24:20.000
+Javier Romero: Yo os lanzo ya un ejemplo que suelo utilizar, que suelo utilizar muchas veces, pero que.
+
+00:24:20.000 --> 00:24:29.000
+Javier Romero: Que bueno, pues, que cuando fue la la Adana en Valencia, un equipo planteó una plataforma para ayudar a.
+
+00:24:29.000 --> 00:24:37.000
+Javier Romero: A gestionar las ayudas. ¿por qué? Porque resulta que ahí nos lo dijeron. No sé si era un 40 o un 60 por 100.
+
+00:24:37.000 --> 00:24:45.000
+Javier Romero: Del dinero que se habilita para ayudas que no suele llegar a la gente porque la gente no sabe que puede tener la ayuda y no sabía gestionarla.
+
+00:24:45.000 --> 00:24:48.000
+Javier Romero: Entonces utilizar la inteligencia artificial para.
+
+00:24:48.000 --> 00:24:58.000
+Javier Romero: Identificar cómo cómo se pueden movilizar esos esos fondos, Pues la verdad es que es es muy interesante. Entonces, Business case, ahorro, retorno.
+
+00:24:58.000 --> 00:25:02.000
+Javier Romero: Pues bueno, pues al final teníamos un retorno más más social, nos salíamos un poco.
+
+00:25:02.000 --> 00:25:06.000
+Javier Romero: De los de los típicos casos de de empresa.
+
+00:25:06.000 --> 00:25:11.000
+Javier Romero: Y aquí os recuerdo siempre que podéis utilizar un proceso empresarial. O sea que no se trata de montar una nueva empresa.
+
+00:25:11.000 --> 00:25:15.000
+Javier Romero: Podéis definirlo como el montaje de un nuevo negocio.
+
+00:25:15.000 --> 00:25:27.000
+Javier Romero: Pero no necesitáis definirlo. De esa forma puede ser un proceso, os podéis entrar en un en un proceso, podéis abarcar un nuevo producto o podéis buscar un fin más social. Pero se trata de encontrar donde.
+
+00:25:27.000 --> 00:25:31.000
+Javier Romero: La inteligencia artificial tiene sentido. ¿dónde aporta valor.
+
+00:25:32.000 --> 00:25:38.000
+Javier Romero: Insisto, el valor lo definiréis vosotros en forma de ahorros de tiempo, de resolver problemas.
+
+00:25:38.000 --> 00:25:41.000
+Javier Romero: Pero que tengamos un que tengamos un reto. No.
+
+00:25:41.000 --> 00:25:43.000
+Javier Romero: Hasta aquí alguna duda.
+
+00:25:44.000 --> 00:25:48.000
+Javier Romero: Voy muy rápido. Viernes por la tarde, todavía nos queda fin de semana.
+
+00:25:48.000 --> 00:25:51.000
+Javier Romero: Nos quedan clases todavía. Así que espero que estéis todavía.
+
+00:25:51.000 --> 00:25:56.000
+Javier Romero: Todavía despiertos venga siguiente. Aquí vamos, la más, la más.
+
+00:25:56.000 --> 00:25:59.000
+Javier Romero: La más interesante, la más bonita y la más dura.
+
+00:26:00.000 --> 00:26:01.000
+Javier Romero: Mhm.
+
+00:26:02.000 --> 00:26:06.000
+Javier Romero: Tenéis que construir esa prueba de concepto, es decir.
+
+00:26:06.000 --> 00:26:08.000
+Javier Romero: Habéis buscado un problema.
+
+00:26:08.000 --> 00:26:15.000
+Javier Romero: Habéis buscado soluciones para el problema. Habéis revisado que legalmente se puede hacer. Habéis diseñado, Habéis pensado que vamos a unir esta pieza con esta.
+
+00:26:16.000 --> 00:26:19.000
+Javier Romero: Pero aquí es donde más hay que arremangarse, porque aquí lo que hay que hacer es construirla.
+
+00:26:20.000 --> 00:26:38.000
+Javier Romero: Vais a tener que llevar una demo funcional al Tribunal, entonces vais a tener que construir esa demo. ¿qué suele pasar aquí, pues que a veces que hay equipos, pues que que tiran muy alto y otras veces, pues que tiran un poquito más para abajo, se puede llevar un G. P: T: Todo, Sabes, supongo, sabéis lo que es un G, P, T.
+
+00:26:38.000 --> 00:26:52.000
+Javier Romero: Como P, o C, Pues Hombre: Pues igual se nos queda un poquito corto. Ahora hay equipos que a veces, pues plantean 7 procesos, 9 herramientas. Bueno, pues pues toda toda esa integración, pues, es puede ser compleja. Entonces.
+
+00:26:52.000 --> 00:26:56.000
+Javier Romero: Os os ayudarán mucho los mentores a a ver cuál es el tamaño.
+
+00:26:56.000 --> 00:27:00.000
+Javier Romero: De esa construcción de la de la prueba de de concepto Y luego.
+
+00:27:00.000 --> 00:27:05.000
+Javier Romero: Pues bueno en el último sprint, pues hablar un poquito del escalado aquí con escalado.
+
+00:27:05.000 --> 00:27:12.000
+Javier Romero: No queremos que hagáis un business case súper complejo, un cuadro de mando super complejo. Unos units economics de nige.
+
+00:27:12.000 --> 00:27:21.000
+Javier Romero: Sí que os invitamos a pensar si esto sale bien, ¿Cuál es el siguiente paso? Escalar escalar económicamente, escalar en pasos tecnológicos, escalar en crecimiento.
+
+00:27:21.000 --> 00:27:31.000
+Javier Romero: No. Lo más importante de este, de de esta extensión de ella. No es ese escalado, porque lo habéis trabajado mucho en el en el Mit, pero sí pensamos que hombre que que poner.
+
+00:27:31.000 --> 00:27:40.000
+Javier Romero: Que nos digáis cómo veis los siguientes pasos, ya sea en costes. En cambio, de plataforma, necesitaré contratar desarrolladores. Necesitaré, pues está bien.
+
+00:27:40.000 --> 00:27:42.000
+Javier Romero: Siguiente tema que hasta ahora.
+
+00:27:42.000 --> 00:27:46.000
+Javier Romero: Pues no lo estábamos tratando suficiente profundidad. La parte de la seguridad.
+
+00:27:47.000 --> 00:27:51.000
+Javier Romero: Aquí os invitamos a que hagáis un análisis de la de la seguridad y, sobre todo.
+
+00:27:51.000 --> 00:27:58.000
+Javier Romero: De los guardarraíles C o n I A cuando hablamos de ella. El 90 por 100 de los proyectos son de guía generativa.
+
+00:27:58.000 --> 00:28:04.000
+Javier Romero: Por lo tanto, los guardarraíles lo iréis viendo. Es un es un elemento superimportante. ¿son esas medidas de seguridad.
+
+00:28:04.000 --> 00:28:10.000
+Javier Romero: Que se intenta acotar lo que puede hacer y lo que no puede y lo que no puede hacer la inteligencia artificial, entonces.
+
+00:28:10.000 --> 00:28:19.000
+Javier Romero: Os invitamos aquí a hacer una reflexión y a ponérnoslo y después, como siempre, pues hay que preparar la presentación, hay que preparar ese entregarle al Tribunal. Hay que ver qué.
+
+00:28:19.000 --> 00:28:27.000
+Javier Romero: Que tenéis un buen Storytelling que tenéis una buena presentación. Y ahí, pues, bueno, pues en la quinta en la quinta mentoría, pues que con vuestros.
+
+00:28:27.000 --> 00:28:31.000
+Javier Romero: Con vuestros, tutores. Os van a ayudar. Y os van a dar. Os van a dar mucha.
+
+00:28:31.000 --> 00:28:37.000
+Javier Romero: Una visión de de qué espera el tribunal como Sois Meaders? Pues, bueno, ya habéis salido.
+
+00:28:37.000 --> 00:28:47.000
+Javier Romero: Ya sabes, lo que es presentarse delante del Tribunal como de exigentes. Son los tribunales de i Sry y, por lo tanto, pues no nos desvelamos aquí nada nada nuevo.
+
+00:28:48.000 --> 00:28:51.000
+Javier Romero: Dudas o con el formato de los Sprints.
+
+00:28:54.000 --> 00:28:56.000
+Javier Romero: Yo aprovecho para refrescar la garganta.
+
+00:28:57.000 --> 00:28:59.000
+Lucía Gómez: Javier, Yo tengo una pregunta.
+
+00:28:59.000 --> 00:29:01.000
+Javier Romero: Sí lucía bien.
+
+00:29:00.000 --> 00:29:11.000
+Lucía Gómez: Perdona que te interrumpa a ver. El reto es como un reto ambiguo. Es un reto sobre una compañía concreta. Se nos va a asignar o es amplio el concepto.
+
+00:29:11.000 --> 00:29:15.000
+Javier Romero: Lo definís, o sea, el reto, debe ser concreto y definido.
+
+00:29:15.000 --> 00:29:19.000
+Javier Romero: Pero lo definís y lo concretáis vosotros por equipos.
+
+00:29:19.000 --> 00:29:29.000
+Javier Romero: Por ejemplo, vais a tener esa sesión que lidera amalia después, ¿no? Pero imaginaros que todos tenéis, pues no sé una inquietud que trabajáis en recursos humanos.
+
+00:29:29.000 --> 00:29:34.000
+Javier Romero: Vale y decir, ostras, es el proceso de on boarding en las compañías, pues pensamos que se podría hacer mejor con I a.
+
+00:29:35.000 --> 00:29:46.000
+Javier Romero: Pues oye, puede ser un proceso. No vamos a buscar un tema social. Oye, pues, que la gente mayor que a lo mejor está poco acompañada. ¿cómo le acercamos la tecnología? Porque, tenéis gente mayor.
+
+00:29:39.000 --> 00:29:41.000
+Lucía Gómez: Vale.
+
+00:29:47.000 --> 00:29:50.000
+Javier Romero: Por el motivo que sea, pero tenéis que buscar cuál es ese reto.
+
+00:29:48.000 --> 00:29:50.000
+Lucía Gómez: Mhm.
+
+00:29:50.000 --> 00:30:01.000
+Javier Romero: Y definirlo. Ahora vais a ver cuáles cuáles son cada una de las tareas que tenéis que realizar en el en el Sprint, en cada sprint vale, pero tenéis libertad.
+
+00:29:50.000 --> 00:29:52.000
+Lucía Gómez: Okay.
+
+00:29:58.000 --> 00:30:00.000
+Lucía Gómez: Perfecto.
+
+00:30:01.000 --> 00:30:05.000
+Javier Romero: Pensamos, porque de esa forma pensamos que vais a hacer más vuestro el reto.
+
+00:30:05.000 --> 00:30:17.000
+Javier Romero: Porque plantearos el reto de una empresa que es como funciona el troncal al final. Si que es cierto que hacéis un reto de transformación global aquí es solución de ella. Prueba de concepto y demo.
+
+00:30:05.000 --> 00:30:07.000
+Lucía Gómez: Claro.
+
+00:30:10.000 --> 00:30:12.000
+Lucía Gómez: Claro.
+
+00:30:17.000 --> 00:30:24.000
+Javier Romero: Por lo tanto, preferimos que os centréis en algo que os llame poderosamente la atención a vosotros. Claro, esto también tiene un.
+
+00:30:24.000 --> 00:30:29.000
+Javier Romero: Tiene un reto en sí mismo, que es que os tendréis que poner de acuerdo, tendréis que buscarlo y poneros de acuerdo.
+
+00:30:25.000 --> 00:30:26.000
+Lucía Gómez: Hándicap.
+
+00:30:28.000 --> 00:30:29.000
+Lucía Gómez: Claro.
+
+00:30:29.000 --> 00:30:33.000
+Javier Romero: Volvemos a lo mismo de la parte de de los Off Skills de.
+
+00:30:33.000 --> 00:30:40.000
+Javier Romero: De toda esa parte donde o sea, no es que os lo demos y ya os ponéis a trabajar inmediatamente. No, no aquí. Lo primero será que os conozcáis.
+
+00:30:40.000 --> 00:30:48.000
+Javier Romero: Que veáis qué inquietudes tenéis y que propongáis retos, y después que lleguéis a un acuerdo y luego lo más difícil.
+
+00:30:48.000 --> 00:30:50.000
+Javier Romero: Definirlo claramente.
+
+00:30:50.000 --> 00:30:52.000
+Lucía Gómez: Okay.
+
+00:30:50.000 --> 00:30:55.000
+Javier Romero: Que es muy importante que lo defináis y lo hayáis puesto. Así que la pregunta es muy correcta.
+
+00:30:56.000 --> 00:30:59.000
+Javier Romero: Me vais interrumpiendo. ¿eh? De verdad que es.
+
+00:30:58.000 --> 00:31:00.000
+Lucía Gómez: Gracias.
+
+00:31:00.000 --> 00:31:03.000
+Javier Romero: A vosotros. La participación siempre es bienvenida.
+
+00:31:03.000 --> 00:31:11.000
+Javier Romero: Vale. Entonces, ¿qué hacemos este documento? Lo vais a tener, Y aquí, a partir de aquí, tenéis las tareas.
+
+00:31:11.000 --> 00:31:14.000
+Javier Romero: Qué tenéis que hacer en cada 1 de los Sprints, Es decir.
+
+00:31:14.000 --> 00:31:17.000
+Javier Romero: Hoy os lleváis todo el trabajo que tenéis que hacer.
+
+00:31:17.000 --> 00:31:23.000
+Javier Romero: Lo conocéis desde el primer momento. Os pedimos que os centréis en cada 1. Está repartido.
+
+00:31:23.000 --> 00:31:30.000
+Javier Romero: Con una lógica, pero podéis ver, ya podéis entender todo el proyecto Vais a ver todo lo que tenéis que hacer, aunque.
+
+00:31:30.000 --> 00:31:37.000
+Javier Romero: Vais a poder, pues bueno verlo, echarle un vistazo y entenderlo. Vale.
+
+00:31:37.000 --> 00:31:40.000
+Javier Romero: En el Sprint Uno: explorar los retos y soluciones.
+
+00:31:41.000 --> 00:31:44.000
+Javier Romero: Qué se está haciendo? ¿qué está pasando con la I a.
+
+00:31:44.000 --> 00:31:53.000
+Javier Romero: Brainstorming de retos. Bueno, pues podéis lanzar ahí vuestros vuestros retos, los evaluaréis esto. La dinámica. Luego amalia os ayudará aquí. ¿eh?
+
+00:31:53.000 --> 00:31:56.000
+Javier Romero: Los evaluaréis, seleccionareis.
+
+00:31:56.000 --> 00:32:02.000
+Javier Romero: Y tenéis que definir. Y este es el punto importante, tenéis que definir claramente cuál es vuestro reto.
+
+00:32:02.000 --> 00:32:08.000
+Javier Romero: A mejor lo defináis, más fácil os será realizar todo el programa. Todo el proyecto.
+
+00:32:08.000 --> 00:32:23.000
+Javier Romero: Si el reto es ambiguo, ¿qué os puede pasar que gente del equipo? Pues lo enfoque de una forma, otras personas de otro. Entonces hoy vais a tener esa ese taller. Pero después tenéis toda la semana. Hasta la fecha de entrega, vamos a ver un calendario más adelante.
+
+00:32:23.000 --> 00:32:30.000
+Javier Romero: Vale, no entro en el detalle, lo podéis leer. Si alguien tiene leyéndolo, tiene alguna duda, me paráis y me decís oye, tengo una duda sobre esta tarea.
+
+00:32:30.000 --> 00:32:33.000
+Javier Romero: Con los mentores, o sea, hoy sí que entraréis en esta.
+
+00:32:33.000 --> 00:32:39.000
+Javier Romero: Y luego los mentores veréis al final de cada tutoria, revisaréis lo que tenéis que entregar en la siguiente.
+
+00:32:39.000 --> 00:32:44.000
+Javier Romero: Pero en este es decidir qué queréis resolver con inteligencia artificial.
+
+00:32:44.000 --> 00:32:48.000
+Javier Romero: Poneros de acuerdo y escribirlo. Voy a resolver esto.
+
+00:32:49.000 --> 00:32:57.000
+Javier Romero: Sí, no os desvelo mucho más, porque, insisto, Amalia tiene aquí una tiene un taller muy, muy completo donde os vais viendo paso a paso.
+
+00:32:57.000 --> 00:33:01.000
+Javier Romero: Vale 2. ¿qué sucede? Uno de los retos.
+
+00:33:02.000 --> 00:33:06.000
+Javier Romero: Que ya sabíamos al principio, cuando diseñamos el Challenge era la velocidad de cambio.
+
+00:33:06.000 --> 00:33:12.000
+Javier Romero: Que no hablamos de lo que se está acelerando. Entonces, todas las herramientas que vais a ver todo el ecosistema que estáis viendo ahora.
+
+00:33:12.000 --> 00:33:14.000
+Javier Romero: Dentro de un año habrá cambiado.
+
+00:33:16.000 --> 00:33:18.000
+Javier Romero: O sea, no tiene nada que ver el chat. G, P, T.
+
+00:33:18.000 --> 00:33:23.000
+Javier Romero: Cinco 0 que había hace un año y las capacidades agénicas de lo que hay ahora.
+
+00:33:23.000 --> 00:33:30.000
+Javier Romero: No tiene nada que ver nuevos players. No tiene nada que ver el modelo agéntico, el tema de voz, el tema de vídeo. Las soluciones, entonces.
+
+00:33:30.000 --> 00:33:37.000
+Javier Romero: Lo que sí pensamos que es muy importante es que os acostumbréis a buscar y a probar las soluciones del ecosistema. Entonces.
+
+00:33:37.000 --> 00:33:40.000
+Javier Romero: Que investigué soluciones existentes.
+
+00:33:42.000 --> 00:33:48.000
+Javier Romero: Que identifiquéis herramientas de ella. Es decir, aquí es importante, veréis que hay muchas soluciones. Hay muchas Apis.
+
+00:33:48.000 --> 00:33:50.000
+Javier Romero: Todo el mundo está familiarizado con las Apis, ¿verdad?
+
+00:33:51.000 --> 00:33:56.000
+Javier Romero: ¿hay alguien que no entiendo que sí. Todos habéis pasado subiendo por el Mip. Entonces.
+
+00:33:56.000 --> 00:34:01.000
+Javier Romero: Si no paramos un segundo. Entonces que investiguéis y que veáis. Pero claro.
+
+00:34:01.000 --> 00:34:25.000
+Javier Romero: Habrá Apis que serán para un mundo Enterprise que habrá que llegar a acuerdos. Pero Pero hoy en día, mucho de lo que se está haciendo en en inteligencia artificial generativa es son apis relativamente económicas, relativamente accesibles, entonces determinar probar casi todas las plataformas ofrecen Free Trials y decidir con cuál queréis utilizarla, pero probarla. Porque una cosa es lo que prometen las plataformas y otra cosa lo que realmente dan no.
+
+00:34:26.000 --> 00:34:32.000
+Javier Romero: Y después oye, pues, mira, yo creo que voy a utilizar como mi. Lm, como mi motor, el de chat. G, P, T.
+
+00:34:32.000 --> 00:34:36.000
+Javier Romero: Género. Y pues, mira, necesito audio. Me voy a ir el evento Labs, y no sé.
+
+00:34:36.000 --> 00:34:42.000
+Javier Romero: Entonces al final, que luego es una selección de cuáles necesitaríais para vuestro problema.
+
+00:34:44.000 --> 00:34:47.000
+Javier Romero: Siguiente: Complayance y Diseño de Lapock.
+
+00:34:48.000 --> 00:34:53.000
+Javier Romero: Aquí estamos en Europa. ¿hay alguien que que venga de Latam.
+
+00:34:53.000 --> 00:34:55.000
+Javier Romero: O de fuera de Europa.
+
+00:34:55.000 --> 00:34:57.000
+Nicolas Soto: Sí.
+
+00:34:56.000 --> 00:34:57.000
+daniella g.: Welcome.
+
+00:34:57.000 --> 00:35:02.000
+Javier Romero: De Latam. Sí, Muy bien, sabéis que la legislación en.
+
+00:34:59.000 --> 00:35:01.000
+Nicolas Soto: Sí.
+
+00:35:02.000 --> 00:35:04.000
+Javier Romero: La legislación en.
+
+00:35:04.000 --> 00:35:07.000
+Javier Romero: La legislación aquí en Europa es muy, es muy exigente.
+
+00:35:07.000 --> 00:35:19.000
+Javier Romero: Y bueno, pues siempre hay un punto de legislación del del Ellai Act, protección de datos, etcétera, que vais a tener que revisar que vuestra solución lo permite hacer.
+
+00:35:19.000 --> 00:35:31.000
+Javier Romero: De acuerdo en Europa. Otra cosa es que digáis oye, no, pues estamos de acuerdo, que nos vamos a llevar la solución a otro sitio. Lo vamos a hacer con tecnología de de otra latitud? Bueno, pues sería un escenario, pero normalmente.
+
+00:35:31.000 --> 00:35:38.000
+Javier Romero: Como el el M I P, digamos, tiene su base en España, pues nos centramos en lo que es legislación española y y europea.
+
+00:35:38.000 --> 00:35:43.000
+Javier Romero: Vale investigación con las regulaciones, normas y leyes. Aquí os va a ayudar mucho. La I a.
+
+00:35:43.000 --> 00:35:51.000
+Javier Romero: Evaluación de riesgos éticos y operativos. No dejéis de pensar. Sí, hay una startup muy chiquitita de 5 personas que acaba de sacar un producto.
+
+00:35:51.000 --> 00:35:57.000
+Javier Romero: Y vais a montar un algo grande. Enterprise sobre una empresa que tiene 3 meses de vida.
+
+00:35:57.000 --> 00:36:11.000
+Javier Romero: Bueno, también evaluáis los riesgos operativos y que con eso digáis oye la viabilidad, oye, pues sí, puedo hacer esto, pero no puedo hacer una plataforma de de recomendación financiera, por ejemplo, porque tiene ciertas cosas. Los temas de salud de medicina.
+
+00:36:11.000 --> 00:36:16.000
+Javier Romero: Y después diseñar la Epoc, la prueba de concepto habéis pasado. Yo creo que ya todos, por los módulos de tecnología.
+
+00:36:17.000 --> 00:36:31.000
+Javier Romero: Por lo tanto, pues entendéis lo que son los componentes y cómo se unen entre ellos y hacer un esquema del proceso. No os pedimos ninguna metodología aquí en concreto, sino que seáis capaces de pintar a nivel de proceso a nivel de componentes o a nivel de cajitas, pero que entendáis.
+
+00:36:31.000 --> 00:36:33.000
+Javier Romero: Cuáles son los elementos que vais a necesitar.
+
+00:36:33.000 --> 00:36:36.000
+Javier Romero: Para realizar vuestra prueba.
+
+00:36:38.000 --> 00:36:40.000
+Javier Romero: Alguna duda con Sprint, 2.
+
+00:36:40.000 --> 00:36:43.000
+Javier Romero: Muy bien, pues vamos. Seguimos avanzando.
+
+00:36:44.000 --> 00:36:51.000
+Javier Romero: Es perdón. Este es el O sea, el 1 es reto. Dos búsqueda de herramientas, 3 con playerns y diseño de la Poc.
+
+00:36:51.000 --> 00:36:54.000
+Javier Romero: Cuatro a construir.
+
+00:36:54.000 --> 00:36:56.000
+Javier Romero: Prueba error e iterar.
+
+00:36:57.000 --> 00:37:05.000
+Javier Romero: No hay más. Entonces aquí es donde donde la teoría se une con la realidad y aparecen los golpes, los sustos, Las sorpresas los no funcionan.
+
+00:37:06.000 --> 00:37:12.000
+Javier Romero: Hay que darle vueltas. Parece que sí, pero el resultado no es el que esperábamos. Y bueno, pues aquí hay que probar e iterar.
+
+00:37:12.000 --> 00:37:16.000
+Javier Romero: Así que así que nada. Y de aquí tenéis que presentar una demo.
+
+00:37:16.000 --> 00:37:31.000
+Javier Romero: Aquí muchas veces hay dudas con el entregable entregáis 3 capturas de la demo Si queréis o hacéis una descripción en el Powerpoint que entregáis porque la demo como tal, pues muchas veces está en una plataforma que no se puede entregar, no se puede subir a la plataforma. Por lo tanto, pues, bueno, hace referencia en.
+
+00:37:31.000 --> 00:37:36.000
+Javier Romero: En el entregable y y luego, pues la enseñáis a los mentores y ahí tendréis el feedback.
+
+00:37:37.000 --> 00:37:40.000
+Javier Romero: Y por último, el que decía dónde hemos cambiado un poquito, No.
+
+00:37:40.000 --> 00:37:42.000
+Javier Romero: Seguridad y guardarraíles.
+
+00:37:42.000 --> 00:37:47.000
+Javier Romero: Qué medidas de seguridad necesitáis y podéis implementar sobre vuestra prueba concepto.
+
+00:37:48.000 --> 00:37:50.000
+Javier Romero: Y muy importante guardar raíles.
+
+00:37:50.000 --> 00:37:59.000
+Javier Romero: Como mínimo, este sería el mínimo, ¿no? Es decir, oye, llegue alguien a mi solución le da un texto, y resulta que la plataforma hace hace otras cosas.
+
+00:37:59.000 --> 00:38:03.000
+Javier Romero: Pues? Bueno, pues eso lo tenéis que lo tenéis que analizar.
+
+00:38:03.000 --> 00:38:05.000
+Javier Romero: Y escalada. La solución.
+
+00:38:05.000 --> 00:38:09.000
+Javier Romero: Cuáles son los próximos pasos que serían? ¿cómo creceríais.
+
+00:38:09.000 --> 00:38:14.000
+Javier Romero: Requiere Business plan requiere Businesscase. Requiere. Bueno.
+
+00:38:14.000 --> 00:38:20.000
+Javier Romero: Aquí. Sabemos que en el Mip hacéis una parte muy, muy importante.
+
+00:38:20.000 --> 00:38:29.000
+Javier Romero: Sobre todo la parte de de economics de de business plan de Business Case y de cuadro de mando. Por lo tanto, aquí lo que os pedimos es un mínimo que analicéis, pues eso.
+
+00:38:29.000 --> 00:38:35.000
+Javier Romero: Costes de la plataforma. Por ejemplo, entender el coste de un token, entender cuántos tokens va a gastar vuestra plataforma.
+
+00:38:35.000 --> 00:38:45.000
+Javier Romero: Pues, que tengáis un mínimo de entendimiento de cuáles son los elementos de coste que os van a condicionar y cómo si la plataforma crece, pues se pueden, se pueden mover.
+
+00:38:45.000 --> 00:38:52.000
+Javier Romero: Vale aprendizajes y conclusiones. Esto es voluntario. De acuerdo? Pues oye, pues os invitamos.
+
+00:38:53.000 --> 00:39:01.000
+Javier Romero: Porque el mundo de la I A es algo muy vivo y que nos llevamos sorpresas. Y si alguien, pues en su presentación quiere contar cuáles han sido sus aprendizajes.
+
+00:39:01.000 --> 00:39:05.000
+Javier Romero: Pues bueno, pues estamos abiertos a ello, pero ya sabéis que ni os di el tiempo.
+
+00:39:06.000 --> 00:39:08.000
+Javier Romero: Siempre es siempre es escaso y tendréis.
+
+00:39:18.000 --> 00:39:20.000
+Javier Romero: Seguimos avanzando.
+
+00:39:20.000 --> 00:39:24.000
+Javier Romero: Definición de reto. Estamos hoy Primer sprint, 5 Sprints, Tribunal.
+
+00:39:24.000 --> 00:39:27.000
+Javier Romero: Yo creo que no tenemos. No tenemos ninguna duda sobre esto.
+
+00:39:27.000 --> 00:39:30.000
+Javier Romero: Vale las mentorías? ¿cómo van a ser.
+
+00:39:30.000 --> 00:39:33.000
+Javier Romero: Bueno, todos los que estáis aquí estáis teniendo mentorías.
+
+00:39:33.000 --> 00:39:37.000
+Javier Romero: Las mentorías contareis con 5 mentorías.
+
+00:39:37.000 --> 00:39:44.000
+Javier Romero: Vuestros mentores, pues es gente que ha hecho el programa que está en el mundo tecnológico, que conoce la tecnología que conoce lo que se está moviendo.
+
+00:39:44.000 --> 00:39:56.000
+Javier Romero: Por lo tanto, os van a Os van a guiar. No son profesores y no son como tal. Un miembro más del equipo, es decir, ellos os lo que hacen es ver el entregable que estáis haciendo y cómo de alineado está.
+
+00:39:56.000 --> 00:40:03.000
+Javier Romero: Con el proceso de aprendizaje y con el entregable final que es el Tribunal, entonces vuestros mentores lo que os tienen es que.
+
+00:40:03.000 --> 00:40:07.000
+Javier Romero: Que retar en y ayudar a que vayáis por ese por ese buen camino.
+
+00:40:07.000 --> 00:40:13.000
+Javier Romero: Del que no hay ningún mapa exacto ni ningún mapa pintado. Lo vais pintando vosotros. A medida que a medida que avanzáis.
+
+00:40:13.000 --> 00:40:20.000
+Javier Romero: Entonces ellos se aseguran de que de que ese camino lo recorreréis de una forma de una forma correcta, como siempre clave.
+
+00:40:20.000 --> 00:40:29.000
+Javier Romero: Salud del equipo, mejor salud, el equipo, tengáis mejor entendimiento en el equipo, mejor os llevéis mejor organizados, estéis, pues, muchísimo mejor.
+
+00:40:29.000 --> 00:40:33.000
+Javier Romero: Suele ser el resultado. Y ahí, pues, bueno, pues con el mentor, pues os ayudará en.
+
+00:40:34.000 --> 00:40:40.000
+Javier Romero: En lo que necesitéis. Es un. Los mentores son ingenieros técnicos en N 8 N no.
+
+00:40:40.000 --> 00:40:56.000
+Javier Romero: Los los mentores son, pues, bueno, pues formamos parte de la comunidad de Disney que sabemos qué es lo que tenéis que llevar para tener un una buena presentación al tribunal y que vuestro proceso de aprendizaje, pues, sea completo y lo disfrutéis aunque, como siempre en Disney, ya sabéis que.
+
+00:40:56.000 --> 00:40:58.000
+Javier Romero: Que todo es todo es intenso. Siempre.
+
+00:41:01.000 --> 00:41:03.000
+Javier Romero: Calendario.
+
+00:41:03.000 --> 00:41:05.000
+Javier Romero: Vamos a hacer un poquito de zoom aquí.
+
+00:41:05.000 --> 00:41:09.000
+Javier Romero: Nos encontramos hoy. Diecinueve 3 hacemos la presentación.
+
+00:41:09.000 --> 00:41:11.000
+Javier Romero: Jueves que.
+
+00:41:11.000 --> 00:41:16.000
+Javier Romero: No, perdón, me he equivocado. Esto tenía que estar el viernes. Al final se me movió, se me movió.
+
+00:41:17.000 --> 00:41:25.000
+Javier Romero: Se me movía disculparme el error. Este es el el viernes. Estamos aquí en el en el 20 os envío. Ahora, cuando os lo envío, os lo envío, os lo envío corregido.
+
+00:41:25.000 --> 00:41:29.000
+Javier Romero: Esta presentación ha tenido un poquito de mala suerte. No sé por qué llevamos.
+
+00:41:29.000 --> 00:41:40.000
+Javier Romero: Tres o 4 Gazapos en ella. Jueves que viene, mentoría Uno las tenéis de 8 a 9 con vuestros mentores online. Tenéis que entregar los miércoles a última hora.
+
+00:41:40.000 --> 00:41:46.000
+Javier Romero: El horario viene en la plataforma. Yo creo que es a las, no sé si es a las 5 o a las o a las 8.
+
+00:41:46.000 --> 00:41:53.000
+Javier Romero: Vale, siguiente, Semana Semana Santa, Semana de descanso o Semana de investigación. Lo que queráis.
+
+00:41:54.000 --> 00:42:04.000
+Javier Romero: Llegáis a la mentoría. Dos con las vemos las herramientas. Vemos lo que habéis visto, podéis iterar durante este tiempo con el reto y con las herramientas.
+
+00:42:04.000 --> 00:42:09.000
+Javier Romero: De acuerdo y nos vamos a la mentoría 3, donde validamos el complejance.
+
+00:42:09.000 --> 00:42:12.000
+Javier Romero: Y la prueba de concepto.
+
+00:42:13.000 --> 00:42:21.000
+Javier Romero: Intentad siempre adelantar un poquito, Porque si aquí tuvierais una prueba de concepto muy desencaminada, pues vamos muy justos.
+
+00:42:21.000 --> 00:42:24.000
+Javier Romero: Mentoría, 4 presentación y demo.
+
+00:42:24.000 --> 00:42:26.000
+Javier Romero: De acuerdo de la E, P, o C y.
+
+00:42:26.000 --> 00:42:28.000
+Javier Romero: Nos vamos a las 5.
+
+00:42:29.000 --> 00:42:33.000
+Javier Romero: Para preparar el tribunal de escalado y el Tribunal cuidado aquí.
+
+00:42:33.000 --> 00:42:40.000
+Javier Romero: Que hay muy poco tiempo. De acuerdo, las mentorías son de 9 a 10. Pues bien, pues error mío.
+
+00:42:40.000 --> 00:42:42.000
+Javier Romero: Disculpadme. Me están corrigiendo ahora mismo.
+
+00:42:42.000 --> 00:42:47.000
+Javier Romero: Vale os lo envío actualizado ¿vale? He cogido el horario que teníamos en la.
+
+00:42:47.000 --> 00:42:53.000
+Javier Romero: En la última edición. Vale, pues, corrijo. Corrijo. Ahora, tenéis todas las convocatorias. Os han llegado las convocatorias.
+
+00:42:54.000 --> 00:42:59.000
+Javier Romero: Sí, Sí, Vale, Vale, las convocatorias, las tenéis bien, que es lo más importante. No.
+
+00:42:55.000 --> 00:42:57.000
+Sonia García Iglesias: Sí, Sí.
+
+00:42:55.000 --> 00:42:57.000
+José Alejandro Rodríguez: Sí.
+
+00:42:58.000 --> 00:43:00.000
+Sonia García Iglesias: Mhm: Sí. Sí, Tranquila.
+
+00:42:59.000 --> 00:43:04.000
+Javier Romero: Vale, Vale, Vale, pues yo ahora, ahora justo, estoy y rectifico.
+
+00:43:04.000 --> 00:43:19.000
+Javier Romero: Entonces es muy importante aprovechar los espacios que tenéis de Semana Santa. Si queréis podéis y sobre todo la semana entre la 4 y la 5 para revisar todo lo que es la construcción avazar en la presentación y que la mentoría 5. Lleguéis.
+
+00:43:19.000 --> 00:43:24.000
+Javier Romero: Con con la solución ya trabajada y con la presentación, porque.
+
+00:43:24.000 --> 00:43:30.000
+Javier Romero: Porque con el feedback que tengáis aquí tenéis un tenéis 24 48 h para hacer los ajustes para.
+
+00:43:31.000 --> 00:43:33.000
+Javier Romero: Para tribunal, de acuerdo.
+
+00:43:33.000 --> 00:43:35.000
+Javier Romero: Importante que lo tengáis en cuenta.
+
+00:43:35.000 --> 00:43:37.000
+Javier Romero: Dudas sobre el calendario.
+
+00:43:38.000 --> 00:43:40.000
+Javier Romero: No.
+
+00:43:41.000 --> 00:43:44.000
+Javier Romero: Presentación de proyectos, metodología.
+
+00:43:44.000 --> 00:43:47.000
+Javier Romero: Metodología. M I, P: De acuerdo?
+
+00:43:47.000 --> 00:43:51.000
+Javier Romero: Quién nos va a valorar? No van a ser los mentores? ¿va a ser un tribunal.
+
+00:43:51.000 --> 00:43:56.000
+Javier Romero: Formado por 2 personas con 2 con 2 perfiles. Pues, bueno, pues bastante.
+
+00:43:56.000 --> 00:44:01.000
+Javier Romero: Bastante diferentes, 1 más técnico, operativo y otro, pues, bueno, más de marketing.
+
+00:44:01.000 --> 00:44:09.000
+Javier Romero: Y más de y más de aplicación de la de la I a 15 min, y tenéis que defender el reto y la solución.
+
+00:44:09.000 --> 00:44:13.000
+Javier Romero: La herramienta, el proceso, la demo y el escalado.
+
+00:44:15.000 --> 00:44:18.000
+Javier Romero: ¿qué es lo que habréis hecho en estos en estos.
+
+00:44:19.000 --> 00:44:22.000
+Javier Romero: En estos en estos Sprints.
+
+00:44:23.000 --> 00:44:26.000
+Javier Romero: Y redoble de tambor. Aquí tengo que poner un día música.
+
+00:44:27.000 --> 00:44:30.000
+Javier Romero: Redoble de tambor. Queréis saber con quién estáis.
+
+00:44:30.000 --> 00:44:32.000
+Javier Romero: Quiénes son vuestros compañeros?
+
+00:44:33.000 --> 00:44:36.000
+Javier Romero: Más redoble de tambor. Aquí, un día pondré 3 o 4.
+
+00:44:39.000 --> 00:44:43.000
+Javier Romero: Muy bien, Pues a ver Fernando Asenjo, tiene el equipo 1.
+
+00:44:43.000 --> 00:44:47.000
+Javier Romero: Mamen edgar paula ginés Diego Claus.
+
+00:44:47.000 --> 00:44:54.000
+Javier Romero: Amalia. Equipo 2 Tony Ángela Andrés Tomás, Elías Verónica. Esto lo pasamos ahora. Eh: ahora mismo.
+
+00:44:54.000 --> 00:44:58.000
+Javier Romero: Lo tenéis en 5 min. En cuanto terminemos, lo ponemos en el Slack.
+
+00:44:58.000 --> 00:45:04.000
+Javier Romero: Vale, Alberto Segovia, Neilín, Daniel Uriel blanca Ignacio Daniel.
+
+00:45:04.000 --> 00:45:10.000
+Javier Romero: Raquel García tiene a Simón Sofía, Javier Evelyn Montserrat, Javier y Nicolás.
+
+00:45:11.000 --> 00:45:16.000
+Javier Romero: Y nuria Cenossain tiene a vanina.
+
+00:45:16.000 --> 00:45:20.000
+Javier Romero: José, Alejandro Olalla Pablo Jenny, Amado.
+
+00:45:20.000 --> 00:45:25.000
+Javier Romero: Óscar Cordero tiene a Carlos, Alberto a Sonia Jesús Benjamín isabela.
+
+00:45:26.000 --> 00:45:28.000
+Javier Romero: Sergio y Filipa.
+
+00:45:28.000 --> 00:45:34.000
+Javier Romero: Osvaldo tiene a Jaime, Andrés Jesús Lucía, María Nacho y Susana.
+
+00:45:34.000 --> 00:45:40.000
+Javier Romero: Y Marco tiene a Jaime Gorka Andrés Leopoldo, Alejandra Claudia, Juliana y Beatriz.
+
+00:45:40.000 --> 00:45:46.000
+Javier Romero: Y deberíais estar todos. Y ahora yo os lo pondré. Os lo pondré en.
+
+00:45:46.000 --> 00:45:54.000
+Javier Romero: En breve. Vale, será porque es viernes, pero no me veo. Hay algo bueno, pero estáis todos, ¿no? O sea, en las 2.
+
+00:45:54.000 --> 00:45:58.000
+Javier Romero: No sé si queréis hacer una captura rápida, aprovechad, venga lo paro, un momentito, aunque ahora os lo envío.
+
+00:45:59.000 --> 00:46:08.000
+Javier Romero: Pero pero hablar y enviároslo a la vez me cuesta. Entonces, pues si queréis hacer una captura muy rápida, también vais a tener un correo ahora de learning experience.
+
+00:46:08.000 --> 00:46:11.000
+Javier Romero: De un momento a otro. Sí, esta ya lo tenéis todos. Sí.
+
+00:46:12.000 --> 00:46:14.000
+Javier Romero: Vale. Y la siguiente.
+
+00:46:21.000 --> 00:46:23.000
+Javier Romero: Bueno. Perfecto.
+
+00:46:23.000 --> 00:46:27.000
+Javier Romero: Bueno, pues nada Nos quedan. Nos quedan 2 minutitos. Vamos a terminar un poco.
+
+00:46:27.000 --> 00:46:31.000
+Javier Romero: Vamos a terminar. Vamos con un poquito de adelanto, definición del reto por equipo.
+
+00:46:33.000 --> 00:46:35.000
+Javier Romero: Antes.
+
+00:46:35.000 --> 00:46:39.000
+Javier Romero: Recomendaciones. Sois mivets. Esto os lo sabéis perfectamente.
+
+00:46:39.000 --> 00:46:43.000
+Javier Romero: Pero siempre es un buen recordatorio para todos.
+
+00:46:43.000 --> 00:46:46.000
+Javier Romero: Establecer las herramientas de colaboración.
+
+00:46:46.000 --> 00:46:49.000
+Javier Romero: Que mejor conozcáis. No hay obligación de utilizar.
+
+00:46:49.000 --> 00:46:52.000
+Javier Romero: Por Gmail. Aquí tenéis más libertad.
+
+00:46:53.000 --> 00:46:57.000
+Javier Romero: Os recomendamos que utilicéis las que mejor conozcáis o las que mejor.
+
+00:46:57.000 --> 00:47:05.000
+Javier Romero: Podéis utilizar grupo de trabajo en Slack o Whatsapp para comunicaros nuestra recomendación. Si queréis utilizar otra herramienta.
+
+00:47:06.000 --> 00:47:09.000
+Javier Romero: Ahora hablaremos del último punto: la comunicación con los mentores.
+
+00:47:09.000 --> 00:47:18.000
+Javier Romero: Que nombréis un facilitador. No le queremos llamar un Screen Master por Sprint, pero lo ideal es que siempre tengáis una persona del equipo y por el número de personas que sois y el número de Springs.
+
+00:47:18.000 --> 00:47:22.000
+Javier Romero: Lo ideal es que vaya rotando, que se encargue de cerrar las reuniones de las logísticas.
+
+00:47:22.000 --> 00:47:28.000
+Javier Romero: De moderar un poco las las sesiones de de subir el trabajo a la plataforma.
+
+00:47:28.000 --> 00:47:32.000
+Javier Romero: Pues? Bueno, pues siempre recomendamos que tengáis una persona que y que además sea rotativa.
+
+00:47:32.000 --> 00:47:34.000
+Javier Romero: Pero lo establecéis vosotros.
+
+00:47:34.000 --> 00:47:38.000
+Javier Romero: Establece que el calendario de reuniones, según disponibilidad de todos.
+
+00:47:38.000 --> 00:47:40.000
+Javier Romero: Lo trabajaréis también, ¿verdad? Amalia.
+
+00:47:41.000 --> 00:47:43.000
+Javier Romero: También trabajáis este tema importante.
+
+00:47:44.000 --> 00:47:46.000
+Javier Romero: Vale, Muchas gracias.
+
+00:47:46.000 --> 00:47:53.000
+Javier Romero: Tened en cuenta que feedback después del mentor trabajo y después alineación.
+
+00:47:53.000 --> 00:47:57.000
+Javier Romero: Que que se nota mucho cuando cuando recibimos un entregable donde.
+
+00:47:57.000 --> 00:48:10.000
+Javier Romero: Donde son. Son 5 tareas sueltas y no están, no están correctamente alineadas. Se Se nota mucho, ¿no? Y luego, con lo que decimos consolidar el trabajo y revisar la alineación del tono entregable antes antes de subirlo.
+
+00:48:10.000 --> 00:48:12.000
+Javier Romero: Comunicación con los mentores.
+
+00:48:12.000 --> 00:48:15.000
+Javier Romero: Recomendación que os hacemos siempre montar un grupo de slack y añadir al mentor.
+
+00:48:16.000 --> 00:48:18.000
+Javier Romero: Solo para la comunicación con el mentor.
+
+00:48:18.000 --> 00:48:25.000
+Javier Romero: Mucho lo que hacéis es montáis el grupo del grupo del slack añadís al mentorio, os ponéis a trabajar en ese grupo.
+
+00:48:25.000 --> 00:48:30.000
+Javier Romero: Entonces, ¿qué sucede? Que tenéis una comunicación, o sea, los mentores no.
+
+00:48:30.000 --> 00:48:43.000
+Javier Romero: Todavía no somos un servicio 24 por 7, aunque intentemos estarlo lo más disponibles posibles, O respondemos, pues, bueno, en un plazo razonable, etcétera, Y solemos intentar ser lo más cercanos posible, pero tener vuestro equipo de trabajo.
+
+00:48:43.000 --> 00:48:49.000
+Javier Romero: Y luego un grupo para la comunicación con el mentor de aquello que necesitéis, pues preguntarle o preparar.
+
+00:48:49.000 --> 00:48:54.000
+Javier Romero: Y que que os pueda responder fácil y ágilmente y que también lo vea todo el equipo.
+
+00:48:55.000 --> 00:48:57.000
+Javier Romero: Sí, sin dudas.
+
+00:48:58.000 --> 00:49:02.000
+Javier Romero: Muy bien, pues ahora teníamos un descanso de de 15 minutitos.
+
+00:49:02.000 --> 00:49:10.000
+Javier Romero: Y hemos terminado algún minuto antes. Si no hay preguntas, si hay preguntas, pues pues nada, pues encantado aquí de.
+
+00:49:10.000 --> 00:49:12.000
+Javier Romero: Encantado de responderlas.
+
+00:49:14.000 --> 00:49:26.000
+Ignacio Lacaba Herrera: Javier una pregunta para el tema de de la E, P, o C, Nos teníamos alguna suscripción que nos disteis, por ejemplo, para un N 8 n igual a la más baratilla o algo que nos faciliten para.
+
+00:49:26.000 --> 00:49:37.000
+Javier Romero: N Ocho. N tiene un plan. No sé si la farena os dará, os dará algo en sus clases. Normalmente se puede tirar con el con el plan gratuito. No damos ninguna herramienta, en concreto.
+
+00:49:28.000 --> 00:49:30.000
+Ignacio Lacaba Herrera: Es gratuito.
+
+00:49:37.000 --> 00:49:54.000
+Javier Romero: Por un motivo que, y lo hemos comentado en varias, o sea, y lo hemos comentado también en el módulo de agentes en otros sitios que quito la presentación. Sin ninguna duda. La cuestión es que no queremos forjarlos a utilizar ninguna herramienta en con, O sea, sí que hay más peso de en 8 N.
+
+00:49:54.000 --> 00:50:06.000
+Javier Romero: Y recomendamos utilizarlo, porque para eso vais a tener un profesor, Vais a tener clases. Pero si 1 de los equipos decidiera utilizar otra herramienta porque le gusta más o porque mañana sale otra herramienta. Nosotros consideramos que no es.
+
+00:50:07.000 --> 00:50:21.000
+Javier Romero: No es un trabajo sobre una herramienta en concreto, sino es sobre el proceso de de trabajo y os damos y os damos ahí total libertad en la que elijáis. Casi todas a día de hoy, tienen un trail que normalmente suele suele ser suficiente.
+
+00:50:23.000 --> 00:50:37.000
+Ignacio Lacaba Herrera: Y bueno, aprovechando el Scope, entiendo que esto es es como un mini troncal, pero entiendo que para el mi, el troncal. Teníamos 8 o 9 meses. Esto es mes mes y medio. Entiendo que es bastante más acotado de lo que se espera también, no en.
+
+00:50:38.000 --> 00:50:40.000
+Ignacio Lacaba Herrera: En la presentación de mayo o relativamente más.
+
+00:50:40.000 --> 00:50:43.000
+Javier Romero: Prueba de concepto es elijo un reto.
+
+00:50:43.000 --> 00:50:45.000
+Javier Romero: Lo defino.
+
+00:50:45.000 --> 00:50:57.000
+Javier Romero: Construyo una prueba de concepto. No hay marketing, no hay salida de mercado, no hay, O sea, nos centramos en lo que es la parte del valor de la inteligencia artificial al proceso.
+
+00:50:57.000 --> 00:50:59.000
+Javier Romero: Por ejemplo, sucede a veces que.
+
+00:50:59.000 --> 00:51:04.000
+Javier Romero: Que se hace un proceso y y los y los equipos trabajáis Mucho oye, ¿no? Pues es que.
+
+00:51:04.000 --> 00:51:08.000
+Javier Romero: Pues esto tiene 7 procesos. Se trabajan muchísimo. Está muy bien.
+
+00:51:08.000 --> 00:51:17.000
+Javier Romero: Pero al final, aquí, lo que queremos ver es, y lo que queremos que practiquéis es como la inteligencia artificial, aporta valor, resolver los problemas de desplegarla, no que.
+
+00:51:17.000 --> 00:51:25.000
+Javier Romero: Entonces, si os acostumbréis a trabajar con ella, entonces necesito definir 7 procesos. Hombre: Puedo decir que mi solución va a tener 7 y que para poco elijo 1, 2 o 3.
+
+00:51:26.000 --> 00:51:30.000
+Javier Romero: Pero pero no necesito entrar a una definición de procesos de los 7 procesos.
+
+00:51:31.000 --> 00:51:46.000
+Javier Romero: Se puede hacer con con menos. Evidentemente, el tiempo que tenemos es acotado el ritmo. Es otro. Es cierto que el ritmo es, es, es intenso, Es bastante. Es bastante frenético, pero al final la guía nos lleva a trabajar cada vez más rápido y también es otra de las partes que.
+
+00:51:46.000 --> 00:51:50.000
+Javier Romero: Que consideramos que es que es factible, viable.
+
+00:51:51.000 --> 00:51:53.000
+Javier Romero: Te he respondido? Ignacio.
+
+00:51:52.000 --> 00:51:54.000
+Ignacio Lacaba Herrera: Sí sí me ha respondido.
+
+00:51:54.000 --> 00:51:56.000
+Javier Romero: Gracias.
+
+00:51:57.000 --> 00:51:59.000
+Javier Romero: Algún otro.
+
+00:52:01.000 --> 00:52:03.000
+Javier Romero: Lo veis claro.
+
+00:52:03.000 --> 00:52:08.000
+Javier Romero: Vale, pues os voy a voy a rectificar el calendario. Os dejo Os dejo en el.
+
+00:52:08.000 --> 00:52:12.000
+Javier Romero: Es la C. La presentación, aunque luego la suban al campus.
+
+00:52:12.000 --> 00:52:16.000
+Javier Romero: Y y poquito más desearos, muchísima.
+
+00:52:16.000 --> 00:52:22.000
+Javier Romero: Muchísima suerte. Yo os veré en el tribunal. Está amalia. Luego.
+
+00:52:22.000 --> 00:52:30.000
+Javier Romero: Con la con la definición del reto, tenéis a vuestros a vuestros mentores que se presentarán ya más tranquilamente con vosotros.
+
+00:52:30.000 --> 00:52:37.000
+Javier Romero: En cada 1 de vuestros grupos habrá unas salas configuradas aquí en el zoom para que podáis.
+
+00:52:37.000 --> 00:52:42.000
+Javier Romero: Para que podáis trabajar con ellos, podéis presentaros, porque porque, bueno, pues hasta ahora estabais.
+
+00:52:42.000 --> 00:52:56.000
+Javier Romero: Por por ediciones y por geografía. Y bueno, pues ahora vais a estar mezclados y, por lo tanto, pues bueno, es una oportunidad también para para aprender de otras personas y compartir. Y bueno, pues enriqueceros de esa parte que también pensamos que es.
+
+00:52:57.000 --> 00:53:00.000
+Javier Romero: Que es bueno e interesante.
+
+00:53:01.000 --> 00:53:04.000
+Javier Romero: No quiero cortar sin.
+
+00:53:04.000 --> 00:53:06.000
+Javier Romero: Una pregunta más.
+
+00:53:07.000 --> 00:53:09.000
+Carlos Alberto Hernández González: Muchas gracias.
+
+00:53:09.000 --> 00:53:11.000
+Javier Romero: Gracias a ti, Carlos.
+
+00:53:11.000 --> 00:53:20.000
+Javier Romero: Pues si no hay más preguntas os dejo con amalia y con los mentores y os envío el el P. D. F.
+
+00:53:20.000 --> 00:53:25.000
+Javier Romero: Pues nada me alegro mucho que hayáis decidido hacer la extensión de ella y esperamos estar a.
+
+00:53:25.000 --> 00:53:34.000
+Javier Romero: A la altura de las expectativas que sabemos que son que son muy altas. Así que nada que los disfrutéis y os veo en el os veo en el tribunal. Ahí sí que os veré.

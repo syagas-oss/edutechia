@@ -217,7 +217,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const config = {\n  geminiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',\n  geminiApiKey: $env.GEMINI_API_KEY || 'CHANGE_ME_GEMINI_API_KEY',\n  geminiModel: 'gemini-1.5-flash',\n  lmStudioUrl: 'https://realtor-employee-cafe-offshore.trycloudflare.com/v1/chat/completions',\n  lmStudioKey: 'CHANGE_ME_LM_STUDIO_TOKEN',\n  lmModel: 'google/gemma-4-e2b',\n  timeout: 45000,\n  supabaseUrl: 'https://zvsfkafxicgutlrotugz.supabase.co/rest/v1/sessions?on_conflict=session_id',\n  supabaseKey: 'sb_publishable_-PEWfNAp_rfgoSMZZHhHyQ_iKr2qsTn'\n};\n\nreturn [{ json: { ...$json, config } }];"
+        "jsCode": "const config = {\n  geminiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent',\n  geminiApiKey: $env.GEMINI_API_KEY || 'CHANGE_ME_GEMINI_API_KEY',\n  geminiModel: 'gemini-2.5-flash-lite',\n  lmStudioUrl: 'https://realtor-employee-cafe-offshore.trycloudflare.com/v1/chat/completions',\n  lmStudioKey: 'CHANGE_ME_LM_STUDIO_TOKEN',\n  lmModel: 'google/gemma-4-e2b',\n  timeout: 45000,\n  supabaseUrl: 'https://zvsfkafxicgutlrotugz.supabase.co/rest/v1/sessions?on_conflict=session_id',\n  supabaseKey: 'sb_publishable_-PEWfNAp_rfgoSMZZHhHyQ_iKr2qsTn'\n};\n\nreturn [{ json: { ...$json, config } }];"
       },
       "id": "7d8fa8d0-1c88-4016-b577-bfa34e9f5c07",
       "name": "AI Config1",
@@ -449,7 +449,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const config = {\n  geminiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',\n  geminiApiKey: $env.GEMINI_API_KEY || 'CHANGE_ME_GEMINI_API_KEY',\n  geminiModel: 'gemini-1.5-flash',\n  lmStudioUrl: 'https://realtor-employee-cafe-offshore.trycloudflare.com/v1/chat/completions',\n  lmStudioKey: 'CHANGE_ME_LM_STUDIO_TOKEN',\n  lmModel: 'google/gemma-4-e2b',\n  timeout: 45000\n};\n\nreturn [{ json: { ...$json, config } }];"
+        "jsCode": "const config = {\n  geminiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent',\n  geminiApiKey: $env.GEMINI_API_KEY || 'CHANGE_ME_GEMINI_API_KEY',\n  geminiModel: 'gemini-2.5-flash-lite',\n  lmStudioUrl: 'https://realtor-employee-cafe-offshore.trycloudflare.com/v1/chat/completions',\n  lmStudioKey: 'CHANGE_ME_LM_STUDIO_TOKEN',\n  lmModel: 'google/gemma-4-e2b',\n  timeout: 45000\n};\n\nreturn [{ json: { ...$json, config } }];"
       },
       "id": "3770cf52-00ca-43ff-97fd-b72e7d09cab2",
       "name": "AI Config",
